@@ -87,3 +87,18 @@ export def-env "git grab" [
 
     print $"(ansi green)Done(ansi reset)"
 }
+
+export def clone [
+    owner: string
+    repo: string
+    --host: string = "github.com"
+    --protocol: string = "https"
+] {(
+    git clone
+        ({
+            scheme: $protocol,
+            host: $host,
+            path: $"/($owner)/($repo)",
+        } | url join)
+        ($env.GIT_REPOS_HOME | path join $host $owner $repo)
+)}
