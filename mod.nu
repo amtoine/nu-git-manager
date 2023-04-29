@@ -1,8 +1,3 @@
-export def-env "git ungrab" [] {
-    let dir = (root_dir)
-    ls -s $dir | gum choose
-}
-
 def root_dir [owner?:string] {
     let owner = if $owner == null {
         ''
@@ -16,6 +11,11 @@ def root_dir [owner?:string] {
 def lsi [path:string="."] {
     # the last part (from lines) is a hack to suppress the errors
     (ls $path | get name | to text | gum choose --no-limit | lines | get 1 | str trim)
+}
+
+export def-env "git ungrab" [] {
+    let dir = (root_dir)
+    ls -s $dir | gum choose
 }
 
 export def-env "git grab select" [] {
