@@ -17,7 +17,6 @@ def "context user_choose_to_exit" [] {
     {msg: "User choose to exit...", label: {text: "User choose to exit..."}}
 }
 
-# TODO
 def "prompt fzf_ask" [
     prompt: string
     preview: string = ""
@@ -36,8 +35,6 @@ def "prompt fzf_ask" [
     $choice
 }
 
-
-# TODO
 def pick_repo [
     prompt: string
 ] {
@@ -53,21 +50,19 @@ def pick_repo [
     $choice
 }
 
-
-# TODO
+# jump to any repo registered with ghq.
+#
+# the function will:
+#   - (1) do nothing and abort when selecting no repo.
+#   - (2) jump to the selected repo and print the content of the repo.
+#
+# dependencies:
+#   - ghq
+#   - fzf
+#
 export def-env goto [
-    --clear (-c): bool  # TODO
+    --clear (-c): bool
 ] {
-    # jump to any repo registered with ghq.
-    #
-    # the function will:
-    #   - (1) do nothing and abort when selecting no repo.
-    #   - (2) jump to the selected repo and print the content of the repo.
-    #
-    # dependencies:
-    #   - ghq
-    #   - fzf
-    #
     let choice = (pick_repo "Please choose a repo to jump to: ")
 
     # compute the directory to jump to.
@@ -83,8 +78,6 @@ export def-env goto [
     }
 }
 
-
-# TODO
 export def pull [
     owner?: string
 ] {
@@ -106,8 +99,6 @@ export def pull [
     ghq get -p $repository
 }
 
-
-# TODO
 export def remove [] {
     let repo = (pick_repo "Please choose a repo to remove: ")
 
@@ -116,8 +107,6 @@ export def remove [] {
     rm --trash --interactive --recursive $path
 }
 
-
-# TODO
 export def "get any" [
     repo: string
     --method: string = "https"
