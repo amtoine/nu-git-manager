@@ -61,7 +61,7 @@ export def-env "git grab" [
         return
     }
 
-    echo $"(ansi green)Cloning into ($repo_path)(ansi reset)"
+    print $"(ansi green)Cloning into ($repo_path)(ansi reset)"
 
     mkdir $dir
     cd $dir
