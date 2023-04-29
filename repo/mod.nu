@@ -1,5 +1,3 @@
-use scripts/prompt.nu
-
 def FZF_PICK_PREVIEW [] { return "
     path=$(ghq root)/$(echo {} | sed 's/: /.com\\//')
     echo "TREE:"
@@ -14,6 +12,29 @@ def FZF_PICK_PREVIEW [] { return "
     echo "FILES:"
     ls -la --color=always $path | awk '{print $1,$9}'
 "}
+
+def "context user_choose_to_exit" [] {
+    {msg: "User choose to exit...", label: {text: "User choose to exit..."}}
+}
+
+# TODO
+def "prompt fzf_ask" [
+    prompt: string
+    preview: string = ""
+] {
+    let choice = (
+        $in |
+        to text |
+        fzf --prompt $prompt --ansi --color --preview $preview |
+        str trim
+    )
+
+    if ($choice | is-empty) {
+        error make (context user_choose_to_exit)
+    }
+
+    $choice
+}
 
 
 # TODO
