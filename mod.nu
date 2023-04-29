@@ -75,11 +75,11 @@ export def-env "git grab" [
     if $bare {
         git clone --bare --recurse-submodules $url
         cd $repo_path
-        echo $"(ansi green)Setting up worktrees(ansi reset)"
+        $"(ansi green)Setting up worktrees(ansi reset)"
 
         mkdir .bare
         mv * .bare
-        echo "gitdir: ./.bare" | save .git
+        "gitdir: ./.bare" | save .git
     } else {
         git clone --recurse-submodules $url
         cd $repo_path
