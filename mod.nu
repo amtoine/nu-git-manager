@@ -1,10 +1,16 @@
 def root_dir [owner?: string] {
-    let owner = if $owner == null {
-        ''
+
+    let root = if ($env | get -i GIT_REPOS_HOME | is empty) {
+        $nu.home-path | path join "dev"
     } else {
-        $owner
+        $env.GIT_REPOS_HOME
     }
-    $nu.home-path | path join "dev" $owner
+
+    if $owner == null {
+        $root
+    } else {
+        $root | path join $owner
+    }
 }
 
 # TODO: support cancel
@@ -19,6 +25,7 @@ def lsi [path: string = "."] {(
 
 export def-env "git ungrab" [] {
     ls -s (root_dir) | gum choose
+    # TODO: ungrab should move to a trash folder?
 }
 
 export def-env "git grab select" [] {
@@ -28,6 +35,8 @@ export def-env "git grab select" [] {
     cd $repo
 }
 
+# TODO: add support for other hosts than github
+# TODO: better worktree support
 # Clone a github repository into a standard location organised by domain and path.
 export def-env "git grab" [
     owner,          # Either the owner, your repo name, or "owner/repo"
@@ -100,5 +109,6 @@ export def clone [
             host: $host,
             path: $"/($owner)/($repo)",
         } | url join)
-        ($env.GIT_REPOS_HOME | path join $host $owner $repo)
+        --recurse-submodules
+        (root_dir $owner | path join $repo)
 )}
