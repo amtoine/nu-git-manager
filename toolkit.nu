@@ -14,6 +14,7 @@ export def "import" [--into: string@"nu-complete import-targets"] {
         return
     }
 
+    # TODO: replace projects with a config value.
     let projects = (match $into {
         "neovim" => { $env.HOME | path join ".local" "share" "nvim" "project_nvim" "project_history" },
         _ => {
