@@ -15,7 +15,7 @@ export def "import" [--into: string@"nu-complete import-targets"] {
     }
 
     let projects = (match $into {
-        "neovim" => { $env.HOME | path join ".local/share/nvim/project_nvim/project_history" },
+        "neovim" => { $env.HOME | path join ".local" "share" "nvim" "project_nvim" "project_history" },
         _ => {
             print $"(ansi red) '(ansi red_italic)($into)' is not a valid target.(ansi reset)"
             return
