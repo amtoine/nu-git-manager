@@ -23,8 +23,8 @@ def lsi [path: string = "."] {(
 )}
 
 export def-env "git ungrab" [] {
+    # TODO: ungrab should move to a trash folder!
     ls -s (root_dir) | gum choose
-    # TODO: ungrab should move to a trash folder?
 }
 
 export def-env "git grab select" [] {
@@ -71,7 +71,6 @@ export def-env "git grab" [
     }
 
     log_success $"Cloning into ($repo_path)"
-    
 
     mkdir $dir
     cd $dir
@@ -105,12 +104,11 @@ export def clone [
     --host: string = "github.com"
     --protocol: string = "https"
 ] {(
-    git clone
+    git clone --recurse-submodules
         ({
             scheme: $protocol,
             host: $host,
             path: $"/($owner)/($repo)",
         } | url join)
-        --recurse-submodules
         (root_dir $owner | path join $repo)
 )}
