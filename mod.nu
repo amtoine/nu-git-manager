@@ -1,3 +1,12 @@
+def log_success [message: string] {
+    print $"(ansi green)($message)(ansi reset)"
+}
+
+def log_warning [message: string] {
+    print $"(ansi yellow)($message)(ansi reset)"
+}
+
+
 def root_dir [owner?: string] {
 
     let root = if ($env | get -i GIT_REPOS_HOME | is empty) {
@@ -37,6 +46,7 @@ export def-env "git grab select" [] {
 
 # TODO: add support for other hosts than github
 # TODO: better worktree support
+
 # Clone a github repository into a standard location organised by domain and path.
 export def-env "git grab" [
     owner,          # Either the owner, your repo name, or "owner/repo"
@@ -65,12 +75,13 @@ export def-env "git grab" [
     let repo_path = if $bare { $"($repo_path).git" } else { $repo_path }
 
     if ($repo_path | path exists) {
-        print $"(ansi yellow)Found an existing repo, we will cd to it.(ansi reset)"
+        log_warning "Found an existing repo, we will cd to it."
         cd $repo_path
         return
     }
 
-    print $"(ansi green)Cloning into ($repo_path)(ansi reset)"
+    log_success $"Cloning into ($repo_path)"
+    
 
     mkdir $dir
     cd $dir
@@ -84,7 +95,8 @@ export def-env "git grab" [
     if $bare {
         git clone --bare --recurse-submodules $url
         cd $repo_path
-        $"(ansi green)Setting up worktrees(ansi reset)"
+
+        log_success "Setting up worktrees"
 
         mkdir .bare
         mv * .bare
@@ -94,7 +106,7 @@ export def-env "git grab" [
         cd $repo_path
     }
 
-    print $"(ansi green)Done(ansi reset)"
+    log_success "Done"
 }
 
 export def clone [
