@@ -6,20 +6,10 @@ def log_warning [message: string] {
     print $"(ansi yellow)($message)(ansi reset)"
 }
 
-
 def root_dir [owner?: string] {
-
-    let root = if ($env | get -i GIT_REPOS_HOME | is empty) {
-        $nu.home-path | path join "dev"
-    } else {
-        $env.GIT_REPOS_HOME
-    }
-
-    if $owner == null {
-        $root
-    } else {
-        $root | path join $owner
-    }
+    $env.GIT_REPOS_HOME?
+    | default ($nu.home-path | path join "dev")
+    | if ($owner != null) { path join $owner } else {}
 }
 
 # TODO: support cancel
