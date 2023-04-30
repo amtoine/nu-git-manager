@@ -28,11 +28,11 @@ export def "import" [--into: string@"nu-complete import-targets"] {
     let before = ($projects | open | lines | length)
 
     $projects | open | lines | append (
-        ghq list
+        ghq list  # FIXME: do not use `ghq` as the main dependency
         | lines
         | each {|it|
             print $"adding (ansi yellow)($it)(ansi reset) to the projects..."
-            ghq root | str trim | path join $it
+            ghq root | str trim | path join $it  # FIXME: do not use `ghq` as the main dependency
         }
     ) | uniq
     | save -f $projects
