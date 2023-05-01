@@ -27,12 +27,15 @@ export def-env "git grab select" [] {
 # TODO: add support for other hosts than github
 # TODO: better worktree support
 
+# Clone a repository into a standard location
+#
+# This place is organised by domain and path.
 export def "git grab" [
-    owner: string
-    repo: string
-    --host: string = "github.com"
-    --ssh (-s): bool
-    --bare (-b): bool
+    owner: string                 # the name of the owner of the repo.
+    repo: string                  # the name of the repo to grab.
+    --host: string = "github.com" # the host to grab the repo from.
+    --ssh (-s): bool              # use ssh instead of https.
+    --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
 ] {
     let url = (if $ssh {
         $"git@($host):($owner)/($repo).git"
