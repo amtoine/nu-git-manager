@@ -1,11 +1,3 @@
-def log_success [message: string] {
-    print $"(ansi green)($message)(ansi reset)"
-}
-
-def log_warning [message: string] {
-    print $"(ansi yellow)($message)(ansi reset)"
-}
-
 def root_dir [owner?: string] {
     $env.GIT_REPOS_HOME?
     | default ($nu.home-path | path join "dev")
