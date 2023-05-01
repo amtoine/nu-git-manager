@@ -1,7 +1,5 @@
-def root_dir [owner?: string] {
-    $env.GIT_REPOS_HOME?
-    | default ($nu.home-path | path join "dev")
-    | if ($owner != null) { path join $owner } else {}
+def root_dir [] {
+    $env.GIT_REPOS_HOME? | default ($nu.home-path | path join "dev")
 }
 
 # TODO: support cancel
