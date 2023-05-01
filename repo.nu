@@ -78,47 +78,10 @@ export def-env goto [
     }
 }
 
-export def pull [
-    owner?: string
-] {
-    let owner = (if ($owner | is-empty) {
-        git config --get user.name | str trim
-    } else { $owner })
-
-    let choice = (
-        gh repo list $owner --json name |
-        from json |
-        get name |
-        sort --ignore-case |
-        uniq |
-        prompt fzf_ask $"Please choose a repo to pull from https://github.com/($owner): "
-    )
-
-    let repository = ([$owner $choice] | str join "/")
-
-    ghq get -p $repository
-}
-
 export def remove [] {
     let repo = (pick_repo "Please choose a repo to remove: ")
 
     let path = ($env.GIT_REPOS_HOME | path join $repo)
 
     rm --trash --interactive --recursive $path
-}
-
-export def "get any" [
-    repo: string
-    --method: string = "https"
-    --host: string = "github.com"
-] {
-    let prefix = if ($method == "ssh") {
-        "ssh://git@"
-    } else {
-        "https://"
-    }
-
-    let upstream = ([$prefix $host "/" $repo ".git"] | str join)
-
-    git clone $upstream ($env.GIT_REPOS_HOME | path join $host $repo)
 }
