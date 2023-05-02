@@ -12,12 +12,12 @@ def lsi [path: string = "."] {(
     | get 1 | str trim    # hack to suppress the errors
 )}
 
-export def-env "git ungrab" [] {
+export def-env "gm ungrab" [] {
     # TODO: ungrab should move to a trash folder!
     ls -s (root_dir) | gum choose
 }
 
-export def-env "git grab select" [] {
+export def-env "gm grab select" [] {
     let owner = (lsi (root_dir))
     let repo = (lsi $owner)
 
@@ -30,7 +30,7 @@ export def-env "git grab select" [] {
 # Clone a repository into a standard location
 #
 # This place is organised by domain and path.
-export def "git grab" [
+export def "gm grab" [
     owner: string                 # the name of the owner of the repo.
     repo: string                  # the name of the repo to grab.
     --host: string = "github.com" # the host to grab the repo from.
