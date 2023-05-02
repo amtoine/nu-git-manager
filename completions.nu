@@ -5,35 +5,49 @@ def is-git-repo [] {
 }
 
 def "nu-complete git available upstream" [] {
+  if not (is-git-repo) { return }
+
   ^git branch -a | lines | each { |line| $line | str replace '\* ' "" | str trim }
 }
 
 def "nu-complete git remotes" [] {
+  if not (is-git-repo) { return }
+
   ^git remote | lines | each { |line| $line | str trim }
 }
 
 def "nu-complete git log" [] {
+  if not (is-git-repo) { return }
+
   ^git log --pretty=%h | lines | each { |line| $line | str trim }
 }
 
 # Yield all existing commits in descending chronological order.
 def "nu-complete git commits all" [] {
+  if not (is-git-repo) { return }
+
   ^git rev-list --all --remotes --pretty=oneline | lines | parse "{value} {description}"
 }
 
 # Yield commits of current branch only. This is useful for e.g. cut points in
 # `git rebase`.
 def "nu-complete git commits current branch" [] {
+  if not (is-git-repo) { return }
+
   ^git log --pretty="%h %s" | lines | parse "{value} {description}"
 }
 
 # Yield local branches like `main`, `feature/typo_fix`
 def "nu-complete git local branches" [] {
+  if not (is-git-repo) { return }
+
   ^git branch | lines | each { |line| $line | str replace '\* ' "" | str trim }
 }
 
 # Yield remote branches like `origin/main`, `upstream/feature-a`
 def "nu-complete git remote branches with prefix" [] {
+  if not (is-git-repo) { return }
+
   ^git branch -r | lines | parse -r '^\*?(\s*|\s*\S* -> )(?P<branch>\S*$)' | get branch | uniq
 }
 
@@ -41,6 +55,8 @@ def "nu-complete git remote branches with prefix" [] {
 # E.g. `upstream/feature-a` as `feature-a` to checkout and track in one command
 # with `git checkout` or `git switch`.
 def "nu-complete git remote branches nonlocal without prefix" [] {
+  if not (is-git-repo) { return }
+
   # Get regex to strip remotes prefixes. It will look like `(origin|upstream)`
   # for the two remotes `origin` and `upstream`.
   let remotes_regex = (["(", ((nu-complete git remotes | each {|r| [$r, '/'] | str join}) | str join "|"), ")"] | str join)
@@ -49,6 +65,8 @@ def "nu-complete git remote branches nonlocal without prefix" [] {
 }
 
 def "nu-complete git switch" [] {
+  if not (is-git-repo) { return }
+
   (nu-complete git local branches)
   | parse "{value}"
   | insert description "local branch"
@@ -58,6 +76,8 @@ def "nu-complete git switch" [] {
 }
 
 def "nu-complete git checkout" [] {
+  if not (is-git-repo) { return }
+
   (nu-complete git local branches)
   | parse "{value}"
   | insert description "local branch"
@@ -72,6 +92,8 @@ def "nu-complete git checkout" [] {
 
 # Arguments to `git rebase --onto <arg1> <arg2>`
 def "nu-complete git rebase" [] {
+  if not (is-git-repo) { return }
+
   (nu-complete git local branches)
   | parse "{value}"
   | insert description "local branch"
@@ -82,18 +104,26 @@ def "nu-complete git rebase" [] {
 }
 
 def "nu-complete git stash-list" [] {
+  if not (is-git-repo) { return }
+
   git stash list | lines | parse "{value}: {description}"
 }
 
 def "nu-complete git tags" [] {
+  if not (is-git-repo) { return }
+
   ^git tag | lines
 }
 
 def "nu-complete git built-in-refs" [] {
+  if not (is-git-repo) { return }
+
   [HEAD FETCH_HEAD ORIG_HEAD]
 }
 
 def "nu-complete git refs" [] {
+  if not (is-git-repo) { return }
+
   nu-complete git switchable branches
   | parse "{value}"
   | insert description Branch
@@ -102,6 +132,8 @@ def "nu-complete git refs" [] {
 }
 
 def "nu-complete git subcommands" [] {
+  if not (is-git-repo) { return }
+
   ^git help -a | lines | where $it starts-with "   " | parse -r '\s*(?P<value>[^ ]+) \s*(?P<description>\w.*)'
 }
 
