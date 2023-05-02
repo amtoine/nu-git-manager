@@ -1,3 +1,8 @@
+def is-git-repo [] {
+  not (do -i {
+    git rev-parse --is-inside-work-tree
+  } | is-empty)
+}
 
 def "nu-complete git available upstream" [] {
   ^git branch -a | lines | each { |line| $line | str replace '\* ' "" | str trim }
