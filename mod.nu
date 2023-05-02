@@ -38,12 +38,12 @@ export def "gm grab" [
     --host: string = "github.com" # the host to grab the repo from.
     --ssh (-p): bool              # use ssh instead of https.
     --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
-    --update (-u): bool
-    --shallow (-s): bool
-    --branch: bool
-    --no-recursive: bool
-    --look: bool
-    --silent: bool
+    --update (-u): bool           # not supported
+    --shallow (-s): bool          # not supported
+    --branch: bool                # not supported
+    --no-recursive: bool          # not supported
+    --look: bool                  # not supported
+    --silent: bool                # not supported
     --vcs (-v): bool              # not supported
 ] {
     # TODO: implement `--update` option
@@ -89,10 +89,11 @@ export def "gm grab" [
     }
 }
 
+# list locally-cloned repositories
 export def "gm list repos" [
-    query?: string
-    --exact (-e): bool
-    --full-path (-p): bool
+    query?: string          # return only repositories matching the query
+    --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
+    --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
 ] {
     let root = (root_dir)
     let repos = (
@@ -124,6 +125,7 @@ export def "gm list repos" [
     } else {}
 }
 
+# print the root of the repositories
 export def "gm root" [
     --all (-a): bool  # not supported
 ] {
@@ -134,6 +136,7 @@ export def "gm root" [
     root_dir
 }
 
+# create a new repository
 export def "gm create" [
     repository: string
     --vcs (-v): bool  # not supported
