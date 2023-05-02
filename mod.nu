@@ -1,3 +1,5 @@
+use std ['log debug', 'log warning']
+
 def root_dir [] {
     $env.GIT_REPOS_HOME? | default ($nu.home-path | path join "dev")
 }
@@ -34,9 +36,44 @@ export def "gm grab" [
     owner: string                 # the name of the owner of the repo.
     repo: string                  # the name of the repo to grab.
     --host: string = "github.com" # the host to grab the repo from.
-    --ssh (-s): bool              # use ssh instead of https.
+    --ssh (-p): bool              # use ssh instead of https.
     --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
+    --update (-u): bool
+    --shallow (-s): bool
+    --branch: bool
+    --no-recursive: bool
+    --look: bool
+    --silent: bool
+    --vcs (-v): bool              # not supported
 ] {
+    # TODO: implement `--update` option
+    if $update {
+        log warning "`--update` option for `gm grab` COMING SOON"
+    }
+    # TODO: implement `--shallow` option
+    if $shallow {
+        log warning "`--shallow` option for `gm grab` COMING SOON"
+    }
+    # TODO: implement `--branch` option
+    if $branch {
+        log warning "`--branch` option for `gm grab` COMING SOON"
+    }
+    # TODO: implement `--look` option
+    if $look {
+        log warning "`--look` option for `gm grab` COMING SOON"
+    }
+    # TODO: implement `--silent` option
+    if $silent {
+        log warning "`--silent` option for `gm grab` COMING SOON"
+    }
+    # TODO: implement `--no-recursive` option
+    if $no_recursive {
+        log warning "`--no-recursive` option for `gm grab` COMING SOON"
+    }
+    if $vcs {
+        log debug "`--vcs` option is NOT SUPPORTED in `gm grab`"
+    }
+
     let url = (if $ssh {
         $"git@($host):($owner)/($repo).git"
     } else {
@@ -50,4 +87,61 @@ export def "gm grab" [
     } else {
         git clone --recurse-submodules $url $local
     }
+}
+
+export def "gm list repos" [
+    query?: string
+    --exact (-e): bool
+    --full-path (-p): bool
+] {
+    let root = (root_dir)
+    let repos = (
+        ls ($root | path join "**" "*" ".git")
+        | get name
+        | path parse
+        | get parent
+        | str replace $root ""
+        | str trim -l -c (char path_sep)
+        | parse "{host}/{user}/{project}"
+        | insert user-project {|it| [$it.user $it.project] | path join}
+        | insert host-user-project {|it| [$it.host $it.user $it.project] | path join}
+    )
+
+    let repos = ($repos | if $query != null {
+        if $exact {
+            where {|it| (
+                ($it.project == $query) or
+                ($it.user-project == $query) or
+                ($it.host-user-project == $query)
+            )}
+        } else {
+            find $query
+        }
+    } else {})
+
+    $repos | get host-user-project | if $full_path {
+        each {|repo| $root | path join $repo}
+    } else {}
+}
+
+export def "gm root" [
+    --all (-a): bool  # not supported
+] {
+    if $all {
+        log debug "`--all` option is NOT SUPPORTED in `gm root`"
+    }
+
+    root_dir
+}
+
+export def "gm create" [
+    repository: string
+    --vcs (-v): bool  # not supported
+] {
+    if $vcs {
+        log debug "`--vcs` option is NOT SUPPORTED in `gm create`"
+    }
+
+    # TODO: implement `gm create`
+    log warning "COMING SOON"
 }
