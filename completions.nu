@@ -235,7 +235,7 @@ export extern "git switch" [
 
 # Apply the change introduced by an existing commit
 export extern "git cherry-pick" [
-  commit?: string@"nu-complete git commits all" # The commit ID to be cherry-picked
+  ...commit: string@"nu-complete git commits all" # The commit ID to be cherry-picked
   --edit(-e)                                    # Edit the commit message prior to committing
   --no-commit(-n)                               # Apply changes without making any commit
   --signoff(-s)                                 # Add Signed-off-by line to the commit message
