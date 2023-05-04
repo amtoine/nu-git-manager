@@ -135,14 +135,14 @@ export def "gm list repos" [
     query?: string          # return only repositories matching the query
     --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
+    --recursive: bool
 ] {
     let root = (root_dir)
     let repos = (
-        ls ($root | path join "**" "*" ".git")
+        ls ($root | if $recursive { path join "**" "*" ".git" } else { path join "*" "*" "*"})
         | get name
-        | path parse
-        | get parent
-        | str replace $root ""
+        | str replace $"^($root)" ""
+        | str replace $".git$" ""
         | str trim -l -c (char path_sep)
         | parse "{host}/{user}/{project}"
         | insert user-project {|it| [$it.user $it.project] | path join}
