@@ -70,9 +70,7 @@ def default-project [] {
 #
 # This place is organised by domain and path.
 export def "gm grab" [
-    owner: string                 # the name of the owner of the repo.
-    repo: string                  # the name of the repo to grab.
-    --host: string = "github.com" # the host to grab the repo from.
+    project: string               # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
     --ssh (-p): bool              # use ssh instead of https.
     --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
     --update (-u): bool           # not supported
@@ -111,13 +109,19 @@ export def "gm grab" [
         log debug "`--vcs` option is NOT SUPPORTED in `gm grab`"
     }
 
+    let project = (
+        parse-project $project
+        | default-project
+        | update project { str replace --all '\/' '-'}
+    )
+
     let url = (if $ssh {
-        $"git@($host):($owner)/($repo).git"
+        $"git@($project.host):($project.user)/($project.project).git"
     } else {
-        $"https://($host)/($owner)/($repo).git"
+        $"https://($project.host)/($project.user)/($project.project).git"
     })
 
-    let local = (root_dir | path join $host $owner $repo)
+    let local = (root_dir | path join $project.host $project.user $project.project)
 
     if $bare {
         git clone --bare --recurse-submodules $url $local
