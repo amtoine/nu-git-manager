@@ -1,5 +1,9 @@
 def root_dir [] {
-    $env.GIT_REPOS_HOME? | default ($nu.home-path | path join "dev")
+    $env.GIT_REPOS_HOME? | default (
+        $env.XDG_DATA_HOME?
+        | default ($env.HOME | path join ".local" "share")
+        | path join "nu-git-manager"
+    )
 }
 
 # TODO: support cancel
