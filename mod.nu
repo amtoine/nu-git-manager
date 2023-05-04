@@ -194,6 +194,9 @@ export def "gm create" [
     log warning "COMING SOON"
 }
 
+# the `nu-[g]it-[m]anager`, a WIP to manage any `git` repo in a centralized store, with sugar on top
+export def gm [] { help gm }
+
 # run the tests with
 # ```nu
 # use mod.nu; mod tests
