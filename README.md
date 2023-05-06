@@ -24,13 +24,15 @@ git -C ($env.NU_LIB_PATH | path join "nu-git-manager") pull
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
 ```nu
 # config.nu
-use nu-git-manager/mod.nu *                # loads the main `gm` module
+
+# load the main `gm` module
+use nu-git-manager/mod.nu *
 
 # the following are non-essential modules
-use nu-git-manager/sugar/git.nu            # load `git` tool extensions
-use nu-git-manager/sugar/gh.nu             # load commands to interact with *GitHub*
-use nu-git-manager/sugar/gist.nu           # load commands to interact with *GitHub* gists
-use nu-git-manager/sugar/completions.nu *  # load some `git` completion
+use nu-git-manager/sugar/git.nu                # load `git` tool extensions
+use nu-git-manager/sugar/gh.nu                 # load commands to interact with *GitHub*
+use nu-git-manager/sugar/gist.nu               # load commands to interact with *GitHub* gists
+use nu-git-manager/sugar/completions/git.nu *  # load some `git` completion
 ```
 
 then you have access to the whole `nu-git-manager` suite :partying:
