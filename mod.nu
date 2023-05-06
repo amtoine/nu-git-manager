@@ -135,11 +135,16 @@ export def "gm grab" [
 }
 
 # list locally-cloned repositories
+#
+# by default `gm list repos` only searches the three first depth levels:
+# - host
+# - user
+# - project
 export def "gm list repos" [
     query?: string          # return only repositories matching the query
     --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
-    --recursive: bool
+    --recursive: bool       # perform a recursive search of all `.git/` directories
 ] {
     let root = (root_dir)
     let repos = (
@@ -183,8 +188,8 @@ export def "gm root" [
 
 # create a new repository
 export def "gm create" [
-    repository: string
-    --vcs (-v): bool  # not supported
+    repository: string  # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
+    --vcs (-v): bool    # not supported
 ] {
     if $vcs {
         log debug "`--vcs` option is NOT SUPPORTED in `gm create`"
