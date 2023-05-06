@@ -1,4 +1,4 @@
-export def "git operations" [] {
+export def operations [] {
     git log $"(git merge-base FETCH_HEAD main)..HEAD" -M5 --summary
     | rg -e 'rename.*=>|delete mode'
     | lines
@@ -7,13 +7,13 @@ export def "git operations" [] {
     | sort-by operation
 }
 
-export def "git get commit" [
+export def "get commit" [
     revision: string = "HEAD"
 ] {
     git rev-parse $revision | str trim
 }
 
-export def "git compare" [
+export def compare [
     with: string
     from: string = "HEAD"
     --share: bool
@@ -29,7 +29,7 @@ export def "git compare" [
     git diff $start $end
 }
 
-export def "git lock clean" [] {
+export def "lock clean" [] {
     try {
         rm --verbose (git rev-parse --show-toplevel | str trim | path join ".git" "index.lock")
     } catch {
@@ -37,11 +37,11 @@ export def "git lock clean" [] {
     }
 }
 
-export def-env "git root" [] {
+export def-env root [] {
     cd (git rev-parse --show-toplevel | str trim)
 }
 
-export def "git branches" [
+export def branches [
     --report: bool
     --clean: bool
 ] {
