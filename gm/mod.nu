@@ -14,7 +14,7 @@ def pick-repo [
 ] {
     gm list repos
     | if $query == null {} else { find $query }
-    | input list -f $prompt
+    | input list --fuzzy $prompt
 }
 
 # fuzzy-jump to any repository managed by `gm`
