@@ -8,26 +8,49 @@ def root_dir [] {
     )
 }
 
-# TODO: support cancel
-def lsi [path: string = "."] {(
-    ls $path
-    | get name
-    | to text
-    | gum choose --no-limit
-    | lines
-    | get 1 | str trim    # hack to suppress the errors
-)}
-
-export def-env "gm ungrab" [] {
-    # TODO: ungrab should move to a trash folder!
-    ls -s (root_dir) | gum choose
+def pick-repo [
+    prompt: string
+    query: string
+] {
+    gm list repos
+    | if $query == null {} else { find $query }
+    | input list -f $prompt
 }
 
-export def-env "gm grab select" [] {
-    let owner = (lsi (root_dir))
-    let repo = (lsi $owner)
+# fuzzy-jump to any repository managed by `gm`
+export def-env "gm goto" [
+    query?: string  # a search query to narrow down the list of choices
+] {
+    let choice = (pick-repo
+        $"Please (ansi yellow_italic)choose a repo(ansi reset) to (ansi green_underline)jump to:(ansi reset)"
+        $query
+    )
+    if ($choice | is-empty) {
+        return
+    }
 
-    cd $repo
+    cd (root_dir | path join $choice)
+}
+
+# fuzzy-delete any repository managed by `gm`
+export def "gm remove" [
+    query?: string      # a search query to narrow down the list of choices
+    --force (-f): bool  # do not ask for comfirmation when deleting a repository
+] {
+    let choice = (pick-repo
+        $"Please (ansi yellow_italic)choose a repo(ansi reset) to (ansi red_underline)completely remove:(ansi reset)"
+        $query
+    )
+    if ($choice | is-empty) {
+        return
+    }
+
+    let repo = (root_dir | path join $choice)
+    if $force {
+        rm --trash --verbose --recursive $repo
+    } else {
+        rm --trash --verbose --recursive $repo --interactive
+    }
 }
 
 # parse-project <repository URL> -> record<host: string, user: string, project: string>
