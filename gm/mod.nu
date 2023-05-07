@@ -18,7 +18,7 @@ def pick-repo [
 }
 
 # fuzzy-jump to any repository managed by `gm`
-export def-env "gm goto" [
+export def-env goto [
     query?: string  # a search query to narrow down the list of choices
 ] {
     let choice = (pick-repo
@@ -33,7 +33,7 @@ export def-env "gm goto" [
 }
 
 # fuzzy-delete any repository managed by `gm`
-export def "gm remove" [
+export def remove [
     query?: string      # a search query to narrow down the list of choices
     --force (-f): bool  # do not ask for comfirmation when deleting a repository
 ] {
@@ -96,7 +96,7 @@ def default-project [] {
 # Clone a repository into a standard location
 #
 # This place is organised by domain and path.
-export def "gm grab" [
+export def grab [
     project: string               # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
     --ssh (-p): bool              # use ssh instead of https.
     --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
@@ -163,7 +163,7 @@ export def "gm grab" [
 # - host
 # - user
 # - project
-export def "gm list repos" [
+export def "list repos" [
     query?: string          # return only repositories matching the query
     --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
@@ -199,7 +199,7 @@ export def "gm list repos" [
 }
 
 # print the root of the repositories
-export def "gm root" [
+export def root [
     --all (-a): bool  # not supported
 ] {
     if $all {
@@ -210,7 +210,7 @@ export def "gm root" [
 }
 
 # create a new repository
-export def "gm create" [
+export def create [
     repository: string  # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
     --vcs (-v): bool    # not supported
 ] {
@@ -223,7 +223,7 @@ export def "gm create" [
 }
 
 # the `nu-[g]it-[m]anager`, a WIP to manage any `git` repo in a centralized store, with sugar on top
-export def gm [] { help gm }
+export def main [] { help gm }
 
 # run the tests with
 # ```nu
