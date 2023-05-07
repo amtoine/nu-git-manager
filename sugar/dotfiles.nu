@@ -1,3 +1,12 @@
+# choose a config file to edit with fuzzy finding
+#
+# `dotfiles edit` requires the following environment variables to be defined:
+# - `$env.DOTFILES_GIT_DIR`: the path to the *bare* repository
+# - `$env.DOTFILES_WORKTREE`: the path to the worktree, e.g. `$env.HOME`
+# - `$env.EDITOR`: will default to `vim`
+#
+# this command will `cd` into the directory where the chosen file is to allow
+# easier editing and will use the `EDITOR`.
 export def-env edit [] {
     let choice = (
         git --git-dir $env.DOTFILES_GIT_DIR --work-tree $env.DOTFILES_WORKTREE

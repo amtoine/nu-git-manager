@@ -1,14 +1,3 @@
-# a module to manage *GitHub* gists
-#
-# > :bulb: **Note**
-# > this module uses the `GIST_HOME` environment variable and defaults its value
-# > to `~/.gists/`.
-#
-# > :bulb: **Note**
-# > the `gist` module also uses the `KNOWN_GITHUB_USERS` to propose some known
-# > users in completion.
-# > this list defaults to the empty list.
-
 # give `~/.gists/` as a default value for the GIST home
 def default-gist-home [] {
     default ($env.HOME | path join ".gists")
@@ -134,4 +123,14 @@ export def-env goto [
     cd (gist-home | path join $gist)
 }
 
+# *GitHub* gists
+#
+# > :bulb: **Note**
+# > this module uses the `GIST_HOME` environment variable and defaults its value
+# > to `~/.gists/`.
+#
+# > :bulb: **Note**
+# > the `gist` module also uses the `KNOWN_GITHUB_USERS` to propose some known
+# > users in completion.
+# > this list defaults to the empty list.
 export def main [] { help gist }

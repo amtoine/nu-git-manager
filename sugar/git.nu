@@ -1,3 +1,4 @@
+# get a summary of all the operations made between `main` and `HEAD`
 export def operations [] {
     git log $"(git merge-base FETCH_HEAD main)..HEAD" -M5 --summary
     | rg -e 'rename.*=>|delete mode'
@@ -7,16 +8,18 @@ export def operations [] {
     | sort-by operation
 }
 
+# get the commit hash of any revision
 export def "get commit" [
-    revision: string = "HEAD"
+    revision: string = "HEAD"  # the revision to get the hash of (defaults to "HEAD")
 ] {
     git rev-parse $revision | str trim
 }
 
+# compare two revisions in a `git` repository
 export def compare [
-    with: string
-    from: string = "HEAD"
-    --share: bool
+    with: string  # the target revision to compare the base with
+    from: string = "HEAD"  # the base revision of the comparison (defaults to "HEAD")
+    --share: bool  # output the comparision in pretty shareable format
 ] {
     let start = (git rev-parse $with | str trim)
     let end = (git rev-parse $from | str trim)
@@ -29,6 +32,11 @@ export def compare [
     git diff $start $end
 }
 
+# removes the index lock
+#
+# sometimes `git` won't want to run a command because of the `.git/index.lock` file not being
+# cleared...
+# this command simply removes the lock for you.
 export def "lock clean" [] {
     try {
         rm --verbose (git rev-parse --show-toplevel | str trim | path join ".git" "index.lock")
@@ -37,13 +45,18 @@ export def "lock clean" [] {
     }
 }
 
+# go to the root of the repository from anywhere in the worktree
 export def-env root [] {
     cd (git rev-parse --show-toplevel | str trim)
 }
 
+# inspect local branches
+#
+# without any options, `git branches` will show all dangling branches, i.e.
+# local branches that do not have a remote counterpart.
 export def branches [
-    --report: bool
-    --clean: bool
+    --report: bool  # will give a table report of all the
+    --clean: bool  # clean all dangling branches
 ] {
     let local_branches = (git branch --list | lines | str replace '..' "")
     let remote_branches = (git branch -r | lines | str trim | find --invert "HEAD ->" | parse "{remote}/{branch}")
