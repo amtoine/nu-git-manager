@@ -2,6 +2,13 @@
 A collection of `nushell` tools to manage `git` repositories.
 
 ## installation
+> **Warning**
+> `gm` requires the use of `nushell` after [nushell/nushell#9066]
+> e.g. from any branch / commit based on [`a2a346e39`].
+>
+> alternatively, you can use any revision of `nu-git-manager`
+> before #21.
+
 one way to install `nu-git-manager` right now is the following
 - clone the repo to a location you want it to be
 ```nu
@@ -26,7 +33,7 @@ in your `config.nu` you can add the following to load `nu-git-manager` modules:
 # config.nu
 
 # load the main `gm` module
-use nu-git-manager/mod.nu *
+use nu-git-manager/gm
 
 # the following are non-essential modules
 use nu-git-manager/sugar/git.nu                # load `git` tool extensions
@@ -54,3 +61,6 @@ help modules gist
 # or
 gist
 ```
+
+[nushell/nushell#9066]: https://github.com/nushell/nushell/pull/9066
+[`a2a346e39`]: https://github.com/nushell/nushell/commit/a2a346e39c53e386b97d8d7f9a05ed58298e8789
