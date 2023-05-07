@@ -28,7 +28,7 @@ export def compare [
         return $"[`($start)`..`($end)`]\(($start)..($end)\)"
     }
 
-    print $"comparing ($start) ($with) and ($end) ($from)"
+    print $"comparing ($start) (char lparen)($with)(char rparen) and ($end) (char lparen)($from)(char rparen)"
     git diff $start $end
 }
 
