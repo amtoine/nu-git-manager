@@ -32,6 +32,10 @@ export def compare [
     git diff $start $end
 }
 
+def repo-root [] {
+    git rev-parse --show-toplevel | str trim
+}
+
 # removes the index lock
 #
 # sometimes `git` won't want to run a command because of the `.git/index.lock` file not being
@@ -39,7 +43,7 @@ export def compare [
 # this command simply removes the lock for you.
 export def "lock clean" [] {
     try {
-        rm --verbose (git rev-parse --show-toplevel | str trim | path join ".git" "index.lock")
+        rm --verbose (repo-root | path join ".git" "index.lock")
     } catch {
         print "the index is not busy for now."
     }
@@ -47,7 +51,7 @@ export def "lock clean" [] {
 
 # go to the root of the repository from anywhere in the worktree
 export def-env root [] {
-    cd (git rev-parse --show-toplevel | str trim)
+    cd (repo-root)
 }
 
 # inspect local branches
