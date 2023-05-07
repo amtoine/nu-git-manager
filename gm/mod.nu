@@ -121,9 +121,12 @@ export def list [
     --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
     --recursive: bool       # perform a recursive search of all `.git/` directories
-] {
-    list repos $query --exact $exact --full-path $full_path --recursive $recursive
-}
+] {(
+    list repos $query
+        --exact $exact
+        --full-path $full_path
+        --recursive $recursive
+)}
 
 # print the root of the repositories
 export def root [
