@@ -1,3 +1,12 @@
+def check-gh-logged-in [] {
+    let out = (do -i { gh auth status } | complete)
+    if $out.exit_code != 0 {
+        error make --unspanned {
+            msg: $out.stderr
+        }
+    }
+}
+
 def "nu-complete list-repos" [context: string] {
     let user = ($context | str replace 'gh\s*pr\s*open\s*' "" | split row " " | get 0)
 
@@ -76,6 +85,8 @@ def unpack-pages [] {
 def pull [
   endpoint: string
 ] {
+    check-gh-logged-in
+
     gh api --paginate $endpoint  # get all the raw data
     | unpack-pages               # split the pages into a single one
     | from json                  # convert to JSON internally
@@ -141,6 +152,8 @@ export def "me pr" [
     number?: int
     --open-in-browser (-o): bool
 ] {
+    check-gh-logged-in
+
     let repo = (
         gh repo view --json nameWithOwner
         | from json
