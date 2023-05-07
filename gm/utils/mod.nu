@@ -87,7 +87,6 @@ export def "pick repo" [
     | input list --fuzzy $prompt
 }
 
-
 #[cfg(test)]
 export module tests {
     use std "assert equal"
