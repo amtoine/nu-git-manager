@@ -33,7 +33,7 @@ in your `config.nu` you can add the following to load `nu-git-manager` modules:
 # config.nu
 
 # load the main `gm` module
-use nu-git-manager/mod.nu *
+use nu-git-manager/gm
 
 # the following are non-essential modules
 use nu-git-manager/sugar/git.nu                # load `git` tool extensions
