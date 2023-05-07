@@ -1,4 +1,4 @@
-export def root_dir [] {
+export def "get root dir" [] {
     $env.GIT_REPOS_HOME? | default (
         $env.XDG_DATA_HOME?
         | default ($env.HOME | path join ".local" "share")
@@ -10,7 +10,7 @@ export def root_dir [] {
 # parse-project <host>/<user>/<project> -> record<host: string, user: string, project: string>
 # parse-project <user>/<project> -> record<user: string, project: string>
 # parse-project <project> -> record<project: string>
-export def parse-project [
+export def "parse project" [
     project: string  # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
 ] {
     let project = (
@@ -38,7 +38,7 @@ export def parse-project [
     {project: $project}
 }
 
-export def default-project [] {
+export def "default project" [] {
     default (git config --global user.name) user
     | default "github.com" host
 }

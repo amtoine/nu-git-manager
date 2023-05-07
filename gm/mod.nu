@@ -1,8 +1,8 @@
 use std ['log debug', 'log warning']
 use utils [
-    "root_dir"
-    "parse-project"
-    "default-project"
+    "get root dir"
+    "parse project"
+    "default project"
 ]
 
 def pick-repo [
@@ -26,7 +26,7 @@ export def-env goto [
         return
     }
 
-    cd (root_dir | path join $choice)
+    cd (get root dir | path join $choice)
 }
 
 # fuzzy-delete any repository managed by `gm`
@@ -42,7 +42,7 @@ export def remove [
         return
     }
 
-    let repo = (root_dir | path join $choice)
+    let repo = (get root dir | path join $choice)
     if $force {
         rm --trash --verbose --recursive $repo
     } else {
@@ -97,8 +97,8 @@ export def grab [
     }
 
     let project = (
-        parse-project $project
-        | default-project
+        parse project $project
+        | default project
         | update project { str replace --all '\/' '-'}
     )
 
@@ -108,7 +108,7 @@ export def grab [
         $"https://($project.host)/($project.user)/($project.project).git"
     })
 
-    let local = (root_dir | path join $project.host $project.user $project.project)
+    let local = (get root dir | path join $project.host $project.user $project.project)
 
     if $bare {
         git clone --bare --recurse-submodules $url $local
@@ -129,7 +129,7 @@ export def "list repos" [
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
     --recursive: bool       # perform a recursive search of all `.git/` directories
 ] {
-    let root = (root_dir)
+    let root = (get root dir)
     let repos = (
         ls ($root | if $recursive { path join "**" "*" ".git" } else { path join "*" "*" "*"})
         | get name
@@ -166,7 +166,7 @@ export def root [
         log debug "`--all` option is NOT SUPPORTED in `gm root`"
     }
 
-    root_dir
+    get root dir
 }
 
 # create a new repository
