@@ -89,57 +89,57 @@ export def "pick repo" [
 
 
 #[cfg(test)]
-module tests {
+export module tests {
     use std "assert equal"
     use std ["log info" "log debug"]
 
     #[test]
     export def parse-project-test [] {
         log debug "testing empty input"
-        assert equal (parse-project "") {project: ""}
+        assert equal (parse project "") {project: ""}
 
         # normal parsing
         log debug "testing some normal parsing"
         let expected = {host: "host", user: "user", project: "project"}
-        assert equal (parse-project "/host/user/project") $expected
-        assert equal (parse-project "host/user/project/") $expected
-        assert equal (parse-project "host//user/project") $expected
-        assert equal (parse-project "host/user/project") $expected
-        assert equal (parse-project "host/user/project.git") $expected
-        assert equal (parse-project "http://host/user/project") $expected
-        assert equal (parse-project "https://host/user/project") $expected
-        assert equal (parse-project "ssh://host/user/project") $expected
-        assert equal (parse-project "git@host:user/project.git") $expected
+        assert equal (parse project "/host/user/project") $expected
+        assert equal (parse project "host/user/project/") $expected
+        assert equal (parse project "host//user/project") $expected
+        assert equal (parse project "host/user/project") $expected
+        assert equal (parse project "host/user/project.git") $expected
+        assert equal (parse project "http://host/user/project") $expected
+        assert equal (parse project "https://host/user/project") $expected
+        assert equal (parse project "ssh://host/user/project") $expected
+        assert equal (parse project "git@host:user/project.git") $expected
 
         # subgroups?
         log debug "testing parsing of subgroups"
-        assert equal (parse-project "host/user/group/subgroup/subsubgroup/project") {
+        assert equal (parse project "host/user/group/subgroup/subsubgroup/project") {
             host: "host", user: "user", project: "group/subgroup/subsubgroup/project"
         }
 
         # default values...
         log debug "testing missing fields"
-        assert equal (parse-project "user/project") {user: "user", project: "project"}
-        assert equal (parse-project "project") {project: "project"}
+        assert equal (parse project "user/project") {user: "user", project: "project"}
+        assert equal (parse project "project") {project: "project"}
 
         # ... with subgroups?
         # we cannot parse these properly, that will throw a runtime HTTP error
         log debug "testing imperfect subgroups"
-        assert equal (parse-project "user/group/subgroup/subsubgroup/project") {
+        assert equal (parse project "user/group/subgroup/subsubgroup/project") {
             host: "user", user: "group", project: "subgroup/subsubgroup/project"
         }
-        assert equal (parse-project "group/subgroup/subsubgroup/project") {
+        assert equal (parse project "group/subgroup/subsubgroup/project") {
             host: "group", user: "subgroup", project: "subsubgroup/project"
         }
 
         log debug "testing invalid project name"
-        assert equal (parse-project "git#host:user/project.git") {
+        assert equal (parse project "git#host:user/project.git") {
             host: "git#host", user: "user", project: "project"
         }
     }
 
     def default-project-test-template [] {
-        assert equal ($in | default-project | columns | sort) ["host" "project" "user"]
+        assert equal ($in | default project | columns | sort) ["host" "project" "user"]
     }
 
     #[test]
