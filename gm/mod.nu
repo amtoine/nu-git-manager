@@ -3,16 +3,9 @@ use utils [
     "get root dir"
     "parse project"
     "default project"
+    "pick repo"
+    "list repos"
 ]
-
-def pick-repo [
-    prompt: string
-    query: string
-] {
-    gm list repos
-    | if $query == null {} else { find $query }
-    | input list --fuzzy $prompt
-}
 
 # fuzzy-jump to any repository managed by `gm`
 export def-env goto [
@@ -119,43 +112,17 @@ export def grab [
 
 # list locally-cloned repositories
 #
-# by default `gm list repos` only searches the three first depth levels:
+# by default `gm list` only searches the three first depth levels:
 # - host
 # - user
 # - project
-export def "list repos" [
+export def list [
     query?: string          # return only repositories matching the query
     --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
     --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
     --recursive: bool       # perform a recursive search of all `.git/` directories
 ] {
-    let root = (get root dir)
-    let repos = (
-        ls ($root | if $recursive { path join "**" "*" ".git" } else { path join "*" "*" "*"})
-        | get name
-        | str replace $"^($root)" ""
-        | str replace $".git$" ""
-        | str trim -l -c (char path_sep)
-        | parse "{host}/{user}/{project}"
-        | insert user-project {|it| [$it.user $it.project] | path join}
-        | insert host-user-project {|it| [$it.host $it.user $it.project] | path join}
-    )
-
-    let repos = ($repos | if $query != null {
-        if $exact {
-            where {|it| (
-                ($it.project == $query) or
-                ($it.user-project == $query) or
-                ($it.host-user-project == $query)
-            )}
-        } else {
-            find $query
-        }
-    } else {})
-
-    $repos | get host-user-project | if $full_path {
-        each {|repo| $root | path join $repo}
-    } else {}
+    list repos $query --exact $exact --full-path $full_path --recursive $recursive
 }
 
 # print the root of the repositories

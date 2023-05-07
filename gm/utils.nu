@@ -43,6 +43,51 @@ export def "default project" [] {
     | default "github.com" host
 }
 
+export def "list repos" [
+    query?: string
+    --exact: bool = false
+    --full-path: bool = false
+    --recursive: bool = false
+] {
+    let root = (get root dir)
+    let repos = (
+        ls ($root | if $recursive { path join "**" "*" ".git" } else { path join "*" "*" "*"})
+        | get name
+        | str replace $"^($root)" ""
+        | str replace $".git$" ""
+        | str trim -l -c (char path_sep)
+        | parse "{host}/{user}/{project}"
+        | insert user-project {|it| [$it.user $it.project] | path join}
+        | insert host-user-project {|it| [$it.host $it.user $it.project] | path join}
+    )
+
+    let repos = ($repos | if $query != null {
+        if $exact {
+            where {|it| (
+                ($it.project == $query) or
+                ($it.user-project == $query) or
+                ($it.host-user-project == $query)
+            )}
+        } else {
+            find $query
+        }
+    } else {})
+
+    $repos | get host-user-project | if $full_path {
+        each {|repo| $root | path join $repo}
+    } else {}
+}
+
+export def "pick repo" [
+    prompt: string
+    query: string
+] {
+    list repos --exact false --full-path false --recursive false
+    | if $query == null {} else { find $query }
+    | input list --fuzzy $prompt
+}
+
+
 #[cfg(test)]
 module tests {
     use std "assert equal"
