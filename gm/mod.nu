@@ -59,7 +59,7 @@ export def grab [
     --no-recursive: bool          # not supported
     --look: bool                  # not supported
     --silent: bool                # not supported
-    --vcs (-v): bool              # not supported
+    --vcs (-v): string            # not supported
 ] {
     # TODO: implement `--update` option
     if $update {
@@ -142,7 +142,7 @@ export def root [
 # create a new repository
 export def create [
     repository: string  # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
-    --vcs (-v): bool    # not supported
+    --vcs (-v): string  # not supported
 ] {
     if $vcs {
         log debug "`--vcs` option is NOT SUPPORTED in `gm create`"
