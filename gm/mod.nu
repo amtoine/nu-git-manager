@@ -85,7 +85,7 @@ export def grab [
     if $no_recursive {
         log warning "`--no-recursive` option for `gm grab` COMING SOON"
     }
-    if $vcs {
+    if ($vcs | is-empty) {
         log debug "`--vcs` option is NOT SUPPORTED in `gm grab`"
     }
 
@@ -144,7 +144,7 @@ export def create [
     repository: string  # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
     --vcs (-v): string  # not supported
 ] {
-    if $vcs {
+    if ($vcs | is-empty) {
         log debug "`--vcs` option is NOT SUPPORTED in `gm create`"
     }
 
