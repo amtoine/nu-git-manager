@@ -7,7 +7,7 @@ A collection of `nushell` tools to manage `git` repositories.
 > e.g. from any branch / commit based on [`a2a346e39`].
 >
 > alternatively, you can use any revision of `nu-git-manager`
-> before #21.
+> before [#21].
 
 one way to install `nu-git-manager` right now is the following
 - clone the repo to a location you want it to be
@@ -64,3 +64,4 @@ gist
 
 [nushell/nushell#9066]: https://github.com/nushell/nushell/pull/9066
 [`a2a346e39`]: https://github.com/nushell/nushell/commit/a2a346e39c53e386b97d8d7f9a05ed58298e8789
+[#21]: https://github.com/amtoine/nu-git-manager/pull/21
