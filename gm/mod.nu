@@ -11,7 +11,7 @@ use utils [
 export def-env goto [
     query?: string  # a search query to narrow down the list of choices
 ] {
-    let choice = (pick-repo
+    let choice = (pick repo
         $"Please (ansi yellow_italic)choose a repo(ansi reset) to (ansi green_underline)jump to:(ansi reset)"
         $query
     )
@@ -27,7 +27,7 @@ export def remove [
     query?: string      # a search query to narrow down the list of choices
     --force (-f): bool  # do not ask for comfirmation when deleting a repository
 ] {
-    let choice = (pick-repo
+    let choice = (pick repo
         $"Please (ansi yellow_italic)choose a repo(ansi reset) to (ansi red_underline)completely remove:(ansi reset)"
         $query
     )
