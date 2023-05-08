@@ -1,2 +1,2 @@
-export use gm
-export use sugar
+export module gm
+export module sugar
