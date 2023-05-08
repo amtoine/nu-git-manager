@@ -1,5 +1,3 @@
-# the `nu-[g]it-[m]anager`, a WIP to manage any `git` repo in a centralized store, with sugar on top
-
 use std ['log debug', 'log warning']
 use utils [
     "get root dir"
@@ -153,3 +151,6 @@ export def create [
     # TODO: implement `gm create`
     log warning "COMING SOON"
 }
+
+# the `nu-[g]it-[m]anager`, a WIP to manage any `git` repo in a centralized store, with sugar on top
+export def main [] { help gm }
