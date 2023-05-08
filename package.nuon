@@ -2,8 +2,10 @@
     name: "nu-git-manager"
     version: 0.1.0
     description: "A collection of `nushell` tools to manage `git` repositories."
+    documentation: "https://github.com/amtoine/nu-git-manager/blob/main/README.md"
     maintainers: [
         @amtoine
         @melMass
     ]
+    license: "https://github.com/amtoine/nu-git-manager/blob/main/LICENSE"
 }
