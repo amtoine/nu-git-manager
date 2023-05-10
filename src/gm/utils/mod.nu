@@ -8,7 +8,7 @@ export def "get root dir" [] {
 
 # Replace all backslashes with forward slashes.
 export def "replace slashes" [] {
-    str replace -a '\\' '/'
+    str replace --all --string '\' '/'
 }
 
 # parse-project <repository URL> -> record<host: string, user: string, project: string>
