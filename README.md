@@ -1,5 +1,5 @@
 # nu-git-manager
-A collection of `nushell` tools to manage `git` repositories.
+A collection of Nushell tools to manage `git` repositories.
 
 ## installation
 > **Warning**
