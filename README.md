@@ -63,6 +63,37 @@ help modules gist
 gist
 ```
 
+## some ideas of advanced (?) usage
+one thing i like to do in my config to go ***BLAZZINGLY FAST*** is to use keybindings to call some `nu-git-manager` commands
+in one key stroke :smirk:
+
+- with `gm` activated, i can jump to any repo from anywhere with `<c-g>`
+```nu
+{
+    name: open_repo
+    modifier: control
+    keycode: char_g
+    mode: [emacs, vi_insert, vi_normal]
+    event: {
+        send: executehostcommand
+        cmd: "gm goto"
+    }
+}
+```
+- with `sugar dotfiles` activated, i can edit any configuration file from anywhere with `<c-v>`
+```nu
+{
+    name: edit_config
+    modifier: control
+    keycode: char_v
+    mode: [emacs, vi_insert, vi_normal]
+    event: {
+        send: executehostcommand
+        cmd: "dotfiles edit"
+    }
+}
+```
+
 [nushell/nushell#9066]: https://github.com/nushell/nushell/pull/9066
 [`a2a346e39`]: https://github.com/nushell/nushell/commit/a2a346e39c53e386b97d8d7f9a05ed58298e8789
 [#21]: https://github.com/amtoine/nu-git-manager/pull/21
