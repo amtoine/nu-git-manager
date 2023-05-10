@@ -1,2 +1,2 @@
-export module gm
-export module sugar
+export module src/gm/
+export module src/sugar/
