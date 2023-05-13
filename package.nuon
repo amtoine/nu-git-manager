@@ -8,4 +8,7 @@
         @melMass
     ]
     license: "https://github.com/amtoine/nu-git-manager/blob/main/LICENSE"
+    dependencies: {
+        nushell: {revision: a2a346e39, mode: "at-least"}
+    }
 }
