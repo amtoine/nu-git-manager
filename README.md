@@ -3,11 +3,8 @@ A collection of Nushell tools to manage `git` repositories.
 
 ## :recycle: installation
 > **Warning**  
-> `gm` requires the use of `nushell` after [nushell/nushell#9066]
-> e.g. from any branch / commit based on [`a2a346e39`].
->
-> alternatively, you can use any revision of `nu-git-manager`
-> before [#21].
+> make sure you have the dependencies installed as specified in
+> [`packages.nuon`](https://github.com/amtoine/nu-git-manager/blob/main/package.nuon)
 
 one way to install `nu-git-manager` right now is the following
 - clone the repo to a location you want it to be
