@@ -6,23 +6,9 @@ A collection of Nushell tools to manage `git` repositories.
 > make sure you have the dependencies installed as specified in
 > [`packages.nuon`](https://github.com/amtoine/nu-git-manager/blob/main/package.nuon)
 
-one way to install `nu-git-manager` right now is the following
-- clone the repo to a location you want it to be
-```nu
-# env.nu
-let-env NU_LIB_PATH = "/path/to/libs"
-```
-```nu
-git clone https://github.com/amtoine/nu-git-manager.git ($env.NU_LIB_PATH | path join "nu-git-manager")
-```
-- make it loadable in your `NU_LIB_DIRS`
-```nu
-let-env NU_LIB_DIRS = ($env.NU_LIB_DIRS | append $env.NU_LIB_PATH)
-```
-- update it sometimes to have the latest
-```nu
-git -C ($env.NU_LIB_PATH | path join "nu-git-manager") pull
-```
+currently, there are two ways to install `nu-git-manager`
+- the [manual process](docs/installation/manual.md)
+- with the [`nupm` package manager](docs/installation/nupm.md)
 
 ## :gear: usage
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
