@@ -1,8 +1,8 @@
 # nu-git-manager
 A collection of Nushell tools to manage `git` repositories.
 
-## installation
-> **Warning**
+## :recycle: installation
+> **Warning**  
 > `gm` requires the use of `nushell` after [nushell/nushell#9066]
 > e.g. from any branch / commit based on [`a2a346e39`].
 >
@@ -27,7 +27,7 @@ let-env NU_LIB_DIRS = ($env.NU_LIB_DIRS | append $env.NU_LIB_PATH)
 git -C ($env.NU_LIB_PATH | path join "nu-git-manager") pull
 ```
 
-## usage
+## :gear: usage
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
 ```nu
 # config.nu
@@ -43,8 +43,9 @@ use nu-git-manager sugar completions git *  # load some `git` completion
 use nu-git-manager sugar dotfiles           # load tools to manage versionned dotfiles
 ```
 
-then you have access to the whole `nu-git-manager` suite :partying:
+then you have access to the whole `nu-git-manager` suite :partying_face:
 
+### :pray: getting help
 do not hesitate to run one of the following to have more information about what `nu-git-manager` has to offer :thumbsup:
 ```nu
 help gm
@@ -63,7 +64,7 @@ help modules gist
 gist
 ```
 
-## some ideas of advanced (?) usage
+## :exclamation: some ideas of advanced (?) usage
 one thing i like to do in my config to go ***BLAZZINGLY FAST*** is to use keybindings to call some `nu-git-manager` commands
 in one key stroke :smirk:
 
