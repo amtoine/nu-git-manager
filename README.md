@@ -4,7 +4,7 @@ A collection of Nushell tools to manage `git` repositories.
 ## :recycle: installation
 > **Warning**  
 > make sure you have the dependencies installed as specified in
-> [`packages.nuon`](https://github.com/amtoine/nu-git-manager/blob/main/package.nuon)
+> [`packages.nuon`](package.nuon)
 
 currently, there are two ways to install `nu-git-manager`
 - the [manual process](docs/installation/manual.md)
