@@ -1,5 +1,5 @@
 use std ['log debug', 'log warning']
-use utils/ [
+use utils/utils.nu [
     "get root dir"
     "parse project"
     "default project"
