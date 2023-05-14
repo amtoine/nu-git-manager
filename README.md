@@ -15,14 +15,7 @@ its versioning cycle will be the same
 
 more information can be found in the [documentation](docs/)!
 
-## :recycle: installation
-> **Warning**  
-> make sure you have the dependencies installed as specified in
-> [`packages.nuon`](package.nuon)
-
-currently, there are two ways to install `nu-git-manager`
-- the [manual process](docs/installation/manual.md)
-- with the [`nupm` package manager](docs/installation/nupm.md)
+## :recycle: installation [here](docs/installation/)
 
 ## :gear: usage
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
