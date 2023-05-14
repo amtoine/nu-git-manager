@@ -13,7 +13,7 @@ its versioning cycle will be the same
 - a new minor release every 3 weeks
 - starting may 2023 tuesday the 16th
 
-more information can be found in the [documentation][docs/README.md]!
+more information can be found in the [documentation](docs/)!
 
 ## :recycle: installation
 > **Warning**  
