@@ -1,6 +1,20 @@
 # nu-git-manager
 A collection of Nushell tools to manage `git` repositories.
 
+## :bulb: what is `nu-git-manager`
+like [`ghq`](https://github.com/x-motemen/ghq), `nu-git-manager` aims at being a fully-featured
+repository manager, purely written in Nushell.
+
+the public API of `nu-git-manager` is greatly inspired by `ghq` for now but this might very likely change
+in the future!
+
+regarding versions, as `nu-git-manager` is tied to the version of the main `nushell/nushell` repo,
+its versioning cycle will be the same
+- a new minor release every 3 weeks
+- starting may 2023 tuesday the 16th
+
+more information can be found in the [documentation][docs/]!
+
 ## :recycle: installation
 > **Warning**  
 > make sure you have the dependencies installed as specified in
