@@ -85,6 +85,11 @@ in one key stroke :smirk:
 }
 ```
 
+## :calendar: the roadmap of `nu-git-manager`
+- [ ] complete the main `gm` commands
+- [ ] support more hosts, e.g. *GitLab*
+- [ ] add more external completions, namely for `git` and `gh`, maybe `glab`
+
 [nushell/nushell#9066]: https://github.com/nushell/nushell/pull/9066
 [`a2a346e39`]: https://github.com/nushell/nushell/commit/a2a346e39c53e386b97d8d7f9a05ed58298e8789
 [#21]: https://github.com/amtoine/nu-git-manager/pull/21
