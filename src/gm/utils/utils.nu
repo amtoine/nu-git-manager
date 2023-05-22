@@ -93,12 +93,10 @@ export def "pick repo" [
     | input list --fuzzy $prompt
 }
 
-#[cfg(test)]
 export module tests {
     use std "assert equal"
     use std ["log info" "log debug"]
 
-    #[test]
     export def parse-project-test [] {
         log debug "testing empty input"
         assert equal (parse project "") {project: ""}
@@ -147,7 +145,6 @@ export module tests {
         assert equal ($in | default project | columns | sort) ["host" "project" "user"]
     }
 
-    #[test]
     export def default-project-test [] {
         for project in [
             {project: "foo"}

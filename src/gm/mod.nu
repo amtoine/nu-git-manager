@@ -154,3 +154,11 @@ export def create [
 
 # the `nu-[g]it-[m]anager`, a WIP to manage any `git` repo in a centralized store, with sugar on top
 export def main [] { help gm }
+
+export module tests {
+    use std "assert equal"
+
+    export def foo [] {
+        assert equal (1 + 2) 4
+    }
+}
