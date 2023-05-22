@@ -151,6 +151,7 @@ export def down [
 export def "me pr" [
     number?: int
     --open-in-browser (-o): bool
+    --force (-f): bool
 ] {
     check-gh-logged-in
 
@@ -168,7 +169,11 @@ export def "me pr" [
                 path: ($repo | path join "pull" ($number | into string))
             } | url join)
         } else {
-            gh pr checkout $number
+            if $force {
+                gh pr checkout --force $number
+            } else {
+                gh pr checkout $number
+            }
         }
         return
     }
