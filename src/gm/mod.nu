@@ -1,4 +1,4 @@
-use std ['log debug', 'log warning']
+use std log
 use utils/utils.nu [
     "get root dir"
     "parse project"

@@ -96,7 +96,7 @@ export def "pick repo" [
 #[cfg(test)]
 export module tests {
     use std "assert equal"
-    use std ["log info" "log debug"]
+    use std log
 
     #[test]
     export def parse-project-test [] {
