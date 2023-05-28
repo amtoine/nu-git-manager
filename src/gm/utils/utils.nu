@@ -95,7 +95,7 @@ export def "pick repo" [
 
 #[cfg(test)]
 export module tests {
-    use std "assert equal"
+    use std assert
     use std log
 
     #[test]
