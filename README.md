@@ -15,6 +15,11 @@ its versioning cycle will be the same
 
 more information can be found in the [documentation](docs/)!
 
+## :link: requirements
+- Nushell 0.80.1+
+- `git` 2.40.1
+- `gh` (optional) 2.29.0 (used by `sugar gh`)
+
 ## :recycle: installation [here](docs/installation/)
 
 ## :gear: usage

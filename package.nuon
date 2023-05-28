@@ -9,6 +9,12 @@
     ]
     license: "https://github.com/amtoine/nu-git-manager/blob/main/LICENSE"
     dependencies: {
-        nushell: {revision: a2a346e39, mode: "at-least"}
+        nushell: 0.80.1+
+        git: 2.40.1
+        optionals: {
+            "sugar gh": {
+                gh: 2.29.0
+            }
+        }
     }
 }
