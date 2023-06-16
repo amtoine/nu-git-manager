@@ -91,3 +91,15 @@ export def branches [
         $dangling_branches
     }
 }
+
+# return true iif the first revision is an ancestor of the second
+export def is-ancestor [
+    a: string  # the base commit-ish revision
+    b: string  # the *head* commit-ish revision
+] {
+    let exit_code = (do -i {
+        git merge-base $a $b --is-ancestor
+    } | complete | get exit_code)
+
+    $exit_code == 0
+}
