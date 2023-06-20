@@ -1,3 +1,5 @@
+use std log
+
 # get a summary of all the operations made between `main` and `HEAD`
 export def operations [] {
     git log $"(git merge-base FETCH_HEAD main)..HEAD" -M5 --summary
@@ -102,4 +104,88 @@ export def is-ancestor [
     } | complete | get exit_code)
 
     $exit_code == 0
+}
+
+# get the list of all the remotes in the current repository
+export def "remote list" [] {
+    ^git remote --verbose
+    | detect columns --no-headers
+    | rename remote url mode
+    | str trim
+    | group-by remote
+    | transpose
+    | update column1 { reject remote | select mode url | transpose -r | into record }
+    | flatten
+    | rename remote fetch push
+}
+
+# add a new remote to the repository
+export def "remote add" [
+    name: string  # the name of the remote, e.g. `amtoine`
+    repo: string  # the name of the upstream repo, e.g. `amtoine/nu-git-manager`
+    host: string  # the host where the upstream repo is stored, e.g. `github.com`
+    --ssh: bool  # use SSH as the communication protocol
+] {
+    if $name in (remote list | get remote) {
+        let span = (metadata $name | get span)
+        error make {
+            msg: $"(ansi red_bold)remote_already_in_index(ansi reset)"
+            label: {
+                text: $"already a remote of ($env.PWD)"
+                start: $span.start
+                end: $span.end
+            }
+        }
+    }
+
+    let url = if $ssh {
+        $"git@($host):($repo)"
+    } else {
+        $"https://($host)/($repo)"
+    }
+
+    ^git remote add $name $url
+
+    remote list | each {|it|
+        if $it.remote == $name {
+            $it | transpose | update column1 { $"(ansi yellow_bold)($in)(ansi reset)" } | transpose -r | into record
+        } else { $it }
+    }
+}
+
+def "nu-complete remotes" [] {
+    remote list | get remote
+}
+
+# remove a remote from the local repository
+export def "remote remove" [
+    ...remotes: string@"nu-complete remotes"  # a *rest* list of remotes
+] {
+    $remotes | each {|remote|
+        if not ($remote in (remote list | get remote)) {
+            log warning $"($remote) is not a remote of ($env.PWD)"
+        } else {
+            ^git remote remove $remote
+        }
+    } | ignore
+}
+
+# fixup a revision that's not the latest commit
+export def fixup [
+    revision: string  # the revision of the Git worktree to fixup
+] {
+    if (do --ignore-errors { git rev-parse $revision } | complete | get exit_code) != 0 {
+        let span = (metadata $revision | get span)
+        error make {
+            msg: $"(ansi red_bold)revision_not_found(ansi reset)"
+            label: {
+                text: $"($revision) not found in the working tree of ($env.PWD)"
+                start: $span.start
+                end: $span.end
+            }
+        }
+    }
+
+    git commit --fixup $revision
+    git rebase --interactive --autosquash $"($revision)~1"
 }
