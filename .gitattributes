@@ -1,0 +1,3 @@
+*.nu linguist-language=Nushell
+*.nush linguist-language=Nushell
+*.nuon linguist-language=Nushell
