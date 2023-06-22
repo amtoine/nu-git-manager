@@ -161,13 +161,24 @@ def "nu-complete remotes" [] {
 export def "remote remove" [
     ...remotes: string@"nu-complete remotes"  # a *rest* list of remotes
 ] {
+    let report = (
+        remote list | each {|it|
+            if $it.remote in $remotes {
+                $it | transpose | update column1 { $"(ansi red_bold)($in)(ansi reset)" } | transpose -r | into record
+            } else { $it }
+        }
+    )
+
     $remotes | each {|remote|
         if not ($remote in (remote list | get remote)) {
             log warning $"($remote) is not a remote of ($env.PWD)"
         } else {
+            log info $"removing ($remote) from ($env.PWD)"
             ^git remote remove $remote
         }
     } | ignore
+
+    $report
 }
 
 # fixup a revision that's not the latest commit
