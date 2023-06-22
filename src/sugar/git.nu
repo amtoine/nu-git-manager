@@ -122,7 +122,7 @@ export def "remote list" [] {
 # add a new remote to the repository
 export def "remote add" [
     name: string  # the name of the remote, e.g. `amtoine`
-    repo: string  # the name of the upstream repo, e.g. `amtoine/nu-git-manager`
+    repo: string  # the name of the upstream repo, e.g. `nu-git-manager`
     host: string  # the host where the upstream repo is stored, e.g. `github.com`
     --ssh: bool  # use SSH as the communication protocol
 ] {
@@ -139,9 +139,9 @@ export def "remote add" [
     }
 
     let url = if $ssh {
-        $"git@($host):($repo)"
+        $"git@($host):($name)/($repo)"
     } else {
-        $"https://($host)/($repo)"
+        $"https://($host)/($name)/($repo)"
     }
 
     ^git remote add $name $url
