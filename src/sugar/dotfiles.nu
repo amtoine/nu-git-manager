@@ -14,6 +14,7 @@ export def-env edit [] {
         | lines
         | input list --fuzzy
             $"Please (ansi yellow_italic)choose a config(ansi reset) file to (ansi blue_underline)edit(ansi reset): "
+        | into string
     )
     if ($choice | is-empty) {
         return

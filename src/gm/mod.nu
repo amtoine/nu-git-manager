@@ -95,11 +95,11 @@ export def grab [
         | update project { str replace --all '\/' '-'}
     )
 
-    let url = (if $ssh {
+    let url = if $ssh {
         $"git@($project.host):($project.user)/($project.project).git"
     } else {
         $"https://($project.host)/($project.user)/($project.project).git"
-    })
+    }
 
     let local = (get root dir | path join $project.host $project.user $project.project)
 
