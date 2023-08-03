@@ -10,6 +10,7 @@ def gist-home [] {
 
 # list the first 100 gists of a given user
 #
+# FIXME: related to https://github.com/nushell/nushell/pull/9769
 # returns a
 # ```
 # table<
