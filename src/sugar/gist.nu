@@ -85,7 +85,7 @@ export def list [
 #
 # the name of the user is extracted from the context of the command
 def "nu-complete list-gists" [context: string] {
-    let user = ($context | str replace 'gist\s*clone\s*' "" | split row " " | get 0)
+    let user = ($context | str replace --regex 'gist\s*clone\s*' "" | split row " " | get 0)
     list-gists $user | select id description | rename value
 }
 
@@ -112,7 +112,7 @@ def "nu-complete list-local-gists" [] {
     }}
     | select name description
     | update name {||
-        get name | str replace (gist-home) "" | str trim -c (char path_sep)
+        get name | str replace --regex (gist-home) "" | str trim -c (char path_sep)
     }
     | rename value
 }

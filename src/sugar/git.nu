@@ -64,7 +64,7 @@ export def branches [
     --report: bool  # will give a table report of all the
     --clean: bool  # clean all dangling branches
 ] {
-    let local_branches = (git branch --list | lines | str replace '..' "")
+    let local_branches = (git branch --list | lines | str replace --regex '..' "")
     let remote_branches = (git branch -r | lines | str trim | find --invert "HEAD ->" | parse "{remote}/{branch}")
 
     let branches_report = (

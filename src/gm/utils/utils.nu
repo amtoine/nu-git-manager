@@ -8,7 +8,7 @@ export def "get root dir" [] {
 
 # Replace all backslashes with forward slashes.
 export def "replace slashes" [] {
-    str replace --all --string '\' '/'
+    str replace --all '\' '/'
 }
 
 # parse-project <repository URL> -> record<host: string, user: string, project: string>
@@ -20,13 +20,13 @@ export def "parse project" [
 ] {
     let project = (
         $project
-        | str replace '.git$' ''
-        | str replace '^http://' ''
-        | str replace '^https://' ''
-        | str replace '^ssh://' ''
-        | str replace '^git@' ''
-        | str replace --all ':' '/'
-        | str replace --all '\/+' '/'
+        | str replace --regex '.git$' ''
+        | str replace --regex '^http://' ''
+        | str replace --regex '^https://' ''
+        | str replace --regex '^ssh://' ''
+        | str replace --regex '^git@' ''
+        | str replace --regex --all ':' '/'
+        | str replace --regex --all '\/+' '/'
         | str trim -c '/'
     )
 
@@ -59,8 +59,8 @@ export def "list repos" [
         ls ($root | if $recursive { path join "**" "*" ".git" } else { path join "*" "*" "*"})
         | get name
         | replace slashes
-        | str replace $"^($root | replace slashes)" ""
-        | str replace $".git$" ""
+        | str replace --regex $"^($root | replace slashes)" ""
+        | str replace --regex $".git$" ""
         | str trim -l -c '/'
         | parse "{host}/{user}/{project}"
         | insert user-project {|it| [$it.user $it.project] | path join}

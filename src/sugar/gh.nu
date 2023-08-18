@@ -8,7 +8,7 @@ def check-gh-logged-in [] {
 }
 
 def "nu-complete list-repos" [context: string] {
-    let user = ($context | str replace 'gh\s*pr\s*open\s*' "" | split row " " | get 0)
+    let user = ($context | str replace --regex 'gh\s*pr\s*open\s*' "" | split row " " | get 0)
 
     http get ({
         scheme: https,
@@ -100,7 +100,7 @@ export def "me notifications" [] {
         $notification | get url | url parse
         | update host "github.com"
         | update path {|it|
-            $it.path | str replace "/repos/" "" | str replace "pulls" "pull"
+            $it.path | str replace --regex "/repos/" "" | str replace --regex "pulls" "pull"
         }
         | reject params
         | url join
@@ -201,7 +201,7 @@ export def "me pr" [
                 $pr.author
                 $pr.date
                 $pr.draft
-                # ($pr.body | str replace --all '\n' "")
+                # ($pr.body | str replace --regex --all '\n' "")
                 $pr.url
             ]
             | str join " - "

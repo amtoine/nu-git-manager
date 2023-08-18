@@ -92,7 +92,7 @@ export def grab [
     let project = (
         parse project $project
         | default project
-        | update project { str replace --all '\/' '-'}
+        | update project { str replace --regex --all '\/' '-'}
     )
 
     let url = if $ssh {
