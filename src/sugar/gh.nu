@@ -44,8 +44,8 @@ def "nu-complete gh-review" [] {[
 export def "pr open" [
     owner: string
     repo: string@"nu-complete list-repos"
-    --draft: bool
-    --ready: bool  # has precedence over `--draft`
+    --draft
+    --ready  # has precedence over `--draft`
     --status: string@"nu-complete gh-status"
     --review: string@"nu-complete gh-review"
 ] {
@@ -112,7 +112,7 @@ export def "me issues" [] {
 }
 
 export def "me starred" [
-    --reduce (-r): bool
+    --reduce (-r)
 ] {
     if ($reduce) {
         pull /user/starred
@@ -124,7 +124,7 @@ export def "me starred" [
 
 export def "me repos" [
   owner: string
-  --user (-u): bool
+  --user (-u)
 ] {
     let root = if ($user) { "users" } else { "orgs" }
     pull $"/($root)/($owner)/repos"
@@ -150,8 +150,8 @@ export def down [
 
 export def "me pr" [
     number?: int
-    --open-in-browser (-o): bool
-    --force (-f): bool
+    --open-in-browser (-o)
+    --force (-f)
 ] {
     check-gh-logged-in
 

@@ -21,7 +21,7 @@ export def "get commit" [
 export def compare [
     with: string  # the target revision to compare the base with
     from: string = "HEAD"  # the base revision of the comparison (defaults to "HEAD")
-    --share: bool  # output the comparision in pretty shareable format
+    --share  # output the comparision in pretty shareable format
 ] {
     let start = (git rev-parse $with | str trim)
     let end = (git rev-parse $from | str trim)
@@ -61,8 +61,8 @@ export def-env root [] {
 # without any options, `git branches` will show all dangling branches, i.e.
 # local branches that do not have a remote counterpart.
 export def branches [
-    --report: bool  # will give a table report of all the
-    --clean: bool  # clean all dangling branches
+    --report  # will give a table report of all the
+    --clean  # clean all dangling branches
 ] {
     let local_branches = (git branch --list | lines | str replace --regex '..' "")
     let remote_branches = (git branch -r | lines | str trim | find --invert "HEAD ->" | parse "{remote}/{branch}")
@@ -124,7 +124,7 @@ export def "remote add" [
     name: string  # the name of the remote, e.g. `amtoine`
     repo: string  # the name of the upstream repo, e.g. `nu-git-manager`
     host: string  # the host where the upstream repo is stored, e.g. `github.com`
-    --ssh: bool  # use SSH as the communication protocol
+    --ssh  # use SSH as the communication protocol
 ] {
     if $name in (remote list | get remote) {
         let span = (metadata $name | get span)

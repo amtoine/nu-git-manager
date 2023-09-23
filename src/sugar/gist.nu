@@ -51,7 +51,7 @@ def list-local-gists [] {
 # list the gists of a *GitHub* user or all the gists stored locally
 export def list [
     user?: string@"nu-complete list-known-users"  # the *GitHub* to list the repositories of
-    --local: bool  # only list gists stored locally
+    --local  # only list gists stored locally
 ] {
     if $local { return (
         try {

@@ -25,7 +25,7 @@ export def-env goto [
 # fuzzy-delete any repository managed by `gm`
 export def remove [
     query?: string      # a search query to narrow down the list of choices
-    --force (-f): bool  # do not ask for comfirmation when deleting a repository
+    --force (-f)  # do not ask for comfirmation when deleting a repository
 ] {
     let choice = (pick repo
         $"Please (ansi yellow_italic)choose a repo(ansi reset) to (ansi red_underline)completely remove:(ansi reset)"
@@ -51,14 +51,14 @@ export def remove [
 # This place is organised by domain and path.
 export def grab [
     project: string               # <repository URL>|<host>/<user>/<project>|<user>/<project>|<project>
-    --ssh (-p): bool              # use ssh instead of https.
-    --bare (-b): bool             # clone as *bare* repo (specific to worktrees).
-    --update (-u): bool           # not supported
-    --shallow (-s): bool          # not supported
-    --branch: bool                # not supported
-    --no-recursive: bool          # not supported
-    --look: bool                  # not supported
-    --silent: bool                # not supported
+    --ssh (-p)              # use ssh instead of https.
+    --bare (-b)             # clone as *bare* repo (specific to worktrees).
+    --update (-u)           # not supported
+    --shallow (-s)          # not supported
+    --branch                # not supported
+    --no-recursive          # not supported
+    --look                  # not supported
+    --silent                # not supported
     --vcs (-v): string            # not supported
 ] {
     # TODO: implement `--update` option
@@ -118,9 +118,9 @@ export def grab [
 # - project
 export def list [
     query?: string          # return only repositories matching the query
-    --exact (-e): bool      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
-    --full-path (-p): bool  # return the full paths instead of path relative to the `gm` root
-    --recursive: bool       # perform a recursive search of all `.git/` directories
+    --exact (-e)      # force the match to be exact, i.e. the query equals to project, user/project or host/user/project
+    --full-path (-p)  # return the full paths instead of path relative to the `gm` root
+    --recursive       # perform a recursive search of all `.git/` directories
 ] {(
     list repos $query
         --exact $exact
@@ -130,7 +130,7 @@ export def list [
 
 # print the root of the repositories
 export def root [
-    --all (-a): bool  # not supported
+    --all (-a)  # not supported
 ] {
     if $all {
         log debug "`--all` option is NOT SUPPORTED in `gm root`"
