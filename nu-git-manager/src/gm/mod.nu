@@ -89,6 +89,8 @@ export def grab [
         log debug "`--vcs` option is NOT SUPPORTED in `gm grab`"
     }
 
+    let span = metadata $project | get span
+
     let project = (
         parse project $project
         | default project
@@ -102,6 +104,17 @@ export def grab [
     }
 
     let local = (get root dir | path join $project.host $project.user $project.project)
+
+    if ($local | path exists) {
+        error make {
+            msg: $"(ansi red)repo_already_grabbed(ansi reset)"
+            label: {
+                text: "this repo has already been grabbed"
+                start: $span.start
+                end: $span.end
+            }
+        }
+    }
 
     if $bare {
         git clone --bare --recurse-submodules $url $local
