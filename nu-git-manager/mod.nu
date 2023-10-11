@@ -1,6 +1,6 @@
 use std log
 
-use fs/store.nu [get-repo-store-path, list-repos-in-store]
+use fs/store.nu [get-repo-store-path, get-repo-store-cache-path, list-repos-in-store]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
@@ -83,15 +83,41 @@ export def "gm clone" [
 #
 #     jump to a directory in the store
 #     > cd (gm list --full-path | input list)
+#
+#     update the cache of repositories
+#     > gm list --update
 export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
+    --update # will dump the content of the store to the cache of `nu-git-manager`
 ]: nothing -> list<path> {
+    let cache_file = get-repo-store-cache-path
+
+    if $update {
+        rm --recursive --force $cache_file
+        mkdir ($cache_file | path dirname)
+
+        print --no-newline "updating cache... "
+        list-repos-in-store | save --force $cache_file
+        print "done"
+
+        return
+    }
+
+    if not ($cache_file | path exists) {
+        error make --unspanned {
+            msg: (
+                $"(ansi red_bold)cache_not_found(ansi reset):\n"
+              + $"please run `(ansi default_dimmed)gm list --update(ansi reset)` to create the cache"
+            )
+        }
+    }
+
+    let repos = open $cache_file
     if $full_path {
-        list-repos-in-store
+        $repos
     } else {
-        let root = get-repo-store-path
-        list-repos-in-store | each {
-            str replace $root '' | str trim --left --char (char path_sep)
+        $repos | each {
+            str replace (get-repo-store-path) '' | str trim --left --char (char path_sep)
         }
     }
 }

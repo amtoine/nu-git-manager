@@ -1,3 +1,4 @@
+use std log
 use path.nu "path sanitize"
 
 export def get-repo-store-path []: nothing -> path {
@@ -6,17 +7,23 @@ export def get-repo-store-path []: nothing -> path {
     ) | path expand | path sanitize
 }
 
+export def get-repo-store-cache-path []: nothing -> path {
+    $env.XDG_CACHE_HOME?
+        | default ($nu.home-path | path join ".cache")
+        | path join "nu-git-manager/cache.nuon"
+        | path expand
+}
+
 export def list-repos-in-store []: nothing -> list<path> {
     if not (get-repo-store-path | path exists) {
         return []
     }
 
-    if $nu.os-info.name == "windows" {
-        # FIXME: this is super slow on windows
-        glob **/*.git --not [**/*.venv **/node_modules/** **/target/** **/build/** */]
-    } else {
-        # FIXME: do not use external `find` command
-        ^find (get-repo-store-path) -name ".git"
-            | lines
-    }  | each { path split | range 0..(-2) | path join }
+    let res: list<string> = glob ($env.GIT_REPOS_HOME | path join "**/HEAD") --not [
+            **/.git/**/refs/remotes/**/HEAD,
+            **/.git/modules/**/HEAD,
+            **/logs/HEAD
+        ]
+
+    $res | str replace --regex '/(.git/)?HEAD$' ''
 }
