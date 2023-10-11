@@ -26,16 +26,43 @@ export def git-url-parsing [] {
 
 export def fetch-and-push-urls [] {
     let cases = [
-        [host, owner, group, repo, fetch_protocol, push_protocol, use_ssh, fetch_url, push_url];
-        ["host", "foo", "", "bar", "", "", false, "https://host/foo/bar", "https://host/foo/bar"],
-        ["host", "foo", "", "bar", "", "", false, "https://host/foo/bar", "https://host/foo/bar"],
+        [use_ssh, user_fetch, user_push, fetch_protocol, push_protocol];
+
+        # - if user_fetch is not-empty: fetch_protocol is the same (same for push)
+        # - if user_fetch is empty: fetch_protocol is `https` if not `use_ssh` (same for push)
+        [false,   "",         "",        "https",        "https"],
+        [false,   "",         "ssh",     "https",        "ssh"],
+        [false,   "",         "https",   "https",        "https"],
+        [false,   "ssh",      "",        "ssh",          "https"],
+        [false,   "ssh",      "ssh",     "ssh",          "ssh"],
+        [false,   "ssh",      "https",   "ssh",          "https"],
+        [false,   "https",    "",        "https",        "https"],
+        [false,   "https",    "ssh",     "https",        "ssh"],
+        [false,   "https",    "https",   "https",        "https"],
+        [true,    "",         "",        "ssh",          "ssh"],
+        [true,    "",         "ssh",     "ssh",          "ssh"],
+        [true,    "",         "https",   "ssh",          "https"],
+        [true,    "ssh",      "",        "ssh",          "ssh"],
+        [true,    "ssh",      "ssh",     "ssh",          "ssh"],
+        [true,    "ssh",      "https",   "ssh",          "https"],
+        [true,    "https",    "",        "https",        "ssh"],
+        [true,    "https",    "ssh",     "https",        "ssh"],
+        [true,    "https",    "https",   "https",        "https"],
     ]
 
-    for case in $cases {
-        let repo = {host: $case.host, owner: $case.owner, group: $case.group, repo: $case.repo}
+    let repo = {host: "h", owner: "o", group: "", repo: "r"}
+    let base_url = {
+        scheme: null,
+        host: $repo.host,
+        path: ([$repo.owner, $repo.group, $repo.repo] | compact | path join)
+    }
 
-        let actual = get-fetch-push-urls $repo $case.fetch_protocol $case.push_protocol $case.use_ssh
-        let expected = {fetch: $case.fetch_url, push: $case.push_url}
-        assert equal $actual $expected
+    for case in $cases {
+        let actual = get-fetch-push-urls $repo $case.user_fetch $case.user_push $case.use_ssh
+        let expected = {
+            fetch: ($base_url | update scheme $case.fetch_protocol | url join)
+            push: ($base_url | update scheme $case.push_protocol | url join)
+        }
+        assert equal $actual $expected $"input: ($case)"
     }
 }
