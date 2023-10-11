@@ -1,7 +1,7 @@
 use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../nu-git-manager/fs/store.nu get-repo-store-path
+use ../nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
 use ../nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
@@ -87,4 +87,47 @@ export def get-store-root [] {
         let actual = with-env $case.env { get-repo-store-path }
         assert equal $actual ($case.expected | path expand | path sanitize)
     }
+}
+
+export def list-all-repos-in-store [] {
+    const BASE = ($nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store")
+
+    if ($BASE | path exists) {
+        rm --recursive --verbose --force $BASE
+    }
+    mkdir $BASE
+
+    let store = [
+        [bare,  store,  path];
+
+        [false, true,  "a/normal/"],
+        [true,  true,  "a/bare/"],
+        [false, true,  "b/c/d/normal/"],
+        [true,  true,  "b/c/d/bare/"],
+        [false, false, "a/normal/b/nested/"],
+        [false, false, "a/normal/.git/modules/foo/"],
+    ]
+
+    for repo in $store {
+        if $repo.bare {
+            git init --bare ($BASE | path join $repo.path)
+        } else {
+            git init ($BASE | path join $repo.path)
+        }
+    }
+
+    # NOTE: remove the path to BASE so that the test output is easy to read
+    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each {
+        str replace $BASE '' | str trim --char (char path_sep)
+    }
+    let expected = $store | where store | get path | each {
+        # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
+        str trim --right --char (char path_sep)
+    }
+
+    # NOTE: need to sort the result to make sure the order of the `git init` does not influence the
+    # results of the test
+    assert equal ($actual | sort) ($expected | sort)
+
+    rm --recursive --verbose --force $BASE
 }
