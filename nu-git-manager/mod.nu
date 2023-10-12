@@ -70,6 +70,10 @@ export def "gm clone" [
 
     git -C $local_path remote set-url $remote $urls.fetch
     git -C $local_path remote set-url $remote --push $urls.push
+
+    gm list --update
+
+    null
 }
 
 # list all the local repositories in your local store
@@ -153,7 +157,7 @@ export def "gm remove" [
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
 ]: nothing -> nothing {
     let root = get-repo-store-path
-    let choices = list-repos-in-store
+    let choices = gm list
         | each {
             str replace $root '' | str trim --left --char (char path_sep)
         }
@@ -194,6 +198,8 @@ export def "gm remove" [
         "no" => { log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)" },
         "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
     }
+
+    gm list --update
 
     null
 }
