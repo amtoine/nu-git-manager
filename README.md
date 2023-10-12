@@ -19,8 +19,16 @@ it provides two main modules:
 
 ## :link: requirements [[toc](#table-of-content)]
 - [Nushell] 0.85.1+
+    - with Cargo and `cargo install nu`
 - `git` 2.34.1
+    - with Pacman and `pacman -S extra/git`
+    - with Nix and `nix run nixpkgs#git`
 - `gh` (optional) 2.29.0 (used by `sugar gh`)
+    - with Pacman and `pacman -S community/github-cli`
+    - with Nix and `nix run nixpkgs#gh`
+- `find` 4.9.0
+    - with Pacman and `pacman -S core/findutils`
+    - with Nix and `nix run nixpkgs#findutils`
 
 ## :recycle: installation [[toc](#table-of-content)]
 - install [Nupm] (**recommended**) by following the [Nupm instructions]
