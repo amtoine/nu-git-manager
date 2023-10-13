@@ -141,6 +141,20 @@ export def "gm root" []: nothing -> path {
     get-repo-store-path
 }
 
+# get the path to the cache of the local store of repositories managed by `nu-git-manager`
+#
+# `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
+# - `~/.cache/nu-git-manager/cache.nuon`
+#
+# # Example
+#     a contrived example, assuming you are in `~`
+#     > XDG_CACHE_HOME=foo gm root
+#     ~/foo/nu-git-manager/cache.nuon
+export def "gm cache" []: nothing -> path {
+    get-repo-store-cache-path
+}
+
 # remove one of the repositories from your local store
 #
 # # Examples
