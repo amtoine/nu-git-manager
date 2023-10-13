@@ -1,7 +1,9 @@
 use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
+use ../nu-git-manager/fs/store.nu [
+    get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+]
 use ../nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
@@ -86,6 +88,20 @@ export def get-store-root [] {
     for case in $cases {
         let actual = with-env $case.env { get-repo-store-path }
         assert equal $actual ($case.expected | path expand | path sanitize)
+    }
+}
+
+export def get-repo-cache [] {
+    let cases = [
+        [env,                       expected];
+
+        [{XDG_CACHE_HOME: null},    "~/.cache/nu-git-manager/cache.nuon"],
+        [{XDG_CACHE_HOME: "~/xdg"}, "~/xdg/nu-git-manager/cache.nuon"],
+    ]
+
+    for case in $cases {
+        let actual = with-env $case.env { get-repo-store-cache-path }
+        assert equal $actual ($case.expected | path expand)
     }
 }
 
