@@ -19,11 +19,14 @@ export def list-repos-in-store []: nothing -> list<path> {
         return []
     }
 
-    let res: list<string> = glob ($env.GIT_REPOS_HOME | path join "**/HEAD") --not [
+    let heads: list<string> = glob ($env.GIT_REPOS_HOME | path join "**/HEAD") --not [
             **/.git/**/refs/remotes/**/HEAD,
             **/.git/modules/**/HEAD,
             **/logs/HEAD
         ]
+    let repos = $heads | str replace --regex '/(.git/)?HEAD$' ''
 
-    $res | str replace --regex '/(.git/)?HEAD$' ''
+    let sorted = $repos | sort
+    let pairs = $sorted | range 1.. | zip ($sorted | range ..(-2))
+    $pairs | filter {|it| not ($it.0 | str starts-with $it.1)} | each { get 0 } | prepend $sorted.0
 }
