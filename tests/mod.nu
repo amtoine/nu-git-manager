@@ -1,6 +1,7 @@
 use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
+use ../nu-git-manager/fs/store.nu get-repo-store-path
 
 export def git-url-parsing [] {
     let cases = [
@@ -64,5 +65,21 @@ export def fetch-and-push-urls [] {
             push: ($base_url | update scheme $case.push_protocol | url join)
         }
         assert equal $actual $expected $"input: ($case)"
+    }
+}
+
+export def get-store-root [] {
+    let cases = [
+        [env,                                                    expected];
+
+        [{GIT_REPOS_HOME: null,         XDG_DATA_HOME: null},    "~/.local/share/repos"],
+        [{GIT_REPOS_HOME: "~/my_repos", XDG_DATA_HOME: null},    "~/my_repos"],
+        [{GIT_REPOS_HOME: null,         XDG_DATA_HOME: "~/xdg"}, "~/xdg/repos"],
+        [{GIT_REPOS_HOME: "~/my_repos", XDG_DATA_HOME: "~/xdg"}, "~/my_repos"],
+    ]
+
+    for case in $cases {
+        let actual = with-env $case.env { get-repo-store-path }
+        assert equal $actual ($case.expected | path expand)
     }
 }
