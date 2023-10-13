@@ -104,9 +104,9 @@ export def "gm list" [
 # - `~/.local/share/repos`
 #
 # # Example
-#     a contrived example
+#     a contrived example, assuming you are in `~`
 #     > GIT_REPOS_HOME=foo gm root
-#     foo
+#     ~/foo
 export def "gm root" []: nothing -> path {
     get-repo-store-path
 }
