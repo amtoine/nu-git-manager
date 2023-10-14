@@ -26,9 +26,6 @@ it provides two main modules:
 - `gh` (optional) 2.29.0 (used by `sugar gh`)
     - with Pacman and `pacman -S community/github-cli`
     - with Nix and `nix run nixpkgs#gh`
-- `find` 4.9.0
-    - with Pacman and `pacman -S core/findutils`
-    - with Nix and `nix run nixpkgs#findutils`
 
 ## :recycle: installation [[toc](#table-of-content)]
 - install [Nupm] (**recommended**) by following the [Nupm instructions]
