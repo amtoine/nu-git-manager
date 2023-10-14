@@ -88,3 +88,11 @@ export def "gm fetch branch" [
         git branch --force $branch FETCH_HEAD
     }
 }
+
+# TODO: documentation
+export def "gm compare" [
+    target: string, # TODO: documentation
+    --head: string = "HEAD", # TODO: documentation
+] {
+    git diff (git merge-base $target $head) $head
+}
