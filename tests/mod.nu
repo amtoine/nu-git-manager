@@ -122,6 +122,7 @@ export def list-all-repos-in-store [] {
         [true,  true,  "b/c/d/bare/"],
         [false, false, "a/normal/b/nested/"],
         [false, false, "a/normal/.git/modules/foo/"],
+        [false, true,  "a/normal.but.more.complex/"],
     ]
 
     for repo in $store {
