@@ -65,7 +65,7 @@ jobs:
           cp "/tmp/$name/${{ env.NU_BIN }}" "$HOME/${{ env.NU_BIN }}"
 
       - name: Install Nupm from Source
-        run: git clone https://github.com/nushell/nupm "${{ env.NUPM }}/nupm"
+        run: git clone https://github.com/nushell/nupm "${{ env.NUPM }}"
 
       - name: Show Nushell Version
         run: |
