@@ -29,14 +29,20 @@ jobs:
             echo "ARCH=x86_64-linux-gnu-full" >> $GITHUB_ENV
             echo "EXT=tar.gz" >> $GITHUB_ENV
             echo "NU_BIN=nu" >> $GITHUB_ENV
+            echo "NUPM=$HOME/nupm" >> $GITHUB_ENV
           elif [ "${{ runner.os }}" = "Windows" ]; then
             echo "ARCH=x86_64-pc-windows-msvc" >> $GITHUB_ENV
             echo "EXT=zip" >> $GITHUB_ENV
             echo "NU_BIN=nu.exe" >> $GITHUB_ENV
+            # NOTE: for some reason, `$HOME` gives an incorrect path on Windows, e.g. it looks like
+            # `/c/Users/runneradmin` where it should really be `c:\Users\runneradmin`: this commands
+            # changes the `/` into `\` and replaces the first part of the path with "x:\"
+            echo "NUPM=$(echo $HOME | tr '/' '\\' | sed 's/^\\\(.\)\\/\1:\\/')/nupm" >> $GITHUB_ENV
           elif [ "${{ runner.os }}" = "macOS" ]; then
             echo "ARCH=x86_64-apple-darwin" >> $GITHUB_ENV
             echo "EXT=tar.gz" >> $GITHUB_ENV
             echo "NU_BIN=nu" >> $GITHUB_ENV
+            echo "NUPM=$HOME/nupm" >> $GITHUB_ENV
           fi
 
       - name: Install Nushell from Nightly
@@ -59,7 +65,7 @@ jobs:
           cp "/tmp/$name/${{ env.NU_BIN }}" "$HOME/${{ env.NU_BIN }}"
 
       - name: Install Nupm from Source
-        run: git clone https://github.com/nushell/nupm $HOME/nupm
+        run: git clone https://github.com/nushell/nupm "${{ env.NUPM }}/nupm"
 
       - name: Show Nushell Version
         run: |
@@ -67,4 +73,4 @@ jobs:
 
       - name: Run the tests
         run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "use $HOME/nupm/nupm/; nupm test"
+          "$HOME/${{ env.NU_BIN }}" --commands "use ${{ env.NUPM }}/nupm/; nupm test"
