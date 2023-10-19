@@ -1,3 +1,4 @@
+use ../fs/dir.nu [open-item]
 def check-gh-logged-in [] {
     let out = (do -i { gh auth status } | complete)
     if $out.exit_code != 0 {
@@ -75,7 +76,7 @@ export def "pr open" [
         }
     } | url join)
 
-    xdg-open $url
+    open-item $url
 }
 
 def unpack-pages [] {
@@ -163,7 +164,7 @@ export def "me pr" [
 
     if not ($number | is-empty) {
         if $open_in_browser {
-            xdg-open ({
+            open-item ({
                 scheme: "https"
                 host: "github.com"
                 path: ($repo | path join "pull" ($number | into string))
@@ -218,7 +219,7 @@ export def "me pr" [
     }
 
     if $open_in_browser {
-        xdg-open $choice.url
+        open-item $choice.url
         return
     }
 
