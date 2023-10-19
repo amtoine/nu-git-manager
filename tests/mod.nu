@@ -55,7 +55,7 @@ export def fetch-and-push-urls [] {
     let base_url = {
         scheme: null,
         host: $repo.host,
-        path: ([$repo.owner, $repo.group, $repo.repo] | compact | path join)
+        path: ([$repo.owner, $repo.group, $repo.repo] | compact | str join '/')
     }
 
     for case in $cases {
@@ -80,6 +80,6 @@ export def get-store-root [] {
 
     for case in $cases {
         let actual = with-env $case.env { get-repo-store-path }
-        assert equal $actual ($case.expected | path expand)
+        assert equal $actual ($case.expected | path expand | str replace -a '\' '/')
     }
 }

@@ -1,7 +1,7 @@
 export def get-repo-store-path []: nothing -> path {
     $env.GIT_REPOS_HOME? | default (
         $env.XDG_DATA_HOME? | default ($nu.home-path | path join ".local/share") | path join "repos"
-    ) | path expand
+    ) | path expand | str replace -a '\' '/'
 }
 
 export def list-repos-in-store []: nothing -> list<path> {
