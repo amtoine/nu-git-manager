@@ -26,7 +26,7 @@ export def get-fetch-push-urls [
     let base_url = {
         scheme: null,
         host: $repository.host,
-        path: ([$repository.owner $repository.group $repository.repo] | compact | path join)
+        path: ([$repository.owner $repository.group $repository.repo] | compact | path join | str replace '\' '/')
     }
     let http_url = $base_url | update scheme "https" | url join
     let ssh_url = $base_url | update scheme "ssh" | url join
