@@ -8,9 +8,13 @@ export def list-repos-in-store []: nothing -> list<path> {
     if not (get-repo-store-path | path exists) {
         return []
     }
-
-    # FIXME: do not use external `find` command
-    ^find (get-repo-store-path) -name ".git"
-        | lines
-        | each { path split | range 0..(-2) | path join }
+    
+    if $nu.os-info.name == "windows" {
+        # FIXME: this is super slow on windows
+        glob **/*.git --not [**/*.venv **/node_modules/** **/target/** **/build/** */]
+    } else {
+        # FIXME: do not use external `find` command
+        ^find (get-repo-store-path) -name ".git"
+            | lines
+    }  | each { path split | range 0..(-2) | path join }
 }
