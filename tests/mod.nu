@@ -135,11 +135,11 @@ export def list-all-repos-in-store [] {
 
     # NOTE: remove the path to BASE so that the test output is easy to read
     let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each {
-        str replace $BASE '' | str trim --char (char path_sep)
+        str replace $BASE '' | str trim --left --char "/"
     }
     let expected = $store | where in_store | get path | each {
         # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
-        str trim --right --char (char path_sep)
+        str trim --right --char "/"
     }
 
     # NOTE: need to sort the result to make sure the order of the `git init` does not influence the
