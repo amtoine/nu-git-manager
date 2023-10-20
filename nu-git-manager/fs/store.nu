@@ -20,7 +20,8 @@ export def list-repos-in-store []: nothing -> list<path> {
         return []
     }
 
-    # FIXME: glob does not work with Windows very well
+    # FIXME: glob does not work very well with Windows and absolute paths: the easy fix is to `cd`
+    # first and then perform the globbing
     # related to https://github.com/nushell/nushell/issues/7125
     cd (get-repo-store-path)
     let heads: list<string> = glob "**/HEAD" --not [
