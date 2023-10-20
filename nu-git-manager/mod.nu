@@ -121,7 +121,7 @@ export def "gm list" [
         $repos
     } else {
         $repos | each {
-            str replace (get-repo-store-path) '' | str trim --left --char (char path_sep)
+            str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
 }
@@ -173,7 +173,7 @@ export def "gm remove" [
     let root = get-repo-store-path
     let choices = gm list
         | each {
-            str replace $root '' | str trim --left --char (char path_sep)
+            str replace $root '' | str trim --left --char "/"
         }
         | find $pattern
 
