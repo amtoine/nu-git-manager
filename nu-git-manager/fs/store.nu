@@ -22,7 +22,7 @@ export def list-repos-in-store []: nothing -> list<path> {
 
     # FIXME: glob does not work with Windows very well
     # related to https://github.com/nushell/nushell/issues/7125
-    cd $env.GIT_REPOS_HOME
+    cd (get-repo-store-path)
     let heads: list<string> = glob "**/HEAD" --not [
             **/.git/**/refs/remotes/**/HEAD,
             **/.git/modules/**/HEAD,
