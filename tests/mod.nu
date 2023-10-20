@@ -101,7 +101,7 @@ export def get-repo-cache [] {
 
     for case in $cases {
         let actual = with-env $case.env { get-repo-store-cache-path }
-        assert equal $actual ($case.expected | path expand)
+        assert equal $actual ($case.expected | path expand | path sanitize)
     }
 }
 
