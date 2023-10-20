@@ -106,7 +106,9 @@ export def get-repo-cache [] {
 }
 
 export def list-all-repos-in-store [] {
-    const BASE = ($nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store")
+    let BASE = (
+        $nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store" | path sanitize
+    )
 
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
