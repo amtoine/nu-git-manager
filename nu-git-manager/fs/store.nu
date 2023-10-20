@@ -17,6 +17,7 @@ export def get-repo-store-cache-path []: nothing -> path {
 
 export def list-repos-in-store []: nothing -> list<path> {
     if not (get-repo-store-path | path exists) {
+        log debug $"the store does not exist: `(get-repo-store-path)`"
         return []
     }
 
