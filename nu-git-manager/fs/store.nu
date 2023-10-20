@@ -20,7 +20,10 @@ export def list-repos-in-store []: nothing -> list<path> {
         return []
     }
 
-    let heads: list<string> = glob ($env.GIT_REPOS_HOME | path join "**/HEAD") --not [
+    # FIXME: glob does not work with Windows very well
+    # related to https://github.com/nushell/nushell/issues/7125
+    cd $env.GIT_REPOS_HOME
+    let heads: list<string> = glob "**/HEAD" --not [
             **/.git/**/refs/remotes/**/HEAD,
             **/.git/modules/**/HEAD,
             **/logs/HEAD
