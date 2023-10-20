@@ -114,19 +114,19 @@ export def list-all-repos-in-store [] {
     mkdir $BASE
 
     let store = [
-        [bare,  store,  path];
+        [is_bare, in_store, path];
 
-        [false, true,  "a/normal/"],
-        [true,  true,  "a/bare/"],
-        [false, true,  "b/c/d/normal/"],
-        [true,  true,  "b/c/d/bare/"],
-        [false, false, "a/normal/b/nested/"],
-        [false, false, "a/normal/.git/modules/foo/"],
-        [false, true,  "a/normal.but.more.complex/"],
+        [false,   true,     "a/normal/"],
+        [true,    true,     "a/bare/"],
+        [false,   true,     "b/c/d/normal/"],
+        [true,    true,     "b/c/d/bare/"],
+        [false,   false,    "a/normal/b/nested/"],
+        [false,   false,    "a/normal/.git/modules/foo/"],
+        [false,   true,     "a/normal.but.more.complex/"],
     ]
 
     for repo in $store {
-        if $repo.bare {
+        if $repo.is_bare {
             git init --bare ($BASE | path join $repo.path)
         } else {
             git init ($BASE | path join $repo.path)
@@ -137,7 +137,7 @@ export def list-all-repos-in-store [] {
     let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each {
         str replace $BASE '' | str trim --char (char path_sep)
     }
-    let expected = $store | where store | get path | each {
+    let expected = $store | where in_store | get path | each {
         # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
         str trim --right --char (char path_sep)
     }
