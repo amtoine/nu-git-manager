@@ -32,7 +32,7 @@ export def list-repos-in-store []: nothing -> list<path> {
         ]
     # NOTE: we need to keep the trailing `/` here to avoid telling that `foo.bar` is a duplicate of
     # `foo`, because `foo/` is not contained in `foo.bar/`
-    let repos = $heads | str replace --regex '(.git/)?HEAD$' ''
+    let repos = $heads | each { path sanitize } | str replace --regex '(.git/)?HEAD$' ''
 
     let sorted = $repos | sort
     let pairs = $sorted | range 1.. | zip ($sorted | range ..(-2))
@@ -40,6 +40,5 @@ export def list-repos-in-store []: nothing -> list<path> {
         | filter {|it| not ($it.0 | str starts-with $it.1)}
         | each { get 0 }
         | prepend $sorted.0
-        | each { path sanitize }
         | str trim --right --char "/"
 }
