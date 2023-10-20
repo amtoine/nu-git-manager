@@ -12,6 +12,7 @@ export def get-repo-store-cache-path []: nothing -> path {
         | default ($nu.home-path | path join ".cache")
         | path join "nu-git-manager/cache.nuon"
         | path expand
+        | path sanitize
 }
 
 export def list-repos-in-store []: nothing -> list<path> {
