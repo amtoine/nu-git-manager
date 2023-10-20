@@ -2,6 +2,11 @@ use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
 use ../nu-git-manager/fs/store.nu get-repo-store-path
+use ../nu-git-manager/fs/path.nu "path sanitize"
+
+export def path-sanitization [] {
+    assert equal ('\foo\bar' | path sanitize) "/foo/bar"
+}
 
 export def git-url-parsing [] {
     let cases = [
@@ -55,7 +60,7 @@ export def fetch-and-push-urls [] {
     let base_url = {
         scheme: null,
         host: $repo.host,
-        path: ([$repo.owner, $repo.group, $repo.repo] | compact | str join '/')
+        path: ([$repo.owner, $repo.group, $repo.repo] | compact | path join | path sanitize)
     }
 
     for case in $cases {
@@ -80,6 +85,6 @@ export def get-store-root [] {
 
     for case in $cases {
         let actual = with-env $case.env { get-repo-store-path }
-        assert equal $actual ($case.expected | path expand | str replace -a '\' '/')
+        assert equal $actual ($case.expected | path expand | path sanitize)
     }
 }

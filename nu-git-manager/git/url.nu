@@ -1,3 +1,5 @@
+use ../fs/path.nu "path sanitize"
+
 export def parse-git-url []: string -> record<host: string, owner: string, group: path, repo: string> {
     str replace --regex '^git@(.*):' 'ssh://$1/'
         | str replace --regex '\.git$' ''
@@ -9,7 +11,7 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
                 | path split
                 | {
                     owner: ($in | first),
-                    group: ($in | range 1..(-2) | if $in != null { str join '/' }),
+                    group: ($in | range 1..(-2) | if $in != null { path join | path sanitize }),
                     repo: ($in | last)
                 }
         }
@@ -26,7 +28,12 @@ export def get-fetch-push-urls [
     let base_url = {
         scheme: null,
         host: $repository.host,
-        path: ([$repository.owner $repository.group $repository.repo] | compact | str join '/')
+        path: (
+            [$repository.owner $repository.group $repository.repo]
+                | compact
+                | path join
+                | path sanitize
+        )
     }
     let http_url = $base_url | update scheme "https" | url join
     let ssh_url = $base_url | update scheme "ssh" | url join
