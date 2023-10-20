@@ -40,5 +40,6 @@ export def list-repos-in-store []: nothing -> list<path> {
         | filter {|it| not ($it.0 | str starts-with $it.1)}
         | each { get 0 }
         | prepend $sorted.0
-        | str trim --right --char (char path_sep)
+        | each { path sanitize }
+        | str trim --right --char "/"
 }
