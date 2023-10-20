@@ -106,6 +106,8 @@ export def get-repo-cache [] {
 }
 
 export def list-all-repos-in-store [] {
+    # NOTE: `$BASE` is a constant, hence the capitalized name, but `path sanitize` is not a
+    # parse-time command
     let BASE = (
         $nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store" | path sanitize
     )
