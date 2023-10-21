@@ -15,6 +15,24 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 }
 
 # manage your Git repositories with the main command of `nu-git-manager`
+#
+# `nu-git-manager` will look for a store in the following places, in order:
+# - `$env.GIT_REPOS_HOME`
+# - `$env.XDG_DATA_HOME | path join "repos"
+# - `~/.local/share/repos`
+#
+# `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
+# - `~/.cache/nu-git-manager/cache.nuon`
+#
+# # Examples
+#     a contrived example, assuming you are in `~`
+#     > GIT_REPOS_HOME=foo gm status | get root
+#     ~/foo
+#
+#     a contrived example, assuming you are in `~`
+#     > XDG_CACHE_HOME=foo gm status | get cache
+#     ~/foo/nu-git-manager/cache.nuon
 export def "gm" []: nothing -> nothing {
     print (help gm)
 }
@@ -110,51 +128,29 @@ export def "gm list" [
     }
 }
 
-# get the root of the local store of repositories managed by `nu-git-manager`
-#
-# `nu-git-manager` will look for a store in the following places, in order:
-# - `$env.GIT_REPOS_HOME`
-# - `$env.XDG_DATA_HOME | path join "repos"
-# - `~/.local/share/repos`
-#
-# # Example
-#     a contrived example, assuming you are in `~`
-#     > GIT_REPOS_HOME=foo gm root
-#     ~/foo
-export def "gm root" []: nothing -> path {
-    get-repo-store-path
+# TODO: documentation
+export def "gm status" []: nothing -> any {
+    {
+        root: (get-repo-store-path)
+        cache: (get-repo-store-cache-path)
+    }
 }
 
-# get the path to the cache of the local store of repositories managed by `nu-git-manager`
+# update the local cache of repositories
 #
-# `nu-git-manager` will look for a cache in the following places, in order:
-# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
-# - `~/.cache/nu-git-manager/cache.nuon`
-#
-# # Example
-#     a contrived example, assuming you are in `~`
-#     > XDG_CACHE_HOME=foo gm root
-#     ~/foo/nu-git-manager/cache.nuon
-#
+# # Examples
 #     update the cache of repositories
-#     > gm cache --update
-export def "gm cache" [
-    --update # will dump the content of the store to the cache of `nu-git-manager`
-]: nothing -> path {
+#     > gm update-cache
+export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
+    rm --recursive --force $cache_file
+    mkdir ($cache_file | path dirname)
 
-    if $update {
-        rm --recursive --force $cache_file
-        mkdir ($cache_file | path dirname)
+    print --no-newline "updating cache... "
+    list-repos-in-store | save --force $cache_file
+    print "done"
 
-        print --no-newline "updating cache... "
-        list-repos-in-store | save --force $cache_file
-        print "done"
-
-        return
-    }
-
-    get-repo-store-cache-path
+    null
 }
 
 # remove one of the repositories from your local store

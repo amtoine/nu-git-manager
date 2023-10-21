@@ -20,7 +20,7 @@ export def check-cache-file [cache_file: path]: nothing -> nothing {
         error make --unspanned {
             msg: (
                 $"(ansi red_bold)cache_not_found(ansi reset):\n"
-              + $"please run `(ansi default_dimmed)gm cache --update(ansi reset)` to create the cache"
+              + $"please run `(ansi default_dimmed)gm update-cache(ansi reset)` to create the cache"
             )
         }
     }
