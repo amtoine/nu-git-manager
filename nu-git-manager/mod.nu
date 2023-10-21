@@ -71,7 +71,7 @@ export def "gm clone" [
     git -C $local_path remote set-url $remote $urls.fetch
     git -C $local_path remote set-url $remote --push $urls.push
 
-    gm list --update
+    gm cache --update
 
     null
 }
@@ -87,31 +87,16 @@ export def "gm clone" [
 #
 #     jump to a directory in the store
 #     > cd (gm list --full-path | input list)
-#
-#     update the cache of repositories
-#     > gm list --update
 export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
-    --update # will dump the content of the store to the cache of `nu-git-manager`
 ]: nothing -> list<path> {
     let cache_file = get-repo-store-cache-path
-
-    if $update {
-        rm --recursive --force $cache_file
-        mkdir ($cache_file | path dirname)
-
-        print --no-newline "updating cache... "
-        list-repos-in-store | save --force $cache_file
-        print "done"
-
-        return
-    }
 
     if not ($cache_file | path exists) {
         error make --unspanned {
             msg: (
                 $"(ansi red_bold)cache_not_found(ansi reset):\n"
-              + $"please run `(ansi default_dimmed)gm list --update(ansi reset)` to create the cache"
+              + $"please run `(ansi default_dimmed)gm cache --update(ansi reset)` to create the cache"
             )
         }
     }
@@ -151,7 +136,25 @@ export def "gm root" []: nothing -> path {
 #     a contrived example, assuming you are in `~`
 #     > XDG_CACHE_HOME=foo gm root
 #     ~/foo/nu-git-manager/cache.nuon
-export def "gm cache" []: nothing -> path {
+#
+#     update the cache of repositories
+#     > gm cache --update
+export def "gm cache" [
+    --update # will dump the content of the store to the cache of `nu-git-manager`
+]: nothing -> path {
+    let cache_file = get-repo-store-cache-path
+
+    if $update {
+        rm --recursive --force $cache_file
+        mkdir ($cache_file | path dirname)
+
+        print --no-newline "updating cache... "
+        list-repos-in-store | save --force $cache_file
+        print "done"
+
+        return
+    }
+
     get-repo-store-cache-path
 }
 
@@ -213,7 +216,7 @@ export def "gm remove" [
         "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
     }
 
-    gm list --update
+    gm cache --update
 
     null
 }
