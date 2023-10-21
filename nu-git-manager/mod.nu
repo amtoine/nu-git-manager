@@ -27,11 +27,11 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 #
 # # Examples
 #     a contrived example, assuming you are in `~`
-#     > GIT_REPOS_HOME=foo gm status | get root
+#     > GIT_REPOS_HOME=foo gm status | get root.path
 #     ~/foo
 #
 #     a contrived example, assuming you are in `~`
-#     > XDG_CACHE_HOME=foo gm status | get cache
+#     > XDG_CACHE_HOME=foo gm status | get cache.path
 #     ~/foo/nu-git-manager/cache.nuon
 export def "gm" []: nothing -> nothing {
     print (help gm)
@@ -128,11 +128,51 @@ export def "gm list" [
     }
 }
 
-# TODO: documentation
-export def "gm status" []: nothing -> any {
+# get current status about the repositories managed by `nu-git-manager`
+#
+# Examples
+#     getting status when everything is fine
+#     > gm status | reject missing | flatten | into record
+#     ╭──────────────┬────────────────────────────────────╮
+#     │ path         │ ~/.local/share/repos               │
+#     │ exists       │ true                               │
+#     │ cache_path   │ ~/.cache/nu-git-manager/cache.nuon │
+#     │ cache_exists │ true                               │
+#     ╰──────────────┴────────────────────────────────────╯
+#
+#     getting status when there is no store
+#     > gm status | get root
+#     ╭────────┬──────────────────────╮
+#     │ path   │ ~/.local/share/repos │
+#     │ exists │ false                │
+#     ╰────────┴──────────────────────╯
+#
+#     getting status when there is no cache
+#     > gm status | get root
+#     ╭────────┬────────────────────────────────────╮
+#     │ path   │ ~/.cache/nu-git-manager/cache.nuon │
+#     │ exists │ false                              │
+#     ╰────────┴────────────────────────────────────╯
+#
+#     getting status when a project is in the cache but is missing on the filesystem
+#     > gm status | get missing
+#     ╭──────────────────────────────────────╮
+#     │ 0 │ ~/.local/share/repos/foo/bar/baz │
+#     ╰──────────────────────────────────────╯
+export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>> {
+    let root = get-repo-store-path
+    let cache = get-repo-store-cache-path
+
     {
-        root: (get-repo-store-path)
-        cache: (get-repo-store-cache-path)
+        root: {
+            path: $root
+            exists: (($root | path type) == "dir")
+        }
+        missing: (open $cache | where ($it | path type) != "dir")
+        cache: {
+            path: $cache
+            exists: (($cache | path type) == "file")
+        }
     }
 }
 
