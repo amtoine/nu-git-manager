@@ -6,14 +6,24 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
         | url parse
         | select host path
         | update path {
-            str trim --left --right --char '/'
+            let tokens = $in
+                | str trim --left --right --char '/'
                 | str replace --regex '\/tree\/.*' ''
                 | path split
-                | {
-                    owner: ($in | first),
-                    group: ($in | range 1..(-2) | if $in != null { path join | path sanitize }),
-                    repo: ($in | last)
-                }
+
+            let owner = if ($tokens | length) > 1 {
+                $tokens | first
+            }
+
+            let group = if ($tokens | length) > 1 {
+                $tokens | range 1..(-2) | if $in != null { path join | path sanitize }
+            }
+
+            {
+                owner: $owner,
+                group: $group,
+                repo: ($tokens | last)
+            }
         }
         | flatten
         | into record

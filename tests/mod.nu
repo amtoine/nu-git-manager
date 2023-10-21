@@ -22,6 +22,7 @@ export def git-url-parsing [] {
         ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo", null,      "bar"],
         ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo", null,      "bar"],
         ["git@gitlab.com:foo/bar/baz/brr",              "gitlab.com", "foo", "bar/baz", "brr"],
+        ["git://git.suckless.org/st",             "git.suckless.org",  null, null,      "st"],
     ]
 
     for case in $cases {
