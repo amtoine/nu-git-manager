@@ -1,6 +1,8 @@
 use std log
 
-use fs/store.nu [get-repo-store-path, get-repo-store-cache-path, list-repos-in-store]
+use fs/store.nu [
+    check-cache-file, get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
@@ -71,7 +73,12 @@ export def "gm clone" [
     git -C $local_path remote set-url $remote $urls.fetch
     git -C $local_path remote set-url $remote --push $urls.push
 
-    gm cache --update
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    print --no-newline "updating cache... "
+    open $cache_file | append $local_path | uniq | sort | save --force $cache_file
+    print "done"
 
     null
 }
@@ -92,14 +99,7 @@ export def "gm list" [
 ]: nothing -> list<path> {
     let cache_file = get-repo-store-cache-path
 
-    if not ($cache_file | path exists) {
-        error make --unspanned {
-            msg: (
-                $"(ansi red_bold)cache_not_found(ansi reset):\n"
-              + $"please run `(ansi default_dimmed)gm cache --update(ansi reset)` to create the cache"
-            )
-        }
-    }
+    check-cache-file $cache_file
 
     let repos = open $cache_file
     if $full_path {
@@ -212,11 +212,19 @@ export def "gm remove" [
 
     let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
     match (["no", "yes"] | input list $prompt) {
-        "no" => { log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)" },
+        "no" => {
+            log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
+            return
+        },
         "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
     }
 
-    gm cache --update
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    print --no-newline "updating cache... "
+    open $cache_file | where $it != ($root | path join $repo_to_remove) | save --force $cache_file
+    print "done"
 
     null
 }

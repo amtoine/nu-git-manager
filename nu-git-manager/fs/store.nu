@@ -15,6 +15,17 @@ export def get-repo-store-cache-path []: nothing -> path {
         | path sanitize
 }
 
+export def check-cache-file [cache_file: path]: nothing -> nothing {
+    if not ($cache_file | path exists) {
+        error make --unspanned {
+            msg: (
+                $"(ansi red_bold)cache_not_found(ansi reset):\n"
+              + $"please run `(ansi default_dimmed)gm cache --update(ansi reset)` to create the cache"
+            )
+        }
+    }
+}
+
 export def list-repos-in-store []: nothing -> list<path> {
     if not (get-repo-store-path | path exists) {
         log debug $"the store does not exist: `(get-repo-store-path)`"
