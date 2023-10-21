@@ -98,7 +98,6 @@ export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
 ]: nothing -> list<path> {
     let cache_file = get-repo-store-cache-path
-
     check-cache-file $cache_file
 
     let repos = open $cache_file
