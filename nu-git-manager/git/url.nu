@@ -31,8 +31,8 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
 
 export def get-fetch-push-urls [
     repository: record<host: string, owner: string, group: path, repo: string>, # typically from `parse-git-url`
-    fetch: string, # one of 'https', 'ssh', or empty
-    push: string, # one of 'https', 'ssh', or empty
+    fetch: string, # one of 'https', 'ssh', 'git', or empty
+    push: string, # one of 'https', 'ssh', 'git', or empty
     ssh: bool,
 ]: nothing -> record<fetch: string, push: string> {
     let base_url = {
@@ -47,10 +47,12 @@ export def get-fetch-push-urls [
     }
     let http_url = $base_url | update scheme "https" | url join
     let ssh_url = $base_url | update scheme "ssh" | url join
+    let git_url = $base_url | update scheme "git" | url join
 
     let fetch_url = match $fetch {
         "https" => $http_url,
         "ssh" => $ssh_url,
+        "git" => $git_url,
         _ => {
             if $ssh {
                 $ssh_url
@@ -63,6 +65,7 @@ export def get-fetch-push-urls [
     let push_url = match $push {
         "https" => $http_url,
         "ssh" => $ssh_url,
+        "git" => $git_url,
         _ => {
             if $ssh {
                 $ssh_url
