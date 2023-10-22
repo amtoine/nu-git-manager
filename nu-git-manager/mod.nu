@@ -133,12 +133,13 @@ export def "gm list" [
 # Examples
 #     getting status when everything is fine
 #     > gm status | reject missing | flatten | into record
-#     ╭──────────────┬────────────────────────────────────╮
-#     │ path         │ ~/.local/share/repos               │
-#     │ exists       │ true                               │
-#     │ cache_path   │ ~/.cache/nu-git-manager/cache.nuon │
-#     │ cache_exists │ true                               │
-#     ╰──────────────┴────────────────────────────────────╯
+#     ╭─────────────────────┬────────────────────────────────────╮
+#     │ path                │ ~/.local/share/repos               │
+#     │ exists              │ true                               │
+#     │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
+#     │ cache_exists        │ true                               │
+#     │ should_update_cache │ false                              │
+#     ╰─────────────────────┴────────────────────────────────────╯
 #
 #     getting status when there is no store
 #     > gm status | get root
@@ -159,20 +160,27 @@ export def "gm list" [
 #     ╭──────────────────────────────────────╮
 #     │ 0 │ ~/.local/share/repos/foo/bar/baz │
 #     ╰──────────────────────────────────────╯
-export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>> {
+#
+#     update the cache if necessary
+#     > if (gm status).should_update_cache { gm update-cache }
+export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
     let root = get-repo-store-path
     let cache = get-repo-store-cache-path
+
+    let missing = open $cache | where ($it | path type) != "dir"
+    let cache_exists = ($cache | path type) == "file"
 
     {
         root: {
             path: $root
             exists: (($root | path type) == "dir")
         }
-        missing: (open $cache | where ($it | path type) != "dir")
+        missing: $missing
         cache: {
             path: $cache
-            exists: (($cache | path type) == "file")
+            exists: $cache_exists
         }
+        should_update_cache: ((not ($missing | is-empty)) or (not $cache_exists))
     }
 }
 
