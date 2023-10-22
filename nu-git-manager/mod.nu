@@ -167,8 +167,13 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let root = get-repo-store-path
     let cache = get-repo-store-cache-path
 
-    let missing = open $cache | where ($it | path type) != "dir"
     let cache_exists = ($cache | path type) == "file"
+
+    let missing = if $cache_exists {
+        open $cache | where ($it | path type) != "dir"
+    } else {
+        null
+    }
 
     {
         root: {
