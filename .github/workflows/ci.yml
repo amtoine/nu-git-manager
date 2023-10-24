@@ -11,6 +11,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  NU_LOG_LEVEL: DEBUG
+
 jobs:
   tests:
     strategy:
