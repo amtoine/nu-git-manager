@@ -2,12 +2,14 @@
 A collection of Nushell tools to manage `git` repositories.
 
 # Table of content
-- [*what is `nu-git-manager`*](#bulb-what-is-nu-git-manager-toc)
-- [*requirements*](#link-requirements-toc)
-- [*installation*](#recycle-installation-toc)
-- [*usage*](#gear-usage-toc)
-    - [*getting help*](#pray-getting-help-toc)
-- [*some ideas of advanced (?) usage*](#exclamation-some-ideas-of-advanced--usage-toc)
+- [nu-git-manager](#nu-git-manager)
+- [Table of content](#table-of-content)
+  - [:bulb: what is `nu-git-manager` \[toc\]](#bulb-what-is-nu-git-manager-toc)
+  - [:link: requirements \[toc\]](#link-requirements-toc)
+  - [:recycle: installation \[toc\]](#recycle-installation-toc)
+  - [:gear: usage \[toc\]](#gear-usage-toc)
+    - [:pray: getting help \[toc\]](#pray-getting-help-toc)
+  - [:exclamation: some ideas of advanced (?) usage \[toc\]](#exclamation-some-ideas-of-advanced--usage-toc)
 
 ## :bulb: what is `nu-git-manager` [[toc](#table-of-content)]
 like [`ghq`](https://github.com/x-motemen/ghq), `nu-git-manager` aims at being a fully-featured
@@ -26,9 +28,6 @@ it provides two main modules:
 - `gh` (optional) 2.29.0 (used by `sugar gh`)
     - with Pacman and `pacman -S community/github-cli`
     - with Nix and `nix run nixpkgs#gh`
-- `find` 4.9.0
-    - with Pacman and `pacman -S core/findutils`
-    - with Nix and `nix run nixpkgs#findutils`
 
 ## :recycle: installation [[toc](#table-of-content)]
 - install [Nupm] (**recommended**) by following the [Nupm instructions]

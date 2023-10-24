@@ -1,6 +1,8 @@
 use std log
 
-use fs/store.nu [get-repo-store-path, list-repos-in-store]
+use fs/store.nu [
+    check-cache-file, get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
@@ -70,6 +72,15 @@ export def "gm clone" [
 
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
+
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    print --no-newline "updating cache... "
+    open $cache_file | append $local_path | uniq | sort | save --force $cache_file
+    print "done"
+
+    null
 }
 
 # list all the local repositories in your local store
@@ -86,12 +97,15 @@ export def "gm clone" [
 export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
 ]: nothing -> list<path> {
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    let repos = open $cache_file
     if $full_path {
-        list-repos-in-store
+        $repos
     } else {
-        let root = get-repo-store-path
-        list-repos-in-store | each {
-            str replace $root '' | str trim --left --char (char path_sep)
+        $repos | each {
+            str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
 }
@@ -111,6 +125,38 @@ export def "gm root" []: nothing -> path {
     get-repo-store-path
 }
 
+# get the path to the cache of the local store of repositories managed by `nu-git-manager`
+#
+# `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
+# - `~/.cache/nu-git-manager/cache.nuon`
+#
+# # Example
+#     a contrived example, assuming you are in `~`
+#     > XDG_CACHE_HOME=foo gm root
+#     ~/foo/nu-git-manager/cache.nuon
+#
+#     update the cache of repositories
+#     > gm cache --update
+export def "gm cache" [
+    --update # will dump the content of the store to the cache of `nu-git-manager`
+]: nothing -> path {
+    let cache_file = get-repo-store-cache-path
+
+    if $update {
+        rm --recursive --force $cache_file
+        mkdir ($cache_file | path dirname)
+
+        print --no-newline "updating cache... "
+        list-repos-in-store | save --force $cache_file
+        print "done"
+
+        return
+    }
+
+    get-repo-store-cache-path
+}
+
 # remove one of the repositories from your local store
 #
 # # Examples
@@ -127,9 +173,9 @@ export def "gm remove" [
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
 ]: nothing -> nothing {
     let root = get-repo-store-path
-    let choices = list-repos-in-store
+    let choices = gm list
         | each {
-            str replace $root '' | str trim --left --char (char path_sep)
+            str replace $root '' | str trim --left --char "/"
         }
         | find $pattern
 
@@ -165,9 +211,19 @@ export def "gm remove" [
 
     let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
     match (["no", "yes"] | input list $prompt) {
-        "no" => { log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)" },
+        "no" => {
+            log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
+            return
+        },
         "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
     }
+
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    print --no-newline "updating cache... "
+    open $cache_file | where $it != ($root | path join $repo_to_remove) | save --force $cache_file
+    print "done"
 
     null
 }
