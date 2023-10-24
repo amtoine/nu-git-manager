@@ -65,13 +65,13 @@ export def "gm clone" [
     let urls = get-fetch-push-urls $repository $fetch $push $ssh
 
     if $bare {
-        git clone $urls.fetch $local_path --origin $remote --bare
+        ^git clone $urls.fetch $local_path --origin $remote --bare
     } else {
-        git clone $urls.fetch $local_path --origin $remote
+        ^git clone $urls.fetch $local_path --origin $remote
     }
 
-    git -C $local_path remote set-url $remote $urls.fetch
-    git -C $local_path remote set-url $remote --push $urls.push
+    ^git -C $local_path remote set-url $remote $urls.fetch
+    ^git -C $local_path remote set-url $remote --push $urls.push
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
