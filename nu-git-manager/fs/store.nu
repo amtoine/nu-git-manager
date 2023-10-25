@@ -36,7 +36,7 @@ export def list-repos-in-store []: nothing -> list<path> {
     # first and then perform the globbing
     # related to https://github.com/nushell/nushell/issues/7125
     cd (get-repo-store-path)
-    let heads: list<string> = glob "**/HEAD" --not [
+    let heads: list<string> = glob "**/HEAD" --exclude [
             **/.git/**/refs/remotes/**/HEAD,
             **/.git/modules/**/HEAD,
             **/logs/HEAD
