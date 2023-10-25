@@ -15,6 +15,24 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 }
 
 # manage your Git repositories with the main command of `nu-git-manager`
+#
+# `nu-git-manager` will look for a store in the following places, in order:
+# - `$env.GIT_REPOS_HOME`
+# - `$env.XDG_DATA_HOME | path join "repos"
+# - `~/.local/share/repos`
+#
+# `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
+# - `~/.cache/nu-git-manager/cache.nuon`
+#
+# # Examples
+#     a contrived example, assuming you are in `~`
+#     > GIT_REPOS_HOME=foo gm status | get root.path
+#     ~/foo
+#
+#     a contrived example, assuming you are in `~`
+#     > XDG_CACHE_HOME=foo gm status | get cache.path
+#     ~/foo/nu-git-manager/cache.nuon
 export def "gm" []: nothing -> nothing {
     print (help gm)
 }
@@ -110,51 +128,82 @@ export def "gm list" [
     }
 }
 
-# get the root of the local store of repositories managed by `nu-git-manager`
+# get current status about the repositories managed by `nu-git-manager`
 #
-# `nu-git-manager` will look for a store in the following places, in order:
-# - `$env.GIT_REPOS_HOME`
-# - `$env.XDG_DATA_HOME | path join "repos"
-# - `~/.local/share/repos`
+# Examples
+#     getting status when everything is fine
+#     > gm status | reject missing | flatten | into record
+#     ╭─────────────────────┬────────────────────────────────────╮
+#     │ path                │ ~/.local/share/repos               │
+#     │ exists              │ true                               │
+#     │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
+#     │ cache_exists        │ true                               │
+#     │ should_update_cache │ false                              │
+#     ╰─────────────────────┴────────────────────────────────────╯
 #
-# # Example
-#     a contrived example, assuming you are in `~`
-#     > GIT_REPOS_HOME=foo gm root
-#     ~/foo
-export def "gm root" []: nothing -> path {
-    get-repo-store-path
-}
+#     getting status when there is no store
+#     > gm status | get root
+#     ╭────────┬──────────────────────╮
+#     │ path   │ ~/.local/share/repos │
+#     │ exists │ false                │
+#     ╰────────┴──────────────────────╯
+#
+#     getting status when there is no cache
+#     > gm status | get root
+#     ╭────────┬────────────────────────────────────╮
+#     │ path   │ ~/.cache/nu-git-manager/cache.nuon │
+#     │ exists │ false                              │
+#     ╰────────┴────────────────────────────────────╯
+#
+#     getting status when a project is in the cache but is missing on the filesystem
+#     > gm status | get missing
+#     ╭──────────────────────────────────────╮
+#     │ 0 │ ~/.local/share/repos/foo/bar/baz │
+#     ╰──────────────────────────────────────╯
+#
+#     update the cache if necessary
+#     > if (gm status).should_update_cache { gm update-cache }
+export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
+    let root = get-repo-store-path
+    let cache = get-repo-store-cache-path
 
-# get the path to the cache of the local store of repositories managed by `nu-git-manager`
-#
-# `nu-git-manager` will look for a cache in the following places, in order:
-# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
-# - `~/.cache/nu-git-manager/cache.nuon`
-#
-# # Example
-#     a contrived example, assuming you are in `~`
-#     > XDG_CACHE_HOME=foo gm root
-#     ~/foo/nu-git-manager/cache.nuon
-#
-#     update the cache of repositories
-#     > gm cache --update
-export def "gm cache" [
-    --update # will dump the content of the store to the cache of `nu-git-manager`
-]: nothing -> path {
-    let cache_file = get-repo-store-cache-path
+    let cache_exists = ($cache | path type) == "file"
 
-    if $update {
-        rm --recursive --force $cache_file
-        mkdir ($cache_file | path dirname)
-
-        print --no-newline "updating cache... "
-        list-repos-in-store | save --force $cache_file
-        print "done"
-
-        return
+    let missing = if $cache_exists {
+        open $cache | where ($it | path type) != "dir"
+    } else {
+        null
     }
 
-    get-repo-store-cache-path
+    {
+        root: {
+            path: $root
+            exists: (($root | path type) == "dir")
+        }
+        missing: $missing
+        cache: {
+            path: $cache
+            exists: $cache_exists
+        }
+        should_update_cache: ((not ($missing | is-empty)) or (not $cache_exists))
+    }
+}
+
+# update the local cache of repositories
+#
+# # Examples
+#     update the cache of repositories
+#     > gm update-cache
+export def "gm update-cache" []: nothing -> nothing {
+    let cache_file = get-repo-store-cache-path
+    rm --recursive --force $cache_file
+    mkdir ($cache_file | path dirname)
+
+    print --no-newline "updating cache... "
+    list-repos-in-store | save --force $cache_file
+    print "done"
+
+    null
 }
 
 # remove one of the repositories from your local store
