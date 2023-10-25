@@ -31,7 +31,7 @@ jobs:
           version: '0.86'
 
       - name: Install Nupm from Source
-        run: git clone https://github.com/nushell/nupm "${{ env.NUPM }}"
+        run: git clone https://github.com/nushell/nupm ~/nupm/
 
       - name: Show Nushell Version
         run: |
@@ -39,4 +39,4 @@ jobs:
 
       - name: Run the tests
         run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "use ${{ env.NUPM }}/nupm/; nupm test"
+          "$HOME/${{ env.NU_BIN }}" --commands "use ~/nupm/nupm/; nupm test"
