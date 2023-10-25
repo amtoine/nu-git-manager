@@ -9,7 +9,7 @@ name: continuous-integration
 
 defaults:
   run:
-    shell: bash
+    shell: nu {0}
 
 env:
   NU_LOG_LEVEL: DEBUG
@@ -34,9 +34,9 @@ jobs:
         run: git clone https://github.com/nushell/nupm ~/nupm/
 
       - name: Show Nushell Version
-        run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "version"
+        run: version
 
       - name: Run the tests
         run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "use ~/nupm/nupm/; nupm test"
+          use ~/nupm/nupm/
+          nupm test
