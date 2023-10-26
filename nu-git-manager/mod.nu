@@ -22,6 +22,7 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 # - `~/.local/share/repos`
 #
 # `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.GIT_REPOS_CACHE`
 # - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
 # - `~/.cache/nu-git-manager/cache.nuon`
 #
