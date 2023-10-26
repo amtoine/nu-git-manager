@@ -93,10 +93,12 @@ export def get-store-root [] {
 
 export def get-repo-cache [] {
     let cases = [
-        [env,                       expected];
+        [env,                                                      expected];
 
-        [{XDG_CACHE_HOME: null},    "~/.cache/nu-git-manager/cache.nuon"],
-        [{XDG_CACHE_HOME: "~/xdg"}, "~/xdg/nu-git-manager/cache.nuon"],
+        [{GIT_REPOS_CACHE: null,         XDG_CACHE_HOME: null},    "~/.cache/nu-git-manager/cache.nuon"],
+        [{GIT_REPOS_CACHE: "~/my_cache", XDG_CACHE_HOME: null},    "~/my_cache"],
+        [{GIT_REPOS_CACHE: null,         XDG_CACHE_HOME: "~/xdg"}, "~/xdg/nu-git-manager/cache.nuon"],
+        [{GIT_REPOS_CACHE: "~/my_cache", XDG_CACHE_HOME: "~/xdg"}, "~/my_cache"],
     ]
 
     for case in $cases {

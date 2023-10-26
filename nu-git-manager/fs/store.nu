@@ -8,9 +8,12 @@ export def get-repo-store-path []: nothing -> path {
 }
 
 export def get-repo-store-cache-path []: nothing -> path {
-    $env.XDG_CACHE_HOME?
-        | default ($nu.home-path | path join ".cache")
-        | path join "nu-git-manager/cache.nuon"
+    $env.GIT_REPOS_CACHE?
+        | default (
+            $env.XDG_CACHE_HOME?
+                | default ($nu.home-path | path join ".cache")
+                | path join "nu-git-manager/cache.nuon"
+        )
         | path expand
         | path sanitize
 }
