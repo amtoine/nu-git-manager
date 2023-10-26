@@ -96,7 +96,13 @@ export def "gm clone" [
     check-cache-file $cache_file
 
     print --no-newline "updating cache... "
-    open $cache_file | append $local_path | uniq | sort | save --force $cache_file
+    open --raw $cache_file
+        | from nuon
+        | append $local_path
+        | uniq
+        | sort
+        | to nuon
+        | save --force $cache_file
     print "done"
 
     null
@@ -119,7 +125,7 @@ export def "gm list" [
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
 
-    let repos = open $cache_file
+    let repos = open --raw $cache_file | from nuon
     if $full_path {
         $repos
     } else {
@@ -171,7 +177,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let cache_exists = ($cache | path type) == "file"
 
     let missing = if $cache_exists {
-        open $cache | where ($it | path type) != "dir"
+        open --raw $cache | from nuon | where ($it | path type) != "dir"
     } else {
         null
     }
@@ -201,7 +207,10 @@ export def "gm update-cache" []: nothing -> nothing {
     mkdir ($cache_file | path dirname)
 
     print --no-newline "updating cache... "
-    list-repos-in-store | save --force $cache_file
+    let foo = list-repos-in-store
+    print ($foo | describe)
+    print $foo
+    $foo | to nuon | save --force $cache_file
     print "done"
 
     null
@@ -272,7 +281,12 @@ export def "gm remove" [
     check-cache-file $cache_file
 
     print --no-newline "updating cache... "
-    open $cache_file | where $it != ($root | path join $repo_to_remove) | save --force $cache_file
+    open --raw $cache_file
+        | from nuon
+        | where $it != ($root
+        | path join $repo_to_remove)
+        | to nuon
+        | save --force $cache_file
     print "done"
 
     null
