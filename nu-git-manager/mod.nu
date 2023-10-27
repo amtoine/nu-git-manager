@@ -207,10 +207,7 @@ export def "gm update-cache" []: nothing -> nothing {
     mkdir ($cache_file | path dirname)
 
     print --no-newline "updating cache... "
-    let foo = list-repos-in-store
-    print ($foo | describe)
-    print $foo
-    $foo | to nuon | save --force $cache_file
+    list-repos-in-store | to nuon | save --force $cache_file
     print "done"
 
     null
