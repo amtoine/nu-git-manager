@@ -1,8 +1,7 @@
 use std log
 
-use fs/store.nu [
-    check-cache-file, get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
-]
+use fs/store.nu [get-repo-store-path, list-repos-in-store]
+use fs/cache.nu [get-repo-store-cache-path, check-cache-file]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {

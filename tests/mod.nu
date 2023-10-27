@@ -1,9 +1,8 @@
 use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../nu-git-manager/fs/store.nu [
-    get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
-]
+use ../nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
+use ../nu-git-manager/fs/cache.nu [get-repo-store-cache-path]
 use ../nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
