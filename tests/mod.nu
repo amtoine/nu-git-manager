@@ -183,19 +183,19 @@ export def cache-manipulation [] {
     [] | save-cache $CACHE
     assert cache []
 
-    add-to-cache $CACHE "foo"
+    add-to-cache $CACHE ("foo" | path expand | path sanitize)
     assert cache ["foo"]
 
-    add-to-cache $CACHE "bar"
+    add-to-cache $CACHE ("bar" | path expand | path sanitize)
     assert cache ["bar", "foo"]
 
-    add-to-cache $CACHE "baz"
+    add-to-cache $CACHE ("baz" | path expand | path sanitize)
     assert cache ["bar", "baz", "foo"]
 
-    remove-from-cache $CACHE "bar"
+    remove-from-cache $CACHE ("bar" | path expand | path sanitize)
     assert cache ["baz", "foo"]
 
-    remove-from-cache $CACHE "brr"
+    remove-from-cache $CACHE ("brr" | path expand | path sanitize)
     assert cache ["baz", "foo"]
 
     rm --recursive --verbose --force $CACHE_DIR
