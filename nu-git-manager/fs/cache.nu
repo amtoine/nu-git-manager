@@ -51,3 +51,8 @@ export def open-cache [cache_file: path]: nothing -> list<path> {
 export def save-cache [cache_file: path]: list<path> -> nothing {
     to nuon | save --force $cache_file
 }
+
+export def make-cache [cache_file: path]: nothing -> nothing {
+    rm --recursive --force $cache_file
+    mkdir ($cache_file | path dirname)
+}
