@@ -47,3 +47,7 @@ export def remove-from-cache [cache_file: path, old_path: path]: nothing -> noth
 export def open-cache [cache_file: path]: nothing -> list<path> {
     open --raw $cache_file | from nuon
 }
+
+export def save-cache [cache_file: path]: list<path> -> nothing {
+    to nuon | save --force $cache_file
+}

@@ -2,7 +2,8 @@ use std log
 
 use fs/store.nu [get-repo-store-path, list-repos-in-store]
 use fs/cache.nu [
-    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache
+    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
+    save-cache
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
@@ -201,7 +202,7 @@ export def "gm update-cache" []: nothing -> nothing {
     let foo = list-repos-in-store
     print ($foo | describe)
     print $foo
-    $foo | to nuon | save --force $cache_file
+    $foo | save-cache $cache_file
     print "done"
 
     null
