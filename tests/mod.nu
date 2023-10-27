@@ -162,18 +162,33 @@ export def cache-manipulation [] {
         $nu.temp-path | path join "nu-git-manager/tests" (random uuid) | path sanitize
     )
     let CACHE_DIR = $CACHE | path dirname
-    if ($CACHE_DIR | path exists) {
-        rm --recursive --verbose --force $CACHE_DIR
-    }
-    mkdir $CACHE_DIR
 
-    # TODO: the real testing
-    # - check-cache-file
-    # - add-to-cache
-    # - remove-from-cache
-    # - open-cache
-    # - save-cache
-    # - make-cache
+    def "assert cache" [cache: list<string>]: nothing -> nothing {
+        assert equal (open-cache $CACHE) ($cache | path expand | each { path sanitize })
+    }
+
+    assert error { check-cache-file $CACHE }
+
+    make-cache $CACHE
+    assert ($CACHE | path dirname | path exists)
+
+    [] | save-cache $CACHE
+    assert cache []
+
+    add-to-cache $CACHE "foo"
+    assert cache ["foo"]
+
+    add-to-cache $CACHE "bar"
+    assert cache ["bar", "foo"]
+
+    add-to-cache $CACHE "baz"
+    assert cache ["bar", "baz", "foo"]
+
+    remove-from-cache $CACHE "bar"
+    assert cache ["baz", "foo"]
+
+    remove-from-cache $CACHE "brr"
+    assert cache ["baz", "foo"]
 
     rm --recursive --verbose --force $CACHE_DIR
 }
