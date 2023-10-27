@@ -164,11 +164,13 @@ export def cache-manipulation [] {
     let CACHE_DIR = $CACHE | path dirname
 
     def "assert cache" [cache: list<string>]: nothing -> nothing {
-        let actual = open-cache $CACHE | str replace (pwd) '' | str trim --left --char '/'
+        let actual = open-cache $CACHE
+            | str replace (pwd | path sanitize) ''
+            | str trim --left --char '/'
         let expected = $cache
             | path expand
             | each { path sanitize }
-            | str replace (pwd) ''
+            | str replace (pwd | path sanitize) ''
             | str trim --left --char '/'
         assert equal $actual $expected
     }
