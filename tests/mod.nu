@@ -2,7 +2,10 @@ use std assert
 
 use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
 use ../nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
-use ../nu-git-manager/fs/cache.nu [get-repo-store-cache-path]
+use ../nu-git-manager/fs/cache.nu [
+    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
+    save-cache, make-cache
+]
 use ../nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
@@ -152,4 +155,25 @@ export def list-all-repos-in-store [] {
     assert equal ($actual | sort) ($expected | sort)
 
     rm --recursive --verbose --force $BASE
+}
+
+export def cache-manipulation [] {
+    let CACHE = (
+        $nu.temp-path | path join "nu-git-manager/tests" (random uuid) | path sanitize
+    )
+    let CACHE_DIR = $CACHE | path dirname
+    if ($CACHE_DIR | path exists) {
+        rm --recursive --verbose --force $CACHE_DIR
+    }
+    mkdir $CACHE_DIR
+
+    # TODO: the real testing
+    # - check-cache-file
+    # - add-to-cache
+    # - remove-from-cache
+    # - open-cache
+    # - save-cache
+    # - make-cache
+
+    rm --recursive --verbose --force $CACHE_DIR
 }
