@@ -13,6 +13,7 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 
         ["https", "use the HTTP protocol: will require a PAT authentification for private repositories"],
         ["ssh", "use the SSH protocol: will require a passphrase unless setup otherwise"],
+        ["git", "use the GIT protocol: useful when cloning a *Suckless* repo"],
     ]
 }
 
@@ -198,10 +199,7 @@ export def "gm update-cache" []: nothing -> nothing {
     make-cache $cache_file
 
     print --no-newline "updating cache... "
-    let foo = list-repos-in-store
-    print ($foo | describe)
-    print $foo
-    $foo | save-cache $cache_file
+    list-repos-in-store | to nuon | save --force $cache_file
     print "done"
 
     null
