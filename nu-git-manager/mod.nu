@@ -199,7 +199,7 @@ export def "gm update-cache" []: nothing -> nothing {
     make-cache $cache_file
 
     print --no-newline "updating cache... "
-    list-repos-in-store | to nuon | save --force $cache_file
+    list-repos-in-store | save-cache $cache_file
     print "done"
 
     null
