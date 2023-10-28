@@ -1,7 +1,9 @@
 use std log
 
-use fs/store.nu [
-    check-cache-file, get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+use fs/store.nu [get-repo-store-path, list-repos-in-store]
+use fs/cache.nu [
+    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
+    save-cache, make-cache
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
@@ -95,16 +97,7 @@ export def "gm clone" [
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-
-    print --no-newline "updating cache... "
-    open --raw $cache_file
-        | from nuon
-        | append $local_path
-        | uniq
-        | sort
-        | to nuon
-        | save --force $cache_file
-    print "done"
+    add-to-cache $cache_file $local_path
 
     null
 }
@@ -126,11 +119,10 @@ export def "gm list" [
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
 
-    let repos = open --raw $cache_file | from nuon
     if $full_path {
-        $repos
+        open-cache $cache_file
     } else {
-        $repos | each {
+        open-cache $cache_file | each {
             str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
@@ -178,7 +170,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let cache_exists = ($cache | path type) == "file"
 
     let missing = if $cache_exists {
-        open --raw $cache | from nuon | where ($it | path type) != "dir"
+        open-cache $cache | where ($it | path type) != "dir"
     } else {
         null
     }
@@ -204,11 +196,10 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 #     > gm update-cache
 export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
-    rm --recursive --force $cache_file
-    mkdir ($cache_file | path dirname)
+    make-cache $cache_file
 
     print --no-newline "updating cache... "
-    list-repos-in-store | to nuon | save --force $cache_file
+    list-repos-in-store | save-cache $cache_file
     print "done"
 
     null
@@ -277,15 +268,7 @@ export def "gm remove" [
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-
-    print --no-newline "updating cache... "
-    open --raw $cache_file
-        | from nuon
-        | where $it != ($root
-        | path join $repo_to_remove)
-        | to nuon
-        | save --force $cache_file
-    print "done"
+    remove-from-cache $cache_file ($root | path join $repo_to_remove)
 
     null
 }
