@@ -64,6 +64,7 @@ export def "gm clone" [
     --fetch: string@"nu-complete git-protocols" # setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
     --push: string@"nu-complete git-protocols" # setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
     --bare # clone the repository as a "bare" project
+    --depth: int # the depth at which to clone the repository
 ]: nothing -> nothing {
     let repository = $url | parse-git-url
 
@@ -86,10 +87,30 @@ export def "gm clone" [
 
     let urls = get-fetch-push-urls $repository $fetch $push $ssh
 
-    if $bare {
-        ^git clone $urls.fetch $local_path --origin $remote --bare
+    if $depth != null {
+        if ($depth < 1) {
+            let span = metadata $depth | get span
+            error make {
+                msg: $"(ansi red_bold)invalid_clone_depth(ansi reset)"
+                label: {
+                    text: $"clone depth should be strictly positive, found ($depth)"
+                    start: $span.start
+                    end: $span.end
+                }
+            }
+        }
+
+        if $bare {
+            ^git clone $urls.fetch $local_path --origin $remote --depth $depth --bare
+        } else {
+            ^git clone $urls.fetch $local_path --origin $remote --depth $depth
+        }
     } else {
-        ^git clone $urls.fetch $local_path --origin $remote
+        if $bare {
+            ^git clone $urls.fetch $local_path --origin $remote --bare
+        } else {
+            ^git clone $urls.fetch $local_path --origin $remote
+        }
     }
 
     ^git -C $local_path remote set-url $remote $urls.fetch
