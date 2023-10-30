@@ -9,7 +9,7 @@ name: continuous-integration
 
 defaults:
   run:
-    shell: bash
+    shell: nu {0}
 
 env:
   NU_LOG_LEVEL: DEBUG
@@ -26,54 +26,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set platform-specific variables
-        run: |
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            echo "ARCH=x86_64-linux-gnu-full" >> $GITHUB_ENV
-            echo "EXT=tar.gz" >> $GITHUB_ENV
-            echo "NU_BIN=nu" >> $GITHUB_ENV
-            echo "NUPM=$HOME/nupm" >> $GITHUB_ENV
-          elif [ "${{ runner.os }}" = "Windows" ]; then
-            echo "ARCH=x86_64-pc-windows-msvc" >> $GITHUB_ENV
-            echo "EXT=zip" >> $GITHUB_ENV
-            echo "NU_BIN=nu.exe" >> $GITHUB_ENV
-            # NOTE: for some reason, `$HOME` gives an incorrect path on Windows, e.g. it looks like
-            # `/c/Users/runneradmin` where it should really be `c:\Users\runneradmin`: this commands
-            # changes the `/` into `\` and replaces the first part of the path with "x:\"
-            echo "NUPM=$(echo $HOME | tr '/' '\\' | sed 's/^\\\(.\)\\/\1:\\/')/nupm" >> $GITHUB_ENV
-          elif [ "${{ runner.os }}" = "macOS" ]; then
-            echo "ARCH=x86_64-apple-darwin" >> $GITHUB_ENV
-            echo "EXT=tar.gz" >> $GITHUB_ENV
-            echo "NU_BIN=nu" >> $GITHUB_ENV
-            echo "NUPM=$HOME/nupm" >> $GITHUB_ENV
-          fi
-
-      - name: Install Nushell from Nightly
-        run: |
-          tarball=$(\
-            curl -L https://api.github.com/repos/nushell/nightly/releases \
-                | jq 'sort_by(.published_at) | reverse | .[0].assets'\
-                | jq '.[] | select(.name | test("${{ env.ARCH }}.${{ env.EXT }}")) | {name, browser_download_url}'\
-            )
-          name=$(echo $tarball | jq '.name' | tr -d '"' | sed 's/.${{ env.EXT }}$//')
-          url=$(echo $tarball | jq '.browser_download_url' | tr -d '"')
-
-          curl -fLo $name $url
-
-          if [ "${{ env.EXT }}" = "tar.gz" ]; then
-            tar xvf $name --directory /tmp
-          elif [ "${{ env.EXT }}" = "zip" ]; then
-            unzip $name -d "/tmp/$name"
-          fi
-          cp "/tmp/$name/${{ env.NU_BIN }}" "$HOME/${{ env.NU_BIN }}"
+      - uses: hustcer/setup-nu@v3.6
+        with:
+          version: '0.86'
 
       - name: Install Nupm from Source
-        run: git clone https://github.com/nushell/nupm "${{ env.NUPM }}"
+        run: git clone https://github.com/nushell/nupm ~/nupm/
 
       - name: Show Nushell Version
-        run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "version"
+        run: version
 
       - name: Run the tests
         run: |
-          "$HOME/${{ env.NU_BIN }}" --commands "use ${{ env.NUPM }}/nupm/; nupm test"
+          use ~/nupm/nupm/
+          nupm test
