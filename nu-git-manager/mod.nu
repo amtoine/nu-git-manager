@@ -57,6 +57,9 @@ export def "gm" []: nothing -> nothing {
 #
 #     setup a public repo in the local store and use HTTP to fetch without PAT and push with SSH
 #     > gm clone https://github.com/amtoine/nu-git-manager --fetch https --push ssh
+#
+#     clone a big repo as a single commit, avoiding all intermediate Git deltas
+#     > gm clone https://github.com/neovim/neovim --depth 1
 export def "gm clone" [
     url: string # the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
     --remote: string = "origin" # the name of the remote to setup
@@ -64,6 +67,7 @@ export def "gm clone" [
     --fetch: string@"nu-complete git-protocols" # setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
     --push: string@"nu-complete git-protocols" # setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
     --bare # clone the repository as a "bare" project
+    --depth: int # the depth at which to clone the repository
 ]: nothing -> nothing {
     let repository = $url | parse-git-url
 
@@ -86,11 +90,32 @@ export def "gm clone" [
 
     let urls = get-fetch-push-urls $repository $fetch $push $ssh
 
-    if $bare {
-        ^git clone $urls.fetch $local_path --origin $remote --bare
+    mut args = [$urls.fetch $local_path --origin $remote]
+    if $depth != null {
+        if ($depth < 1) {
+            let span = metadata $depth | get span
+            error make {
+                msg: $"(ansi red_bold)invalid_clone_depth(ansi reset)"
+                label: {
+                    text: $"clone depth should be strictly positive, found ($depth)"
+                    start: $span.start
+                    end: $span.end
+                }
+            }
+        }
+
+        $args = ($args ++ --depth ++ $depth)
+
+        if $bare {
+            $args = ($args ++ --bare)
+        }
     } else {
-        ^git clone $urls.fetch $local_path --origin $remote
+        if $bare {
+            $args = ($args ++ --bare)
+        }
     }
+
+    ^git clone $args
 
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
