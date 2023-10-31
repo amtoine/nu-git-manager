@@ -87,6 +87,7 @@ export def "gm clone" [
 
     let urls = get-fetch-push-urls $repository $fetch $push $ssh
 
+    mut args = [$urls.fetch $local_path --origin $remote]
     if $depth != null {
         if ($depth < 1) {
             let span = metadata $depth | get span
@@ -100,18 +101,18 @@ export def "gm clone" [
             }
         }
 
+        $args = ($args ++ --depth ++ $depth)
+
         if $bare {
-            ^git clone $urls.fetch $local_path --origin $remote --depth $depth --bare
-        } else {
-            ^git clone $urls.fetch $local_path --origin $remote --depth $depth
+            $args = ($args ++ --bare)
         }
     } else {
         if $bare {
-            ^git clone $urls.fetch $local_path --origin $remote --bare
-        } else {
-            ^git clone $urls.fetch $local_path --origin $remote
+            $args = ($args ++ --bare)
         }
     }
+
+    ^git clone $args
 
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
