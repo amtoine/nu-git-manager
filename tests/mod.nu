@@ -1,12 +1,12 @@
 use std assert
 
-use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
-use ../nu-git-manager/fs/cache.nu [
+use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
+use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
+use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, make-cache
 ]
-use ../nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
     assert equal ('\foo\bar' | path sanitize) "/foo/bar"

@@ -48,9 +48,9 @@ in your `config.nu` you can add the following to load `nu-git-manager` modules:
 use nu-git-manager *
 
 # the following are non-essential modules
-use nu-git-manager sugar git                # augmnet Git with custom commands
-use nu-git-manager sugar gh                 # load commands to interact with *GitHub*
-use nu-git-manager sugar gist               # load commands to interact with *GitHub* gists
+use nu-git-manager-sugar git                # augment Git with custom commands
+use nu-git-manager-sugar gh                 # load commands to interact with *GitHub*
+use nu-git-manager-sugar gist               # load commands to interact with *GitHub* gists
 ```
 
 then you have access to the whole `nu-git-manager` suite :partying_face:
