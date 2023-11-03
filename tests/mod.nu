@@ -221,6 +221,7 @@ export def install-package [] {
 
     with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
         # FIXME: use --no-confirm option
+        # related to https://github.com/nushell/nupm/pull/42
         mkdir $env.NUPM_HOME;
         nupm install --path .
 

@@ -38,6 +38,7 @@ jobs:
           use /tmp/nupm/nupm
           with-env {NUPM_HOME: ("~/.local/share/nupm" | path expand)} {
             # FIXME: use --no-confirm option
+            # related to https://github.com/nushell/nupm/pull/42
             mkdir ("~/.local/share/nupm" | path expand)
             nupm install --force --path /tmp/nupm
           }
