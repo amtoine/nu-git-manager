@@ -47,5 +47,5 @@ jobs:
 
       - name: Run the tests
         run: |
-          use nupm
+          use ~/.local/share/nupm/modules/nupm
           nupm test
