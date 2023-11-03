@@ -31,7 +31,7 @@ jobs:
           version: '0.86'
 
       - name: Install Nupm from Source
-        run: git clone https://github.com/nushell/nupm ~/nupm/
+        run: git clone --depth 1 https://github.com/nushell/nupm ~/nupm/
 
       - name: Show Nushell Version
         run: version
