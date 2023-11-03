@@ -36,7 +36,10 @@ jobs:
       - name: Install Nupm
         run: |
           use /tmp/nupm/nupm
-          nupm install --force --path /tmp/nupm
+          with-env {NUPM_HOME: ~/.local/share/nupm} {
+            mkdir ~/.local/share/nupm
+            nupm install --force --path /tmp/nupm
+          }
 
       - name: Show Nushell Version
         run: version
