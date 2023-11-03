@@ -36,9 +36,9 @@ jobs:
       - name: Install Nupm
         run: |
           use /tmp/nupm/nupm
-          with-env {NUPM_HOME: ~/.local/share/nupm} {
+          with-env {NUPM_HOME: ("~/.local/share/nupm" | path expand)} {
             # FIXME: use --no-confirm option
-            mkdir ~/.local/share/nupm
+            mkdir ("~/.local/share/nupm" | path expand)
             nupm install --force --path /tmp/nupm
           }
 
