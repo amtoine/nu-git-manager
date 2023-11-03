@@ -216,6 +216,7 @@ export def cache-manipulation [] {
 }
 
 export def install-package [] {
+    # FIXME: is there a way to not rely on hardcoded paths here?
     use ~/.local/share/nupm/modules/nupm
 
     with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
