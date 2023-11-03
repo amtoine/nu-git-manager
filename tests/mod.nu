@@ -214,3 +214,17 @@ export def cache-manipulation [] {
 
     rm --recursive --verbose --force $CACHE_DIR
 }
+
+export def install-package [] {
+    use ~/.local/share/nupm/modules/nupm
+
+    with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
+        mkdir $env.NUPM_HOME;
+        nupm install --path .
+
+        assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
+
+        rm --recursive --force --verbose $env.NUPM_HOME
+    }
+}
