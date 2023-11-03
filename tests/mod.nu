@@ -214,3 +214,20 @@ export def cache-manipulation [] {
 
     rm --recursive --verbose --force $CACHE_DIR
 }
+
+export def install-package [] {
+    # FIXME: is there a way to not rely on hardcoded paths here?
+    use ~/.local/share/nupm/modules/nupm
+
+    with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
+        # FIXME: use --no-confirm option
+        # related to https://github.com/nushell/nupm/pull/42
+        mkdir $env.NUPM_HOME;
+        nupm install --path .
+
+        assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
+
+        rm --recursive --force --verbose $env.NUPM_HOME
+    }
+}
