@@ -1,6 +1,7 @@
 use std assert
 
 use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
+use ../src/nu-git-manager/git/repo.nu [is-grafted]
 use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
 use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
@@ -234,4 +235,33 @@ export def install-package [] {
 
         rm --recursive --force --verbose $env.NUPM_HOME
     }
+}
+
+export def detect-grafting [] {
+    let BASE = $nu.temp-path | path join "nu-git-manager/tests" (random uuid)
+    if ($BASE | path exists) {
+        rm --recursive --verbose --force $BASE
+    }
+    mkdir $BASE
+
+    do {
+        cd $BASE
+
+        ^git init base
+
+        [c1, c2, c3] | each {
+            ^git -C base commit --allow-empty --no-verify --no-gpg-sign --message $in
+        }
+
+        ^git clone $"file://($BASE)/base" graft_1 --depth 1
+        ^git clone $"file://($BASE)/base" graft_3 --depth 3
+        ^git clone $"file://($BASE)/base" no_graft
+    }
+
+    assert not (is-grafted ($BASE | path join "base"))
+    assert not (is-grafted ($BASE | path join "no_graft"))
+    assert (is-grafted ($BASE | path join "graft_1"))
+    assert (is-grafted ($BASE | path join "graft_3"))
+
+    rm --recursive --force --verbose $BASE
 }
