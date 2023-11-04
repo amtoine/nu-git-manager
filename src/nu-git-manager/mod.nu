@@ -3,7 +3,7 @@ use std log
 use fs/store.nu [get-repo-store-path, list-repos-in-store]
 use fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
-    save-cache, make-cache
+    save-cache, clean-cache-dir
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 
@@ -221,7 +221,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 #     > gm update-cache
 export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
-    make-cache $cache_file
+    clean-cache-dir $cache_file
 
     print --no-newline "updating cache... "
     list-repos-in-store | save-cache $cache_file

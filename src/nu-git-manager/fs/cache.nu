@@ -42,7 +42,7 @@ export def remove-from-cache [cache_file: path, old_path: path]: nothing -> noth
     print "done"
 }
 
-export def make-cache [cache_file: path]: nothing -> nothing {
+export def clean-cache-dir [cache_file: path]: nothing -> nothing {
     rm --recursive --force $cache_file
     mkdir ($cache_file | path dirname)
 }
