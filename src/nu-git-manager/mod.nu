@@ -129,6 +129,8 @@ export def "gm clone" [
 
 # list all the local repositories in your local store
 #
+# /!\ this command will return sanitized paths. /!\
+#
 # # Examples
 #     list all the repositories in the store
 #     > gm list
@@ -154,6 +156,8 @@ export def "gm list" [
 }
 
 # get current status about the repositories managed by `nu-git-manager`
+#
+# /!\ `$.root.path` and `$.cache.path` will be sanitized /!\
 #
 # Examples
 #     getting status when everything is fine
