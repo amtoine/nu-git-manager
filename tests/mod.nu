@@ -4,7 +4,7 @@ use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
 use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
 use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
-    save-cache, make-cache
+    save-cache, clean-cache-dir
 ]
 use ../src/nu-git-manager/fs/path.nu "path sanitize"
 
@@ -193,7 +193,7 @@ export def cache-manipulation [] {
 
     assert error { check-cache-file $CACHE }
 
-    make-cache $CACHE
+    clean-cache-dir $CACHE
     assert ($CACHE | path dirname | path exists)
 
     [] | save-cache $CACHE

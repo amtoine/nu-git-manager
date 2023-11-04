@@ -1,5 +1,13 @@
 use ../fs/path.nu "path sanitize"
 
+# parse the URL of a Git repo
+#
+# this command will isolate
+# - the host, e.g. `github.com`
+# - the owner, e.g. `amtoine`
+# - the group, e.g. GitLab repos can be stored in subgroups, which can either be seen as subfields
+#   to the owner or superfields of the repo
+# - the repo, e.g. `nu-git-manager`
 export def parse-git-url []: string -> record<host: string, owner: string, group: path, repo: string> {
     str replace --regex '^git@(.*):' 'ssh://$1/'
         | str replace --regex '\.git$' ''
@@ -29,11 +37,12 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
         | into record
 }
 
+# compute the FETCH and PUSH remote URLs for a parsed repository, based on user input
 export def get-fetch-push-urls [
-    repository: record<host: string, owner: string, group: path, repo: string>, # typically from `parse-git-url`
-    fetch: string, # one of 'https', 'ssh', 'git', or empty
-    push: string, # one of 'https', 'ssh', 'git', or empty
-    ssh: bool,
+    repository: record<host: string, owner: string, group: path, repo: string>, # the parsed repository (typically from `parse-git-url`)
+    fetch: string, # user input: one of 'https', 'ssh', 'git', or empty (typically from `gm clone --fetch`)
+    push: string, # user input: one of 'https', 'ssh', 'git', or empty (typically from `gm clone --push`)
+    ssh: bool, # user input (typically from `gm clone --ssh`)
 ]: nothing -> record<fetch: string, push: string> {
     let base_url = {
         scheme: null,
