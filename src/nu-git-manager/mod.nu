@@ -6,6 +6,7 @@ use fs/cache.nu [
     save-cache, make-cache
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
+use error/error.nu [throw-error]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
     [
@@ -77,13 +78,14 @@ export def "gm clone" [
         | path join
 
     if ($local_path | path exists) {
-        let span = metadata $url | get span
-        error make {
-            msg: $"(ansi red_bold)repository_already_in_store(ansi reset)"
+        throw-error {
+            msg: "repository_already_in_store"
             label: {
-                text: $"this repository has already been cloned by (ansi {fg: "default_dimmed", attr: "it"})gm(ansi reset)"
-                start: $span.start
-                end: $span.end
+                text: (
+                    "this repository has already been cloned by "
+                 + $"(ansi {fg: "default_dimmed", attr: "it"})gm(ansi reset)"
+                )
+                span: (metadata $url | get span)
             }
         }
     }
@@ -93,13 +95,11 @@ export def "gm clone" [
     mut args = [$urls.fetch $local_path --origin $remote]
     if $depth != null {
         if ($depth < 1) {
-            let span = metadata $depth | get span
-            error make {
-                msg: $"(ansi red_bold)invalid_clone_depth(ansi reset)"
+            throw-error {
+                msg: "invalid_clone_depth"
                 label: {
                     text: $"clone depth should be strictly positive, found ($depth)"
-                    start: $span.start
-                    end: $span.end
+                    span: (metadata $depth | get span)
                 }
             }
         }
@@ -254,13 +254,14 @@ export def "gm remove" [
 
     let repo_to_remove = match ($choices | length) {
         0 => {
-            let span = metadata $pattern | get span
-            error make {
-                msg: $"(ansi red_bold)no_matching_repository(ansi reset)"
+            throw-error {
+                msg: "no_matching_repository"
                 label: {
-                    text: $"no repository matching this in (ansi {fg: "default_dimmed", attr: "it"})($root)(ansi reset)"
-                    start: $span.start
-                    end: $span.end
+                    text: (
+                        "no repository matching this in "
+                     + $"(ansi {fg: "default_dimmed", attr: "it"})($root)(ansi reset)"
+                    )
+                    span: (metadata $pattern | get span)
                 }
             }
         },
