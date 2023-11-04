@@ -27,18 +27,22 @@ export def open-cache [cache_file: path]: nothing -> list<path> {
 }
 
 export def save-cache [cache_file: path]: list<path> -> nothing {
-    to nuon | save --force $cache_file
+    each { path sanitize } | to nuon | save --force $cache_file
 }
 
 export def add-to-cache [cache_file: path, new_path: path]: nothing -> nothing {
     print --no-newline "updating cache... "
-    open-cache $cache_file | append $new_path | uniq | sort | save-cache $cache_file
+    open-cache $cache_file
+        | append ($new_path | path sanitize)
+        | uniq
+        | sort
+        | save-cache $cache_file
     print "done"
 }
 
 export def remove-from-cache [cache_file: path, old_path: path]: nothing -> nothing {
     print --no-newline "updating cache... "
-    open-cache $cache_file | where $it != $old_path | save-cache $cache_file
+    open-cache $cache_file | where $it != ($old_path | path sanitize) | save-cache $cache_file
     print "done"
 }
 
