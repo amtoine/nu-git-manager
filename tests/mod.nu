@@ -151,9 +151,9 @@ export def list-all-repos-in-store [] {
 
     for repo in $store {
         if $repo.is_bare {
-            git init --bare ($BASE | path join $repo.path)
+            ^git init --bare ($BASE | path join $repo.path)
         } else {
-            git init ($BASE | path join $repo.path)
+            ^git init ($BASE | path join $repo.path)
         }
     }
 
