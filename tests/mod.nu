@@ -130,6 +130,8 @@ export def list-all-repos-in-store [] {
         $nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store" | path sanitize
     )
 
+    assert length (with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store }) 0
+
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
     }
