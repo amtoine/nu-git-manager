@@ -199,6 +199,8 @@ export def cache-manipulation [] {
     [] | save-cache $CACHE
     assert cache []
 
+    check-cache-file $CACHE
+
     add-to-cache $CACHE ("foo" | path expand | path sanitize)
     assert cache ["foo"]
 
