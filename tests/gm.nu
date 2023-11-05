@@ -1,0 +1,43 @@
+use std assert
+
+use ../src/nu-git-manager/ *
+
+def run-with-env [code: closure, --prepare-cache] {
+    # NOTE: for the CI to run, the repos need to live inside `HOME`
+    let TEST_ENV_BASE = ($nu.home-path | path join "nu-git-manager/tests" (random uuid))
+
+    let TEST_ENV = {
+        GIT_REPOS_HOME: ($TEST_ENV_BASE | path join "repos/"),
+        GIT_REPOS_CACHE: ($TEST_ENV_BASE | path join "repos.cache"),
+    }
+
+    for target in ($TEST_ENV | values) {
+        if ($target | path exists) { rm --recursive --force --verbose $target }
+    }
+
+    if $prepare_cache {
+        with-env $TEST_ENV { gm update-cache }
+    }
+
+    with-env $TEST_ENV $code
+}
+
+export def error-with-empty-store [] {
+    run-with-env {
+        assert error { gm list }
+    }
+}
+
+export def cache-update [] {
+    run-with-env {
+        gm update-cache
+        assert equal (gm list) []
+    }
+}
+
+export def clone [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+        assert equal (gm list) ["github.com/amtoine/nu-git-manager"]
+    }
+}
