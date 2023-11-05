@@ -38,7 +38,7 @@ export def cache-update [] {
     }
 }
 
-export def clone [] {
+export def clone-invalid-depth [] {
     run-with-env --prepare-cache {
         # NOTE: full error
         # ```
@@ -50,10 +50,19 @@ export def clone [] {
         #    ╰────
         # ```
         assert error { gm clone https://github.com/amtoine/nu-git-manager --depth 0 }
+    }
+}
 
+export def clone-depth-1 [] {
+    run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager --depth 1
         assert equal (gm list) ["github.com/amtoine/nu-git-manager"]
+    }
+}
 
+export def clone-twice [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
         # NOTE: full error
         # ```
         # Error:   × repository_already_in_store
@@ -65,7 +74,9 @@ export def clone [] {
         # ```
         assert error { gm clone https://github.com/amtoine/nu-git-manager }
     }
+}
 
+export def clone-full-repo [] {
     run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager
 
