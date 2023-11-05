@@ -98,13 +98,24 @@ export def clone-bare [] {
     }
 }
 
-export def clone-set-remote-name [] {
+export def clone-set-remote [] {
     run-with-env --prepare-cache {
-        gm clone https://github.com/amtoine/nu-git-manager --remote test-remote-name
+        let url = "https://github.com/amtoine/nu-git-manager"
+        gm clone $url --remote test-remote-name --fetch https --push ssh
 
         let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
 
-        assert equal (git -C $repo remote | lines) [test-remote-name]
+        let actual = git -C $repo remote --verbose
+            | lines
+            | parse --regex '(?<remote>[-_\w]+)\s+(?<url>.*) \((?<mode>\w+)\)'
+            | str trim
+        let expected = [
+            [remote, url, mode];
+
+            [test-remote-name, "https://github.com/amtoine/nu-git-manager", fetch],
+            [test-remote-name, "ssh://github.com/amtoine/nu-git-manager", push]
+        ]
+        assert equal $actual $expected
     }
 }
 
