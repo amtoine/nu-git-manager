@@ -35,7 +35,7 @@ export def "update-ignored-revisions" [] {
     [
         "# Run this command to always ignore formatting commits in `git blame`",
         "# ```",
-       $"# git config --global blame.ignoreRevsFile ($FILE)",
+       $"# git config blame.ignoreRevsFile ($FILE)",
         "# ```",
         $commits
     ] | str join "\n" | save --force $FILE
