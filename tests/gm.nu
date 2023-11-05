@@ -4,15 +4,11 @@ use ../src/nu-git-manager/ *
 
 def run-with-env [code: closure, --prepare-cache] {
     # NOTE: for the CI to run, the repos need to live inside `HOME`
-    let TEST_ENV_BASE = ($nu.home-path | path join "nu-git-manager/tests" (random uuid))
+    let TEST_ENV_BASE = ($nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid))
 
     let TEST_ENV = {
         GIT_REPOS_HOME: ($TEST_ENV_BASE | path join "repos/"),
         GIT_REPOS_CACHE: ($TEST_ENV_BASE | path join "repos.cache"),
-    }
-
-    for target in ($TEST_ENV | values) {
-        if ($target | path exists) { rm --recursive --force --verbose $target }
     }
 
     if $prepare_cache {
@@ -20,6 +16,8 @@ def run-with-env [code: closure, --prepare-cache] {
     }
 
     with-env $TEST_ENV $code
+
+    rm --recursive --force --verbose $TEST_ENV_BASE
 }
 
 export def error-with-empty-store [] {
