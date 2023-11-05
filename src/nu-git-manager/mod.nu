@@ -6,6 +6,7 @@ use fs/cache.nu [
     save-cache, clean-cache-dir
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
+use git/repo.nu [is-grafted, get-root-commit]
 use error/error.nu [throw-error]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
@@ -228,7 +229,11 @@ export def "gm update-cache" []: nothing -> nothing {
     clean-cache-dir $cache_file
 
     print --no-newline "updating cache... "
-    list-repos-in-store | save-cache $cache_file
+    list-repos-in-store | each {{
+        path: $in,
+        grafted: (is-grafted $in),
+        root: (get-root-commit $in)
+    }} | save-cache $cache_file
     print "done"
 
     null

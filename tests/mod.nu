@@ -180,15 +180,25 @@ export def cache-manipulation [] {
     )
     let CACHE_DIR = $CACHE | path dirname
 
+    const BASE_REPO = {
+        path: null,
+        grafted: false,
+        root: "",
+    }
+
     def "assert cache" [cache: list<string>]: nothing -> nothing {
         let actual = open-cache $CACHE
-            | str replace (pwd | path sanitize) ''
-            | str trim --left --char '/'
+            | update path { str replace (pwd | path sanitize) '' | str trim --left --char '/' }
         let expected = $cache
-            | path expand
-            | each { path sanitize }
-            | str replace (pwd | path sanitize) ''
-            | str trim --left --char '/'
+            | each {|it|
+                $BASE_REPO | update path {
+                    $it
+                        | path expand
+                        | path sanitize
+                        | str replace (pwd | path sanitize) ''
+                        | str trim --left --char '/'
+                }
+            }
         assert equal $actual $expected
     }
 
@@ -202,13 +212,13 @@ export def cache-manipulation [] {
 
     check-cache-file $CACHE
 
-    add-to-cache $CACHE ("foo" | path expand | path sanitize)
+    add-to-cache $CACHE ($BASE_REPO | update path { "foo" | path expand | path sanitize })
     assert cache ["foo"]
 
-    add-to-cache $CACHE ("bar" | path expand | path sanitize)
+    add-to-cache $CACHE ($BASE_REPO | update path { "bar" | path expand | path sanitize })
     assert cache ["bar", "foo"]
 
-    add-to-cache $CACHE ("baz" | path expand | path sanitize)
+    add-to-cache $CACHE ($BASE_REPO | update path { "baz" | path expand | path sanitize })
     assert cache ["bar", "baz", "foo"]
 
     remove-from-cache $CACHE ("bar" | path expand | path sanitize)

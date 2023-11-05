@@ -1,4 +1,5 @@
 use path.nu "path sanitize"
+use ../git/repo.nu [is-grafted]
 
 # get the path to the cache of the local store of repos
 #
@@ -29,24 +30,27 @@ export def check-cache-file [cache_file: path]: nothing -> nothing {
 # open the cache file
 #
 # /!\ this command will return sanitized paths if `add-to-cache` or `gm update-cache` have been used. /!\
-export def open-cache [cache_file: path]: nothing -> list<path> {
+export def open-cache [cache_file: path]: nothing -> table<path: path, grafted: bool, root: string> {
     open --raw $cache_file | from nuon
 }
 
 # save a list of paths to the cache file
 #
 # /!\ this command will sanitize the paths for the caller. /!\
-export def save-cache [cache_file: path]: list<path> -> nothing {
-    each { path sanitize } | to nuon | save --force $cache_file
+export def save-cache [cache_file: path]: table<path: path, grafted: bool, root: string> -> nothing {
+    update path { path sanitize } | to nuon | save --force $cache_file
 }
 
 # add a new path to the cache file
 #
 # /!\ this command will sanitize the paths for the caller. /!\
-export def add-to-cache [cache_file: path, new_path: path]: nothing -> nothing {
+export def add-to-cache [
+    cache_file: path,
+    repo: record<path: string, grafted: bool, root: string>
+]: nothing -> nothing {
     print --no-newline "updating cache... "
     open-cache $cache_file
-        | append ($new_path | path sanitize)
+        | append $repo
         | uniq
         | sort
         | save-cache $cache_file
@@ -58,7 +62,7 @@ export def add-to-cache [cache_file: path, new_path: path]: nothing -> nothing {
 # /!\ this command will sanitize the paths for the caller. /!\
 export def remove-from-cache [cache_file: path, old_path: path]: nothing -> nothing {
     print --no-newline "updating cache... "
-    open-cache $cache_file | where $it != ($old_path | path sanitize) | save-cache $cache_file
+    open-cache $cache_file | where $it.path != ($old_path | path sanitize) | save-cache $cache_file
     print "done"
 }
 
