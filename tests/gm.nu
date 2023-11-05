@@ -88,6 +88,26 @@ export def clone-full-repo [] {
     }
 }
 
+export def clone-bare [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --bare
+
+        let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+
+        assert ($repo | path join "HEAD" | path exists)
+    }
+}
+
+export def clone-set-remote-name [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --remote test-remote-name
+
+        let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+
+        assert equal (git -C $repo remote | lines) [test-remote-name]
+    }
+}
+
 export def status [] {
     run-with-env {
         let BASE_STATUS = {
