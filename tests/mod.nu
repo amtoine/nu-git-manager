@@ -238,7 +238,8 @@ export def install-package [] {
 }
 
 export def detect-grafting [] {
-    let BASE = $nu.temp-path | path join "nu-git-manager/tests" (random uuid)
+    # NOTE: for the CI to run, the repos need to live inside `HOME`
+    let BASE = $nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid)
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
     }
