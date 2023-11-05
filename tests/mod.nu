@@ -191,6 +191,11 @@ export def cache-manipulation [] {
         assert equal $actual $expected
     }
 
+    # NOTE: full error
+    # ```
+    # Error:   × cache_not_found:
+    #   │ please run `gm update-cache` to create the cache
+    # ```
     assert error { check-cache-file $CACHE }
 
     clean-cache-dir $CACHE
