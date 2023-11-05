@@ -22,6 +22,11 @@ def run-with-env [code: closure, --prepare-cache] {
 
 export def error-with-empty-store [] {
     run-with-env {
+        # NOTE: the full error:
+        # ```
+        # Error:   × cache_not_found:
+        #   │ please run `gm update-cache` to create the cache
+        # ```
         assert error { gm list }
     }
 }
