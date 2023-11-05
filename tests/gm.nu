@@ -1,5 +1,6 @@
 use std assert
 
+use ../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../src/nu-git-manager/ *
 
 def run-with-env [code: closure, --prepare-cache] {
@@ -80,7 +81,9 @@ export def clone-full-repo [] {
     run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager
 
-        let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+        let repo = (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
+        )
 
         let actual = git -C $repo rev-list HEAD | lines | last
         let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
@@ -94,7 +97,7 @@ export def clone-bare [] {
 
         let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
 
-        assert ($repo | path join "HEAD" | path exists)
+        assert ($repo | path join "HEAD" | path sanitize | path exists)
     }
 }
 
@@ -103,7 +106,9 @@ export def clone-set-remote [] {
         let url = "https://github.com/amtoine/nu-git-manager"
         gm clone $url --remote test-remote-name --fetch https --push ssh
 
-        let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+        let repo = (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
+        )
 
         let actual = git -C $repo remote --verbose
             | lines
@@ -123,12 +128,12 @@ export def status [] {
     run-with-env {
         let BASE_STATUS = {
             root: {
-                path: $env.GIT_REPOS_HOME,
+                path: ($env.GIT_REPOS_HOME | path sanitize),
                 exists: false
             },
             missing: null,
             cache: {
-                path: $env.GIT_REPOS_CACHE,
+                path: ($env.GIT_REPOS_CACHE | path sanitize),
                 exists: false
             },
             should_update_cache: false
@@ -153,11 +158,14 @@ export def status [] {
             | update cache.exists true
         assert equal $actual $expected
 
-        rm ($env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager") --recursive
+        let repo = (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
+        )
+        rm $repo --recursive
 
         let actual = gm status
         let expected = $BASE_STATUS
-            | update missing [($env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager")]
+            | update missing [$repo]
             | update root.exists true
             | update cache.exists true
             | update should_update_cache true
