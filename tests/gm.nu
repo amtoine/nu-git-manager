@@ -65,6 +65,16 @@ export def clone [] {
         # ```
         assert error { gm clone https://github.com/amtoine/nu-git-manager }
     }
+
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager
+
+        let repo = $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+
+        let actual = git -C $repo rev-list HEAD | lines | last
+        let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
+        assert equal $actual $expected
+    }
 }
 
 export def status [] {
