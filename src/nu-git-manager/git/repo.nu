@@ -9,10 +9,17 @@ export def is-grafted [
 ]: nothing -> bool {
     let repo = $repo | default (pwd)
 
-    let root_commit = ^git -C $repo rev-list HEAD | lines | last
     not (
-        ^git -C $repo log --oneline --decorate $root_commit
+        ^git -C $repo log --oneline --decorate (get-root-commit $repo)
             | parse --regex '[0-9a-f]+ \(grafted.*'
             | is-empty
     )
+}
+
+export def get-root-commit [
+    repo?: path, # the path to the repository to check (defaults to `pwd`)
+]: nothing -> string {
+    let repo = $repo | default (pwd)
+
+    $"(^git -C $repo rev-list HEAD | lines | last)"
 }
