@@ -164,3 +164,47 @@ export def status [] {
         assert equal $actual $expected
     }
 }
+
+export def remove [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+        gm clone https://github.com/nushell/nupm --depth 1
+
+        assert equal (gm list) ["github.com/amtoine/nu-git-manager", "github.com/nushell/nupm"]
+
+        # NOTE: true error
+        # ```
+        # Error:   × no_matching_repository
+        #    ╭─[entry #8:1:1]
+        #  1 │ gm remove "foo"
+        #    ·           ──┬──
+        #    ·             ╰── no repository matching this in .../repos
+        #    ╰────
+        # ```
+        assert error { gm remove "not-in-store" --no-confirm }
+
+        # NOTE: true error
+        # ```
+        # Error:   × invalid_arguments_and_options:
+        #   │ no search pattern will match all projects and `--no-confirm` won't remove multiple directories
+        # ```
+        assert error { gm remove --no-confirm }
+
+        # NOTE: true error
+        # ```
+        # Error:   × invalid_arguments_and_options
+        #    ╭─[entry #3:1:1]
+        #  1 │ gm remove github --no-confirm
+        #    ·           ───┬──
+        #    ·              ╰── this pattern is too broad, multiple repos won't be removed by `--no-confirm`
+        #    ╰────
+        # ```
+        assert error { gm remove "github" --no-confirm }
+
+        gm remove "github.com/amtoine/nu-git-manager" --no-confirm
+        assert equal (gm list) ["github.com/nushell/nupm"]
+
+        gm remove "github.com/nushell/nupm" --no-confirm
+        assert equal (gm list) []
+    }
+}
