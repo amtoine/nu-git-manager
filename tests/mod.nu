@@ -1,7 +1,7 @@
 use std assert
 
 use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../src/nu-git-manager/git/repo.nu [is-grafted]
+use ../src/nu-git-manager/git/repo.nu [is-grafted, get-root-commit]
 use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
 use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
@@ -275,4 +275,13 @@ export def detect-grafting [] {
     assert (is-grafted ($BASE | path join "graft_3"))
 
     rm --recursive --force --verbose $BASE
+}
+
+export def root-commit [] {
+    let repo = $nu.temp-path | path join $"nu-git-manager-(random uuid)"
+    git clone https://github.com/amtoine/nu-git-manager $repo
+
+    let actual = get-root-commit $repo
+    let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
+    assert equal $actual $expected
 }
