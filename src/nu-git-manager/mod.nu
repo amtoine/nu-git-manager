@@ -123,7 +123,11 @@ export def "gm clone" [
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-    add-to-cache $cache_file $local_path
+    add-to-cache $cache_file {
+        path: $local_path,
+        grafted: (is-grafted $local_path),
+        root: (get-root-commit $local_path)
+    }
 
     null
 }
@@ -148,9 +152,9 @@ export def "gm list" [
     check-cache-file $cache_file
 
     if $full_path {
-        open-cache $cache_file
+        open-cache $cache_file | get path
     } else {
-        open-cache $cache_file | each {
+        open-cache $cache_file | get path | each {
             str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
