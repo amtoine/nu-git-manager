@@ -5,7 +5,7 @@ use ../src/nu-git-manager/ *
 
 def run-with-env [code: closure, --prepare-cache] {
     # NOTE: for the CI to run, the repos need to live inside `HOME`
-    let TEST_ENV_BASE = ($nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid))
+    let TEST_ENV_BASE = $nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid)
 
     let TEST_ENV = {
         GIT_REPOS_HOME: ($TEST_ENV_BASE | path join "repos"),
