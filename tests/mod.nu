@@ -183,7 +183,7 @@ export def cache-manipulation [] {
     const BASE_REPO = {
         path: null,
         grafted: false,
-        root: "",
+        root_hash: "",
     }
 
     def "assert cache" [cache: list<string>]: nothing -> nothing {

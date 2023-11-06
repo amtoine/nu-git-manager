@@ -30,14 +30,14 @@ export def check-cache-file [cache_file: path]: nothing -> nothing {
 # open the cache file
 #
 # /!\ this command will return sanitized paths if `add-to-cache` or `gm update-cache` have been used. /!\
-export def open-cache [cache_file: path]: nothing -> table<path: path, grafted: bool, root: string> {
+export def open-cache [cache_file: path]: nothing -> table<path: path, grafted: bool, root_hash: string> {
     open --raw $cache_file | from nuon
 }
 
 # save a list of paths to the cache file
 #
 # /!\ this command will sanitize the paths for the caller. /!\
-export def save-cache [cache_file: path]: table<path: path, grafted: bool, root: string> -> nothing {
+export def save-cache [cache_file: path]: table<path: path, grafted: bool, root_hash: string> -> nothing {
     update path { path sanitize } | to nuon | save --force $cache_file
 }
 
@@ -46,7 +46,7 @@ export def save-cache [cache_file: path]: table<path: path, grafted: bool, root:
 # /!\ this command will sanitize the paths for the caller. /!\
 export def add-to-cache [
     cache_file: path,
-    repo: record<path: string, grafted: bool, root: string>
+    repo: record<path: string, grafted: bool, root_hash: string>
 ]: nothing -> nothing {
     print --no-newline "updating cache... "
     open-cache $cache_file

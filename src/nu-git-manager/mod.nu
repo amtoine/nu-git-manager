@@ -124,7 +124,7 @@ export def "gm clone" [
     let repo = {
         path: $local_path,
         grafted: (is-grafted $local_path),
-        root: (get-root-commit $local_path)
+        root_hash: (get-root-commit $local_path)
     }
 
     let cache_file = get-repo-store-cache-path
@@ -139,7 +139,7 @@ export def "gm clone" [
             }
         }
     } else {
-        let forks = open-cache $cache_file | where root == $repo.root
+        let forks = open-cache $cache_file | where root_hash == $repo.root_hash
 
         if not ($forks | is-empty) {
             let msg = if ($forks | length) == 1 {
@@ -151,7 +151,7 @@ export def "gm clone" [
                 msg: "cloning_fork"
                 label: {
                     text: (
-                        $"this repo is a fork of (ansi cyan)($msg)(ansi reset) because they share the same root commit: (ansi magenta)($repo.root)(ansi reset)\n"
+                        $"this repo is a fork of (ansi cyan)($msg)(ansi reset) because they share the same root commit: (ansi magenta)($repo.root_hash)(ansi reset)\n"
                         + (
                             $forks | get path | each {
                                 let repo = $in
@@ -277,7 +277,7 @@ export def "gm update-cache" []: nothing -> nothing {
     list-repos-in-store | each {{
         path: $in,
         grafted: (is-grafted $in),
-        root: (get-root-commit $in)
+        root_hash: (get-root-commit $in)
     }} | save-cache $cache_file
     print "done"
 
