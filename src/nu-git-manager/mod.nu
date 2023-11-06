@@ -7,7 +7,7 @@ use fs/cache.nu [
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use git/repo.nu [is-grafted, get-root-commit]
-use error/error.nu [throw-error]
+use error/error.nu [throw-error, throw-warning]
 
 def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
     [
@@ -121,13 +121,54 @@ export def "gm clone" [
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
 
-    let cache_file = get-repo-store-cache-path
-    check-cache-file $cache_file
-    add-to-cache $cache_file {
+    let repo = {
         path: $local_path,
         grafted: (is-grafted $local_path),
         root: (get-root-commit $local_path)
     }
+
+    let cache_file = get-repo-store-cache-path
+    check-cache-file $cache_file
+
+    if $repo.grafted {
+        throw-warning {
+            msg: "cloning_grafted_repository",
+            label: {
+                text: "this repo is grafted, cannot detect forks",
+                span: (metadata $url).span
+            }
+        }
+    } else {
+        let forks = open-cache $cache_file | where root == $repo.root
+
+        if not ($forks | is-empty) {
+            let msg = if ($forks | length) == 1 {
+                "1 other repo"
+            } else {
+                $"($forks | length) other repos"
+            }
+            throw-warning {
+                msg: "cloning_fork"
+                label: {
+                    text: (
+                        $"this repo is a fork of (ansi cyan)($msg)(ansi reset) because they share the same root commit: (ansi magenta)($repo.root)(ansi reset)\n"
+                        + (
+                            $forks | get path | each {
+                                let repo = $in
+                                    | str replace (get-repo-store-path) ''
+                                    | str trim --left --char "/"
+                                $"- (ansi cyan)($repo)(ansi reset)"
+                            } | str join "\n"
+                        )
+
+                    )
+                    span: (metadata $url).span
+                }
+            }
+        }
+    }
+
+    add-to-cache $cache_file $repo
 
     null
 }
