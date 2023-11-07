@@ -245,9 +245,13 @@ export def "gm update-cache" []: nothing -> nothing {
 #
 #     remove a precise repo by giving its full name, a name collision is unlikely
 #     > gm remove amtoine/nu-git-manager
+#
+#     remove a precise repo without confirmation
+#     > gm remove amtoine/nu-git-manager --no-confirm
 export def "gm remove" [
     pattern?: string # a pattern to restrict the choices
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
+    --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
 ]: nothing -> nothing {
     let root = get-repo-store-path
     let choices = gm list
@@ -271,6 +275,29 @@ export def "gm remove" [
         },
         1 => { $choices | first },
         _ => {
+            if $no_confirm {
+                if $pattern == null {
+                    error make --unspanned {
+                        msg: (
+                            $"(ansi red_bold)invalid_arguments_and_options(ansi reset):\n"
+                          + "no search pattern will match all projects and `--no-confirm` won't "
+                          + "remove multiple directories"
+                        )
+                    }
+                } else {
+                    throw-error {
+                        msg: "invalid_arguments_and_options"
+                        label: {
+                            text: (
+                                "this pattern is too broad, multiple repos won't be removed by "
+                              + "`--no-confirm`"
+                            )
+                            span: (metadata $pattern | get span)
+                        }
+                    }
+                }
+            }
+
             let prompt = $"please choose a repository to (ansi red)remove(ansi reset)"
             let choice = if $fuzzy {
                 $choices | input list --fuzzy $prompt
@@ -287,14 +314,15 @@ export def "gm remove" [
         },
     }
 
-    let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
-    match (["no", "yes"] | input list $prompt) {
-        "no" => {
+    if not $no_confirm {
+        let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
+        if (["no", "yes"] | input list $prompt) == "no" {
             log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
             return
-        },
-        "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
+        }
     }
+
+    rm --recursive --force --verbose ($root | path join $repo_to_remove)
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
