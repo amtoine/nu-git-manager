@@ -7,6 +7,7 @@ use ../src/nu-git-manager/fs/cache.nu [
     save-cache, clean-cache-dir
 ]
 use ../src/nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 export def path-sanitization [] {
     assert equal ('\foo\bar' | path sanitize) "/foo/bar"
@@ -238,5 +239,42 @@ export def install-package [] {
         assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
 
         rm --recursive --force --verbose $env.NUPM_HOME
+    }
+}
+
+export def store-cleaning [] {
+    with-env {GIT_REPOS_HOME: "/tmp/nu-git-manager/foo"} {
+        mkdir $env.GIT_REPOS_HOME
+        touch ($env.GIT_REPOS_HOME | path join ".lock")
+
+        let empty_directories = [
+            foo/bar/
+            bar/
+            baz/foo/bar/
+        ]
+
+        let actual = $empty_directories
+            | each {|it|
+                let path = $env.GIT_REPOS_HOME | path join $it
+                mkdir $path
+
+                $path
+            }
+            | clean-empty-directories-rec
+            | str replace $env.GIT_REPOS_HOME ''
+            | str trim --char '/'
+        let expected = [
+            "foo/bar",
+            "bar",
+            "baz/foo/bar",
+            "foo",
+            "baz/foo",
+            "baz",
+            "",
+        ]
+
+        assert equal $actual $expected
+
+        rm --recursive --verbose --force $env.GIT_REPOS_HOME
     }
 }
