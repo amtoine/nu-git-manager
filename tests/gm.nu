@@ -246,17 +246,20 @@ export def store-cleaning-after-remove [] {
 export def store-cleaning [] {
     run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager --depth 1
-        rm --force --recursive --verbose (
-            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+
+        let repo = (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
         )
 
-        let expected = [($env.GIT_REPOS_HOME | path join "github.com/amtoine")]
+        rm --force --recursive --verbose $repo
+
+        let expected = [($repo | path dirname)]
         assert equal (gm clean --list) $expected
 
         let expected = [
-            ($env.GIT_REPOS_HOME | path join "github.com/amtoine")
-            ($env.GIT_REPOS_HOME | path join "github.com")
-            $env.GIT_REPOS_HOME
+            ($repo | path dirname)
+            ($repo | path dirname --num-levels 2)
+            ($repo | path dirname --num-levels 3)
         ]
         assert equal (gm clean) $expected
 

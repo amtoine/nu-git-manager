@@ -1,3 +1,5 @@
+use path.nu ["path sanitize"]
+
 # clean all empty directories recursively, starting from a list of empty leaves
 #
 # /!\ this command will return sanitized paths /!\
