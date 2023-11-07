@@ -319,11 +319,17 @@ export def "gm remove" [
         }
     }
 
-    rm --recursive --force --verbose ($root | path join $repo_to_remove)
+    let repo_to_remove = $root | path join $repo_to_remove
+
+    rm --recursive --force --verbose $repo_to_remove
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-    remove-from-cache $cache_file ($root | path join $repo_to_remove)
+    remove-from-cache $cache_file $repo_to_remove
+
+    if (ls ($repo_to_remove | path dirname) | is-empty) {
+        [($repo_to_remove | path dirname)] | clean-empty-directories-rec
+    }
 
     null
 }
