@@ -13,3 +13,9 @@ export def "test" [
         nupm test
     }
 }
+
+# install `nu-git-manager` with Nupm
+export def "install" [] {
+    use nupm
+    nupm install --force --path (^git rev-parse --show-toplevel)
+}
