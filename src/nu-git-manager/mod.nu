@@ -326,3 +326,50 @@ export def "gm remove" [
 
     null
 }
+
+# clean the store
+#
+# this command will mainly remove empty directory recursively.
+#
+# /!\ this command will return sanitized paths. /!\
+#
+# Examples
+#     clean the store
+#     > gm clean
+#
+#     list the leaves of the store that would have to be cleaned
+#     > gm clean --list
+export def "gm clean" [
+    --list # only list without cleaning
+]: nothing -> list<path> {
+    let empty_directories_in_store = ls (gm status | get root.path | path join "**")
+        | where (ls $it.name | is-empty)
+        | get name
+    let cached_repos = gm list --full-path
+
+    let empty_non_repo_directories_in_store = $empty_directories_in_store
+        | where not ($cached_repos | any {|repo| $it | str starts-with $repo})
+
+    if $list {
+        return $empty_non_repo_directories_in_store
+    }
+
+    let deleted = unfold $empty_non_repo_directories_in_store {|directories|
+        let next = $directories | each {|it|
+            ^rmdir $it
+
+            let parent = $it | path dirname;
+            if (ls $parent | is-empty) {
+                $parent
+            }
+        }
+
+        if ($next | is-empty) {
+            {out: $directories}
+        } else {
+            {out: $directories, next: $next}
+        }
+    }
+
+    $deleted | flatten
+}
