@@ -31,12 +31,16 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 # - `~/.cache/nu-git-manager/cache.nuon`
 #
 # # Examples
-#     a contrived example, assuming you are in `~`
-#     > GIT_REPOS_HOME=foo gm status | get root.path
+#     a contrived example to set the path to the root of the store
+#     > with-env { GIT_REPOS_HOME: ($nu.home-path | path join "foo") } {
+#           gm status | get root.path | str replace $nu.home-path '~'
+#       }
 #     ~/foo
 #
-#     a contrived example, assuming you are in `~`
-#     > XDG_CACHE_HOME=foo gm status | get cache.path
+#     a contrived example to set the path to the cache of the store
+#     > with-env { XDG_CACHE_HOME: ($nu.home-path | path join "foo") } {
+#           gm status | get cache.path | str replace $nu.home-path '~'
+#       }
 #     ~/foo/nu-git-manager/cache.nuon
 export def "gm" []: nothing -> nothing {
     print (help gm)
