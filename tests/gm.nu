@@ -231,3 +231,14 @@ export def remove [] {
         assert equal (gm list) []
     }
 }
+
+export def store-cleaning [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+        gm remove "github.com/amtoine/nu-git-manager" --no-confirm
+
+        # NOTE: the root should not exist anymore because there was only one repo in it and it's
+        # been cleaned
+        assert not ($env.GIT_REPOS_HOME | path exists)
+    }
+}
