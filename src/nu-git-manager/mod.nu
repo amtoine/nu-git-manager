@@ -352,6 +352,7 @@ export def "gm clean" [
     let empty_directories_in_store = ls (gm status | get root.path | path join "**")
         | where (ls $it.name | is-empty)
         | get name
+        | each { path sanitize }
     let cached_repos = gm list --full-path
 
     let empty_non_repo_directories_in_store = $empty_directories_in_store
