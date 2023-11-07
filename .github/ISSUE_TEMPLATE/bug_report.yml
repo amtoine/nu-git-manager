@@ -34,6 +34,9 @@ body:
         }
         ```
         then run all the `gm` commands inside `with-env $REPRO_ENV { ... }`
+
+        > **Note**
+        > alternately, you can skip the two steps above by using `toolkit run --clean { ... }`
       placeholder: |
         1. run `with-env $REPRO_ENV { gm clone https://github.com/amtoine/nu-git-manager }`
         2. run `with-env $REPRO_ENV { gm update-cache }`
