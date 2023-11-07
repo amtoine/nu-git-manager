@@ -316,14 +316,13 @@ export def "gm remove" [
 
     if not $no_confirm {
         let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
-        match (["no", "yes"] | input list $prompt) {
-            "no" => {
-                log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
-                return
-            },
-            "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
+        if (["no", "yes"] | input list $prompt) == "no" {
+            log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
+            return
         }
     }
+
+    rm --recursive --force --verbose ($root | path join $repo_to_remove)
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
