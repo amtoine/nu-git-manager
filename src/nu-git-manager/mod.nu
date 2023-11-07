@@ -5,6 +5,7 @@ use fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
+use fs/dir.nu [clean-empty-directories-rec]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use error/error.nu [throw-error]
 
@@ -354,22 +355,5 @@ export def "gm clean" [
         return $empty_non_repo_directories_in_store
     }
 
-    let deleted = unfold $empty_non_repo_directories_in_store {|directories|
-        let next = $directories | each {|it|
-            ^rmdir $it
-
-            let parent = $it | path dirname;
-            if (ls $parent | is-empty) {
-                $parent
-            }
-        }
-
-        if ($next | is-empty) {
-            {out: $directories}
-        } else {
-            {out: $directories, next: $next}
-        }
-    }
-
-    $deleted | flatten
+    $empty_non_repo_directories_in_store | clean-empty-directories-rec
 }
