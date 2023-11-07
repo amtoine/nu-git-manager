@@ -245,6 +245,8 @@ export def install-package [] {
 export def store-cleaning [] {
     with-env {GIT_REPOS_HOME: "/tmp/nu-git-manager/foo"} {
         mkdir $env.GIT_REPOS_HOME
+        # NOTE: this is to make sure the root of the test is not empty
+        # we don't want the test to go remove empty directories outside...
         touch ($env.GIT_REPOS_HOME | path join ".lock")
 
         let empty_directories = [
