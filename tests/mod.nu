@@ -258,6 +258,8 @@ export def store-cleaning [] {
         let actual = $empty_directories
             | each {|it|
                 let path = $env.GIT_REPOS_HOME | path join $it | path sanitize
+
+                print $"making `($path)`"
                 mkdir $path
 
                 $path
