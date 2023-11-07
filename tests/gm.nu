@@ -57,7 +57,12 @@ export def clone-invalid-depth [] {
 export def clone-depth-1 [] {
     run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager --depth 1
-        assert ($env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path exists)
+        assert (
+            $env.GIT_REPOS_HOME
+                | path join "github.com/amtoine/nu-git-manager"
+                | path sanitize
+                | path exists
+        )
         assert equal (gm list) ["github.com/amtoine/nu-git-manager"]
     }
 }
@@ -212,12 +217,17 @@ export def remove [] {
 
         gm remove "github.com/amtoine/nu-git-manager" --no-confirm
         assert not (
-            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path exists
+            $env.GIT_REPOS_HOME
+            | path join "github.com/amtoine/nu-git-manager"
+            | path sanitize
+            | path exists
         )
         assert equal (gm list) ["github.com/nushell/nupm"]
 
         gm remove "github.com/nushell/nupm" --no-confirm
-        assert not ($env.GIT_REPOS_HOME | path join "github.com/nushell/nupm" | path exists)
+        assert not (
+            $env.GIT_REPOS_HOME | path join "github.com/nushell/nupm" | path sanitize | path exists
+        )
         assert equal (gm list) []
     }
 }
