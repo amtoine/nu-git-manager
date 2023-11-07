@@ -265,7 +265,7 @@ export def store-cleaning [] {
                 $path
             }
             | clean-empty-directories-rec
-            | str replace $env.GIT_REPOS_HOME ''
+            | str replace ($env.GIT_REPOS_HOME | path sanitize) ''
             | str trim --char '/'
         let expected = [
             "foo/bar",
