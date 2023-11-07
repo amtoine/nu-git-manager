@@ -8,15 +8,7 @@ use fs/cache.nu [
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use error/error.nu [throw-error]
 
-def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
-    [
-        [value, description];
-
-        ["https", "use the HTTP protocol: will require a PAT authentification for private repositories"],
-        ["ssh", "use the SSH protocol: will require a passphrase unless setup otherwise"],
-        ["git", "use the GIT protocol: useful when cloning a *Suckless* repo"],
-    ]
-}
+use completions/nu-complete.nu
 
 # manage your Git repositories with the main command of `nu-git-manager`
 #
