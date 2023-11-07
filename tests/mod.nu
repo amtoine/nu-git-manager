@@ -243,7 +243,7 @@ export def install-package [] {
 }
 
 export def store-cleaning [] {
-    with-env {GIT_REPOS_HOME: "/tmp/nu-git-manager/foo"} {
+    with-env {GIT_REPOS_HOME: "/tmp/nu-git-manager/store-cleaning"} {
         mkdir $env.GIT_REPOS_HOME
         # NOTE: this is to make sure the root of the test is not empty
         # we don't want the test to go remove empty directories outside...
