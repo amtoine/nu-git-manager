@@ -232,10 +232,33 @@ export def remove [] {
     }
 }
 
-export def store-cleaning [] {
+export def store-cleaning-after-remove [] {
     run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager --depth 1
         gm remove "github.com/amtoine/nu-git-manager" --no-confirm
+
+        # NOTE: the root should not exist anymore because there was only one repo in it and it's
+        # been cleaned
+        assert not ($env.GIT_REPOS_HOME | path exists)
+    }
+}
+
+export def store-cleaning [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+        rm --force --recursive --verbose (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager"
+        )
+
+        let expected = [($env.GIT_REPOS_HOME | path join "github.com/amtoine")]
+        assert equal (gm clean --list) $expected
+
+        let expected = [
+            ($env.GIT_REPOS_HOME | path join "github.com/amtoine")
+            ($env.GIT_REPOS_HOME | path join "github.com")
+            $env.GIT_REPOS_HOME
+        ]
+        assert equal (gm clean) $expected
 
         # NOTE: the root should not exist anymore because there was only one repo in it and it's
         # been cleaned
