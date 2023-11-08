@@ -241,7 +241,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let cache_exists = ($cache | path type) == "file"
 
     let missing = if $cache_exists {
-        open-cache $cache | where ($it | path type) != "dir"
+        open-cache $cache | get path | where ($it | path type) != "dir"
     } else {
         null
     }
