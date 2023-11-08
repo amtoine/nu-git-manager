@@ -5,8 +5,9 @@ use fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
+use fs/path.nu ["path sanitize"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
-use git/repo.nu [is-grafted, get-root-commit]
+use git/repo.nu [is-grafted, get-root-commit, list-remotes]
 use error/error.nu [throw-error, throw-warning]
 
 use completions/nu-complete.nu
@@ -373,6 +374,52 @@ export def "gm remove" [
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
     remove-from-cache $cache_file ($root | path join $repo_to_remove)
+
+    null
+}
+
+# TODO: documentation
+# TODO: format
+# TODO: make non-interactive and test in the CI
+export def "gm fork" [] {
+    let status = gm status
+
+    let forks_to_squash = $status.cache.path | open $in --raw | from nuon | group-by root_hash | transpose k v | where ($it.v | length) > 1 | get v
+
+    if ($forks_to_squash | is-empty) {
+        print "no forks to squash"
+        return
+    }
+
+    $forks_to_squash | each {|forks|
+        let main = $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
+        if ($main | is-empty) {
+            continue
+        }
+
+        let main = $status.root.path | path join $main | path sanitize
+        print $"main: ($main)"
+        for fork in $forks.path {
+            if $fork != $main {
+                print $"fork: ($fork)"
+                let fork_origin = list-remotes $fork | where remote == "origin" | into record
+
+                let fork_name = $fork | path split | reverse | get 1
+                let fork_full_name = $fork | str replace $status.root.path '' | str trim --char '/'
+
+                print $"adding remote ($fork_name) in `($main)`"
+                ^git -C $main remote add ($fork_name) "PLACEHOLDER"
+
+                print $"setting FETCH remote of ($fork_name) to ($fork_origin.fetch) in `($main)`"
+                ^git -C $main remote set-url ($fork_name) $fork_origin.fetch
+                print $"setting PUSH remote of ($fork_name) to ($fork_origin.push) in `($main)`"
+                ^git -C $main remote set-url --push ($fork_name) $fork_origin.push
+
+                print $"removing fork ($fork_full_name)"
+                gm remove --no-confirm $fork_full_name
+            }
+        }
+    }
 
     null
 }
