@@ -1,4 +1,4 @@
-use ../fs/dir.nu [open-item]
+use fs/dir.nu [open-item]
 def check-gh-logged-in [] {
     let out = (do -i { gh auth status } | complete)
     if $out.exit_code != 0 {

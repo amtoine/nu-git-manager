@@ -1,10 +1,12 @@
 use std assert
 
-use ../nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../nu-git-manager/fs/store.nu [
-    get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
+use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
+use ../src/nu-git-manager/fs/cache.nu [
+    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
+    save-cache, clean-cache-dir
 ]
-use ../nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/path.nu "path sanitize"
 
 export def path-sanitization [] {
     assert equal ('\foo\bar' | path sanitize) "/foo/bar"
@@ -22,6 +24,7 @@ export def git-url-parsing [] {
         ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo", null,      "bar"],
         ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo", null,      "bar"],
         ["git@gitlab.com:foo/bar/baz/brr",              "gitlab.com", "foo", "bar/baz", "brr"],
+        ["git://git.suckless.org/st",             "git.suckless.org",  null, null,      "st"],
     ]
 
     for case in $cases {
@@ -41,21 +44,34 @@ export def fetch-and-push-urls [] {
         [false,   "",         "",        "https",        "https"],
         [false,   "",         "ssh",     "https",        "ssh"],
         [false,   "",         "https",   "https",        "https"],
+        [false,   "",         "git",     "https",        "git"],
         [false,   "ssh",      "",        "ssh",          "https"],
         [false,   "ssh",      "ssh",     "ssh",          "ssh"],
         [false,   "ssh",      "https",   "ssh",          "https"],
+        [false,   "ssh",      "git",     "ssh",          "git"],
+        [false,   "git",      "",        "git",          "https"],
+        [false,   "git",      "ssh",     "git",          "ssh"],
+        [false,   "git",      "https",   "git",          "https"],
+        [false,   "git",      "git",     "git",          "git"],
         [false,   "https",    "",        "https",        "https"],
         [false,   "https",    "ssh",     "https",        "ssh"],
         [false,   "https",    "https",   "https",        "https"],
+        [false,   "https",    "git",     "https",        "git"],
         [true,    "",         "",        "ssh",          "ssh"],
         [true,    "",         "ssh",     "ssh",          "ssh"],
         [true,    "",         "https",   "ssh",          "https"],
+        [true,    "",         "git",     "ssh",          "git"],
         [true,    "ssh",      "",        "ssh",          "ssh"],
         [true,    "ssh",      "ssh",     "ssh",          "ssh"],
         [true,    "ssh",      "https",   "ssh",          "https"],
+        [true,    "ssh",      "git",     "ssh",          "git"],
         [true,    "https",    "",        "https",        "ssh"],
         [true,    "https",    "ssh",     "https",        "ssh"],
         [true,    "https",    "https",   "https",        "https"],
+        [true,    "git",      "",        "git",          "ssh"],
+        [true,    "git",      "ssh",     "git",          "ssh"],
+        [true,    "git",      "https",   "git",          "https"],
+        [true,    "git",      "git",     "git",          "git"],
     ]
 
     let repo = {host: "h", owner: "o", group: "", repo: "r"}
@@ -114,6 +130,8 @@ export def list-all-repos-in-store [] {
         $nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store" | path sanitize
     )
 
+    assert length (with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store }) 0
+
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
     }
@@ -133,9 +151,9 @@ export def list-all-repos-in-store [] {
 
     for repo in $store {
         if $repo.is_bare {
-            git init --bare ($BASE | path join $repo.path)
+            ^git init --bare ($BASE | path join $repo.path)
         } else {
-            git init ($BASE | path join $repo.path)
+            ^git init ($BASE | path join $repo.path)
         }
     }
 
@@ -153,4 +171,72 @@ export def list-all-repos-in-store [] {
     assert equal ($actual | sort) ($expected | sort)
 
     rm --recursive --verbose --force $BASE
+}
+
+export def cache-manipulation [] {
+    let CACHE = (
+        $nu.temp-path | path join "nu-git-manager/tests" (random uuid) | path sanitize
+    )
+    let CACHE_DIR = $CACHE | path dirname
+
+    def "assert cache" [cache: list<string>]: nothing -> nothing {
+        let actual = open-cache $CACHE
+            | str replace (pwd | path sanitize) ''
+            | str trim --left --char '/'
+        let expected = $cache
+            | path expand
+            | each { path sanitize }
+            | str replace (pwd | path sanitize) ''
+            | str trim --left --char '/'
+        assert equal $actual $expected
+    }
+
+    # NOTE: full error
+    # ```
+    # Error:   × cache_not_found:
+    #   │ please run `gm update-cache` to create the cache
+    # ```
+    assert error { check-cache-file $CACHE }
+
+    clean-cache-dir $CACHE
+    assert ($CACHE | path dirname | path exists)
+
+    [] | save-cache $CACHE
+    assert cache []
+
+    check-cache-file $CACHE
+
+    add-to-cache $CACHE ("foo" | path expand | path sanitize)
+    assert cache ["foo"]
+
+    add-to-cache $CACHE ("bar" | path expand | path sanitize)
+    assert cache ["bar", "foo"]
+
+    add-to-cache $CACHE ("baz" | path expand | path sanitize)
+    assert cache ["bar", "baz", "foo"]
+
+    remove-from-cache $CACHE ("bar" | path expand | path sanitize)
+    assert cache ["baz", "foo"]
+
+    remove-from-cache $CACHE ("brr" | path expand | path sanitize)
+    assert cache ["baz", "foo"]
+
+    rm --recursive --verbose --force $CACHE_DIR
+}
+
+export def install-package [] {
+    # FIXME: is there a way to not rely on hardcoded paths here?
+    use ~/.local/share/nupm/modules/nupm
+
+    with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
+        # FIXME: use --no-confirm option
+        # related to https://github.com/nushell/nupm/pull/42
+        mkdir $env.NUPM_HOME;
+        nupm install --path .
+
+        assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
+
+        rm --recursive --force --verbose $env.NUPM_HOME
+    }
 }

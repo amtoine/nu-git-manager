@@ -4,12 +4,12 @@ A collection of Nushell tools to manage `git` repositories.
 # Table of content
 - [nu-git-manager](#nu-git-manager)
 - [Table of content](#table-of-content)
-  - [:bulb: what is `nu-git-manager` \[toc\]](#bulb-what-is-nu-git-manager-toc)
-  - [:link: requirements \[toc\]](#link-requirements-toc)
-  - [:recycle: installation \[toc\]](#recycle-installation-toc)
-  - [:gear: usage \[toc\]](#gear-usage-toc)
-    - [:pray: getting help \[toc\]](#pray-getting-help-toc)
-  - [:exclamation: some ideas of advanced (?) usage \[toc\]](#exclamation-some-ideas-of-advanced--usage-toc)
+  - [:bulb: what is `nu-git-manager`](#bulb-what-is-nu-git-manager-toc)
+  - [:link: requirements](#link-requirements-toc)
+  - [:recycle: installation](#recycle-installation-toc)
+  - [:gear: usage](#gear-usage-toc)
+    - [:pray: getting help](#pray-getting-help-toc)
+  - [:exclamation: some ideas of advanced (?) usage](#exclamation-some-ideas-of-advanced--usage-toc)
 
 ## :bulb: what is `nu-git-manager` [[toc](#table-of-content)]
 like [`ghq`](https://github.com/x-motemen/ghq), `nu-git-manager` aims at being a fully-featured
@@ -44,15 +44,13 @@ nupm install --path --force nu-git-manager
 ## :gear: usage [[toc](#table-of-content)]
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
 ```nu
-# config.nu
-
 # load the main `gm` command
-use nu-git-manager [gm, "gm clone", "gm list", "gm root", "gm remove"]
+use nu-git-manager *
 
 # the following are non-essential modules
-use nu-git-manager sugar git                # augmnet Git with custom commands
-use nu-git-manager sugar gh                 # load commands to interact with *GitHub*
-use nu-git-manager sugar gist               # load commands to interact with *GitHub* gists
+use nu-git-manager-sugar git                # augment Git with custom commands
+use nu-git-manager-sugar gh                 # load commands to interact with *GitHub*
+use nu-git-manager-sugar gist               # load commands to interact with *GitHub* gists
 ```
 
 then you have access to the whole `nu-git-manager` suite :partying_face:
