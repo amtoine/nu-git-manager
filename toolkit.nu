@@ -3,14 +3,15 @@
 # > **Important**  
 # > the `toolkit test` command requires [Nupm](https://github.com/nushell/nupm) to be installed
 export def "test" [
+    pattern?: string = "" # the pattern a test name should match to run
     --verbose # show the output of each tests
 ] {
     use nupm
 
     if $verbose {
-        nupm test --show-stdout
+        nupm test $pattern --show-stdout
     } else {
-        nupm test
+        nupm test $pattern
     }
 }
 
