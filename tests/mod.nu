@@ -152,9 +152,9 @@ export def list-all-repos-in-store [] {
 
     for repo in $store {
         if $repo.is_bare {
-            git init --bare ($BASE | path join $repo.path)
+            ^git init --bare ($BASE | path join $repo.path)
         } else {
-            git init ($BASE | path join $repo.path)
+            ^git init ($BASE | path join $repo.path)
         }
     }
 
@@ -202,6 +202,11 @@ export def cache-manipulation [] {
         assert equal $actual $expected
     }
 
+    # NOTE: full error
+    # ```
+    # Error:   × cache_not_found:
+    #   │ please run `gm update-cache` to create the cache
+    # ```
     assert error { check-cache-file $CACHE }
 
     clean-cache-dir $CACHE

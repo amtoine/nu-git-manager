@@ -56,4 +56,4 @@ jobs:
         run: |
           # FIXME: is there a way to not rely on hardcoded paths here?
           use ~/.local/share/nupm/modules/nupm
-          nupm test
+          nupm test --show-stdout
