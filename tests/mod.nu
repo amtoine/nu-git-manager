@@ -1,7 +1,7 @@
 use std assert
 
 use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../src/nu-git-manager/git/repo.nu [is-grafted, get-root-commit]
+use ../src/nu-git-manager/git/repo.nu [is-grafted, get-root-commit, list-remotes]
 use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
 use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
@@ -289,4 +289,24 @@ export def root-commit [] {
     let actual = get-root-commit $repo
     let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
     assert equal $actual $expected
+}
+
+export def remote-listing [] {
+    let repo = $nu.temp-path | path join $"nu-git-manager-(random uuid)"
+
+    git init $repo
+    git -C $repo remote add 0 0-default
+    git -C $repo remote add 1 1-fetch
+    git -C $repo remote set-url 1 --push 1-push
+    git -C $repo remote add 2 2-fetch
+    git -C $repo remote set-url 2 --push 2-push
+
+    let expected = [
+        [remote, fetch, push];
+
+        ["0", "0-default", "0-default"],
+        ["1", "1-fetch", "1-push"],
+        ["2", "2-fetch", "2-push"],
+    ]
+    assert equal (list-remotes $repo) $expected
 }

@@ -23,3 +23,17 @@ export def get-root-commit [
 
     $"(^git -C $repo rev-list HEAD | lines | last)"
 }
+
+export def list-remotes [
+    repo?: path, # the path to the repository to check (defaults to `pwd`)
+]: nothing -> table<remote: string, fetch: string, push: string> {
+    ^git -C ($repo | default (pwd)) remote --verbose show
+        | detect columns --no-headers
+        | str trim
+        | rename remote url mode
+        | group-by remote
+        | transpose k v
+        | update v { reject remote | select mode url | transpose --header-row | into record }
+        | flatten
+        | rename remote fetch push
+}
