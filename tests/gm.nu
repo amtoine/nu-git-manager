@@ -233,7 +233,8 @@ export def remove [] {
     }
 }
 
-export def merge-forks [] {
+# FIXME: make the fork-merging command of `gm` non-interactive to not ignore this test
+def merge-forks [] {
     run-with-env --prepare-cache {
         # this one shouldn't change
         gm clone https://github.com/amtoine/dotfiles --depth 1
