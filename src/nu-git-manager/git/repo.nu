@@ -16,6 +16,7 @@ export def is-grafted [
     )
 }
 
+# TODO: documentation
 export def get-root-commit [
     repo?: path, # the path to the repository to check (defaults to `pwd`)
 ]: nothing -> string {
@@ -24,6 +25,7 @@ export def get-root-commit [
     $"(^git -C $repo rev-list HEAD | lines | last)"
 }
 
+# TODO: documentation
 export def list-remotes [
     repo?: path, # the path to the repository to check (defaults to `pwd`)
 ]: nothing -> table<remote: string, fetch: string, push: string> {
