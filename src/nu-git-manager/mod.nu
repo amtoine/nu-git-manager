@@ -423,12 +423,6 @@ export def "gm squash-forks" [
     }
 
     $forks_to_squash | each {|forks|
-        # FIXME: this is a bug and should be
-        # ```
-        # let main = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0 | default (
-        #     $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
-        # )
-        # ```
         let default = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0
         let main = if $default == null {
             let choice = (
