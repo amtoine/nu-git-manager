@@ -381,7 +381,7 @@ export def "gm remove" [
 # TODO: documentation
 # TODO: format
 # TODO: make non-interactive and test in the CI
-export def "gm fork" [] {
+export def "gm squash-forks" [] {
     let status = gm status
 
     let forks_to_squash = $status.cache.path | open $in --raw | from nuon | group-by root_hash | transpose k v | where ($it.v | length) > 1 | get v
