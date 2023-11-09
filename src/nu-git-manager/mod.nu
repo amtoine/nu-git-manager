@@ -379,15 +379,19 @@ export def "gm remove" [
 }
 
 # TODO: documentation
-# TODO: format
 # TODO: make non-interactive and test in the CI
 export def "gm squash-forks" [] {
     let status = gm status
 
-    let forks_to_squash = $status.cache.path | open $in --raw | from nuon | group-by root_hash | transpose k v | where ($it.v | length) > 1 | get v
+    let forks_to_squash = open $status.cache.path --raw
+        | from nuon
+        | group-by root_hash
+        | transpose k v
+        | where ($it.v | length) > 1
+        | get v
 
     if ($forks_to_squash | is-empty) {
-        print "no forks to squash"
+        log info "no forks to squash"
         return
     }
 
@@ -397,25 +401,27 @@ export def "gm squash-forks" [] {
             continue
         }
 
+        log debug $"squashing into ($main)"
+
         let main = $status.root.path | path join $main | path sanitize
-        print $"main: ($main)"
         for fork in $forks.path {
             if $fork != $main {
-                print $"fork: ($fork)"
                 let fork_origin = list-remotes $fork | where remote == "origin" | into record
 
                 let fork_name = $fork | path split | reverse | get 1
                 let fork_full_name = $fork | str replace $status.root.path '' | str trim --char '/'
 
-                print $"adding remote ($fork_name) in `($main)`"
+                log debug $"    squashing ($fork_full_name)"
+
+                log debug $"        adding remote ($fork_name)"
                 ^git -C $main remote add ($fork_name) "PLACEHOLDER"
 
-                print $"setting FETCH remote of ($fork_name) to ($fork_origin.fetch) in `($main)`"
+                log debug $"        setting FETCH to ($fork_origin.fetch)"
                 ^git -C $main remote set-url ($fork_name) $fork_origin.fetch
-                print $"setting PUSH remote of ($fork_name) to ($fork_origin.push) in `($main)`"
+                log debug $"        setting PUSH to ($fork_origin.push)"
                 ^git -C $main remote set-url --push ($fork_name) $fork_origin.push
 
-                print $"removing fork ($fork_full_name)"
+                log debug $"    removing ($fork_full_name)"
                 gm remove --no-confirm $fork_full_name
             }
         }
