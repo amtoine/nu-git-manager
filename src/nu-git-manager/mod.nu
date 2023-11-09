@@ -328,7 +328,13 @@ export def "gm remove" [
     remove-from-cache $cache_file $repo_to_remove
 
     if (ls ($repo_to_remove | path dirname) | is-empty) {
-        [($repo_to_remove | path dirname)] | clean-empty-directories-rec
+        let deleted = [($repo_to_remove | path dirname)] | clean-empty-directories-rec
+
+        print (
+            ["the following empty directories have been removed:"]
+                | append $deleted
+                | str join "\n- "
+        )
     }
 
     null
