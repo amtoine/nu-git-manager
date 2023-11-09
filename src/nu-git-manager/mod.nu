@@ -425,10 +425,12 @@ export def "gm squash-forks" [
     $forks_to_squash | each {|forks|
         let default = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0
         let main = if $default == null {
-            let choice = (
-                $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
-            )
+            let choice = $forks.path
+                | str replace $status.root.path ''
+                | str trim --char '/'
+                | input list $"Please choose a main fork to squash ($forks.root_hash.0)"
             if ($choice | is-empty) {
+                log warning $"skipping ($forks.root_hash.0)"
                 continue
             }
             $choice
