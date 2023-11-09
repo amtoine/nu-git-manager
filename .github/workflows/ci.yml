@@ -26,7 +26,7 @@ on:
         description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
         default: "*"
         type: string
-      ci-timeout:
+      timeout:
         description: "The timeout of the ci job. Default is 20min"
         default: 20
         type: number
