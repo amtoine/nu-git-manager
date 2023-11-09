@@ -21,7 +21,7 @@ runs:
       run: version
       shell: "nu {0}"
 
-    - run: git clone --depth 1 https://github.com/nushell/nupm /tmp/nupm
+    - run: "git clone --depth 1 https://github.com/nushell/nupm /tmp/nupm"
       shell: bash
 
     - run: |
