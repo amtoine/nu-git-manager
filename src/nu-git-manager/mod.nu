@@ -379,8 +379,9 @@ export def "gm remove" [
 }
 
 # TODO: documentation
-# TODO: make non-interactive and test in the CI
-export def "gm squash-forks" [] {
+export def "gm squash-forks" [
+    --non-interactive-preselect: record = {} # TODO:documentation
+] {
     let status = gm status
 
     let forks_to_squash = open $status.cache.path --raw
@@ -396,9 +397,23 @@ export def "gm squash-forks" [] {
     }
 
     $forks_to_squash | each {|forks|
-        let main = $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
-        if ($main | is-empty) {
-            continue
+        # FIXME: this is a bug and should be
+        # ```
+        # let main = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0 | default (
+        #     $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
+        # )
+        # ```
+        let default = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0
+        let main = if $default == null {
+            let choice = (
+                $forks.path | str replace $status.root.path '' | str trim --char '/' | input list
+            )
+            if ($choice | is-empty) {
+                continue
+            }
+            $choice
+        } else {
+            $default
         }
 
         log debug $"squashing into ($main)"

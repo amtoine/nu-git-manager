@@ -233,8 +233,7 @@ export def remove [] {
     }
 }
 
-# FIXME: make the fork-merging command of `gm` non-interactive to not ignore this test
-def merge-forks [] {
+export def squash-forks [] {
     run-with-env --prepare-cache {
         # this one shouldn't change
         gm clone https://github.com/amtoine/dotfiles --depth 1
@@ -247,6 +246,21 @@ def merge-forks [] {
         gm clone https://github.com/amtoine/nushell
         gm clone https://github.com/fdncred/nushell
         gm clone https://github.com/nushell/nushell
+
+        let expected = [
+            "github.com/amtoine/dotfiles",
+            "github.com/amtoine/nu-git-manager",
+            "github.com/amtoine/nushell",
+            "github.com/fdncred/nushell",
+            "github.com/nushell/nushell",
+            "github.com/stormasm/nu-git-manager",
+        ]
+        assert equal (gm list) $expected
+
+        gm squash-forks --non-interactive-preselect {
+            2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
+            8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
+        }
 
         let expected = [
             "github.com/amtoine/dotfiles",
