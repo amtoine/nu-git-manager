@@ -1,0 +1,36 @@
+name: Setup Nupm
+description: Install and setup Nupm environment
+
+inputs:
+  nu_version:
+    required: true
+    description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+
+outputs:
+  nupm_path:
+    value: ${{ steps.set-output.outputs.nupm-path }}
+    description: 'The path to the installed Nupm'
+runs:
+  using: composite
+  steps:
+    - uses: hustcer/setup-nu@v3.7
+      with:
+        version: ${{ inputs.nu_version }}
+
+    - name: Show Nushell Version
+      run: version
+      shell: "nu {0}"
+
+    - run: git clone --depth 1 https://github.com/nushell/nupm /tmp/nupm
+      shell: bash
+
+    - run: |
+        use /tmp/nupm/nupm
+        with-env {NUPM_HOME: ("~/.local/share/nupm" | path expand)} {
+          mkdir ("~/.local/share/nupm" | path expand)
+          nupm install --force --path /tmp/nupm
+        }
+        $env.GITHUB_OUTPUT = 'nupm-path="/tmp/nupm"'
+      shell: "nu {0}"
+      id: set-output
+      
