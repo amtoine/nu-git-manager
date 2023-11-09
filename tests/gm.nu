@@ -255,7 +255,8 @@ export def squash-forks [] {
             "github.com/nushell/nushell",
             "github.com/stormasm/nu-git-manager",
         ]
-        assert equal (gm list) $expected
+        # NOTE: sorting is apparently required here for Windows
+        assert equal (gm list | sort) $expected
 
         gm squash-forks --non-interactive-preselect {
             2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
