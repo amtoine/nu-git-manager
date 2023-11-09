@@ -1,0 +1,58 @@
+on:
+  workflow_dispatch:
+    inputs:
+      nu_version:
+        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        default: "*"
+        type: string
+      timeout:
+        description: "The timeout of the ci job. Default is 20min"
+        default: 20
+        type: number
+
+  workflow_call:
+    inputs:
+      nu_version:
+        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        default: "*"
+        type: string
+      timeout:
+        description: "The timeout of the ci job. Default is 20min"
+        default: 20
+        type: number
+
+env:
+  NU_LOG_LEVEL: DEBUG
+
+defaults:
+  run:
+    shell: nu {0}
+jobs:
+  tests:
+    timeout-minutes: ${{ inputs.timeout }}
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-22.04]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Nushell and Nupm (latest)
+        uses: ./.github/actions/setup_nupm
+        if: github.ref != 'refs/heads/nightly'
+        with:
+          nu_version: ${{inputs.nu_version}}
+
+      - name: Setup Nushell and Nupm (nightly)
+        uses: ./.github/actions/setup_nupm
+        if: github.ref == 'refs/heads/nightly'
+        with:
+          nu_version: "nightly"
+
+      - name: Run the tests
+        run: |
+          # FIXME: is there a way to not rely on hardcoded paths here?
+          use ~/.local/share/nupm/modules/nupm
+          nupm test --show-stdout
+          shell: "nu {0}"
