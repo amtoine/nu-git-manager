@@ -6,7 +6,7 @@ use path.nu ["path sanitize"]
 export def clean-empty-directories-rec []: list<path> -> list<path> {
     let deleted = unfold $in {|directories|
         let next = $directories | each {|it|
-            rm --force --verbose $it
+            rm --force $it
 
             let parent = $it | path dirname;
             if (ls $parent | is-empty) {

@@ -330,11 +330,10 @@ export def "gm remove" [
     if (ls ($repo_to_remove | path dirname) | is-empty) {
         let deleted = [($repo_to_remove | path dirname)] | clean-empty-directories-rec
 
-        print (
-            ["the following empty directories have been removed:"]
-                | append $deleted
-                | str join "\n- "
-        )
+        print "the following empty directories have been removed:"
+        print $deleted
+    } else {
+        print "no empty directory to clean"
     }
 
     null
