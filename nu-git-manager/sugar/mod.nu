@@ -96,3 +96,35 @@ export def "gm compare" [
 ] {
     git diff (git merge-base $target $head) $head
 }
+
+def get-branches [--merged, --no-merged]: nothing -> list<string> {
+    let branches = if $merged {
+        ^git branch --merged
+    } else if $no_merged {
+        ^git branch --no-merged
+    } else {
+        ^git branch
+    }
+
+    $branches | lines | str substring 2..
+}
+
+# TODO: documentation
+export def "gm repo branch interactive-delete" [] {
+    let choice = get-branches | input list --multi "remove"
+    if ($choice | is-empty) {
+        return
+    }
+
+    let not_merged = get-branches --no-merged
+    let merged = get-branches --merged
+
+    ^git branch --delete ($choice | where $it in $merged)
+
+    let choice = $choice | where $it in $not_merged | input list --multi "sure?"
+    if ($choice | is-empty) {
+        return
+    }
+
+    ^git branch --delete --force $choice
+}
