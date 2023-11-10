@@ -231,3 +231,7 @@ export def remove [] {
         assert equal (gm list) []
     }
 }
+
+export def user-import [] {
+    ^$nu.current-exe --commands "use ./src/nu-git-manager/ *"
+}
