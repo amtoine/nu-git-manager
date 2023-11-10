@@ -324,5 +324,7 @@ export def "gm remove" [
     check-cache-file $cache_file
     remove-from-cache $cache_file ($root | path join $repo_to_remove)
 
+    "foo" | path sanitize
+
     null
 }
