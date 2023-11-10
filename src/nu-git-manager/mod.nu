@@ -6,6 +6,7 @@ use fs/cache.nu [
     save-cache, clean-cache-dir
 ]
 use fs/dir.nu [clean-empty-directories-rec]
+use fs/path.nu ["path sanitize"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use error/error.nu [throw-error]
 
