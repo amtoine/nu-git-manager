@@ -31,7 +31,6 @@ export def list-remotes [
 ]: nothing -> table<remote: string, fetch: string, push: string> {
     ^git -C ($repo | default (pwd)) remote --verbose show
         | detect columns --no-headers
-        | str trim
         | rename remote url mode
         | group-by remote
         | transpose k v
