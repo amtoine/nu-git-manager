@@ -11,4 +11,4 @@ on:
 
 jobs:
   tests:
-    uses: ./.github/workflows/test.yml
+    uses: ./.github/workflows/nupm-tests.yml

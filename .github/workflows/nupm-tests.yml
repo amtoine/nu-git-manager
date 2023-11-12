@@ -29,7 +29,7 @@ defaults:
   run:
     shell: nu {0}
 jobs:
-  tests:
+  nupm-tests:
     timeout-minutes: ${{ inputs.timeout }}
     strategy:
       fail-fast: true
