@@ -1,3 +1,4 @@
+# reusable workflow to be able to provide defaults to the CI
 on:
   workflow_dispatch:
     inputs:

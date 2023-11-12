@@ -1,0 +1,23 @@
+name: 🌃 Nightly Compatibility Check
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # Fetches all history for all tags and branches
+          fetch-depth: 0
+      - run: |
+          git fetch origin
+          git reset --hard ${{ github.sha }}
+        shell: bash
+        if: ${{ env.ACT }}
+
+      - uses: ./.github/actions/sync_action
+        with:
+          do_push: false

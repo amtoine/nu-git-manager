@@ -1,0 +1,43 @@
+name: 'Sync Action'
+description: 'Checks the mergeability of main into nightly and optionally pushes it.'
+
+inputs:
+  do_push:
+    description: 'Whether to push changes after syncing'
+    required: true
+    default: 'false'
+    
+
+runs:
+  using: 'composite'
+  steps:
+    - name: "Fetching from origin"
+      run: | 
+        git fetch origin main
+        git fetch origin nightly:nightly
+        git checkout nightly
+      shell: bash
+    
+    - name: "Attempt to merge main into nightly"
+      run: |
+        set +e
+        git merge --no-ff origin/main -m "Merge main into nightly"
+        MERGE_STATUS=$?
+        set -e
+        if [ $MERGE_STATUS -ne 0 ]; then
+          echo "Merge conflict detected"
+          exit 1
+        fi
+      shell: bash
+
+    - name: Set up Git
+      shell: bash
+      run: |
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
+      if: ${{ inputs.do_push && !env.ACT }}
+    
+    - name: "Push to remote"
+      run: git push origin nightly
+      shell: bash
+      if: ${{ inputs.do_push && !env.ACT }}

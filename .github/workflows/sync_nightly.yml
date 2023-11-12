@@ -1,0 +1,15 @@
+name: 🌃 Sync Main to Nightly
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  sync_on_merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/sync_action
+        with:
+          do_push: true
