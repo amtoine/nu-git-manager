@@ -35,9 +35,9 @@ runs:
       run: |
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      if: ${{ inputs.do_push && !env.ACT }}
+      if: ${{ inputs.do_push == 'true' && !env.ACT }}
     
     - name: "Push to remote"
       run: git push origin nightly
       shell: bash
-      if: ${{ inputs.do_push && !env.ACT }}
+      if: ${{ inputs.do_push == 'true' && !env.ACT }}
