@@ -37,9 +37,9 @@ runs:
 
     - run: |
         use ${{ inputs.nupm_clone_path }}/nupm
-        with-env {NUPM_HOME: ( ${{ inputs.nupm_path }} | path expand)} {
-          mkdir (${{ inputs.nupm_path }} | path expand)
-          nupm install --force --path ${{ inputs.nupm_clone_path }}
+        with-env {NUPM_HOME: ( "${{ inputs.nupm_path }}" | path expand)} {
+          mkdir ("${{ inputs.nupm_path }}" | path expand)
+          nupm install --force --path "${{ inputs.nupm_clone_path }}"
         }
         $env.GITHUB_OUTPUT = 'nupm-path="${{ inputs.nupm_clone_path }}"'
       shell: nu {0}
