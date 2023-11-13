@@ -28,6 +28,7 @@ env:
 defaults:
   run:
     shell: nu {0}
+
 jobs:
   nupm-tests:
     timeout-minutes: ${{ inputs.timeout }}
@@ -39,6 +40,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Nushell and Nupm (latest)
         uses: ./.github/actions/setup_nupm
         if: github.ref != 'refs/heads/nightly'

@@ -1,4 +1,5 @@
 name: 🌃 Nightly Compatibility Check
+
 on:
   pull_request:
     branches: [main]
@@ -12,6 +13,7 @@ jobs:
         with:
           # Fetches all history for all tags and branches
           fetch-depth: 0
+
       - run: |
           git fetch origin
           git reset --hard ${{ github.sha }}

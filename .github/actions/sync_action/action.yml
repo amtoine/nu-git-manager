@@ -6,18 +6,17 @@ inputs:
     description: 'Whether to push changes after syncing'
     required: true
     default: 'false'
-    
 
 runs:
   using: 'composite'
   steps:
     - name: "Fetching from origin"
-      run: | 
+      run: |
         git fetch origin main
         git fetch origin nightly:nightly
         git checkout nightly
       shell: bash
-    
+
     - name: "Attempt to merge main into nightly"
       run: |
         set +e
@@ -36,7 +35,7 @@ runs:
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
       if: ${{ inputs.do_push == 'true' && !env.ACT }}
-    
+
     - name: "Push to remote"
       run: git push origin nightly
       shell: bash
