@@ -54,4 +54,7 @@ jobs:
           nu_version: "nightly"
 
       - name: Run the tests
-        run: nupm test --show-stdout
+        run: |
+          # FIXME: is there a way to not rely on hardcoded paths here?
+          use ~/.local/share/nupm/modules/nupm
+          nupm test --show-stdout
