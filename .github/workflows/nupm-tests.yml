@@ -35,23 +35,16 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-22.04]
+        platform: [windows-latest, macos-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Nushell and Nupm (latest)
+      - name: Setup Nushell and Nupm
         uses: ./.github/actions/setup_nupm
-        if: github.ref != 'refs/heads/nightly'
         with:
-          nu_version: ${{inputs.nu_version}}
-
-      - name: Setup Nushell and Nupm (nightly)
-        uses: ./.github/actions/setup_nupm
-        if: github.ref == 'refs/heads/nightly'
-        with:
-          nu_version: "nightly"
+          nu_version: ${{github.ref == 'refs/heads/nightly' && 'nightly' || inputs.nu_version}}
 
       - name: Run the tests
         run: |
