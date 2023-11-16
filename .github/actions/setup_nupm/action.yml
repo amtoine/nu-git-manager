@@ -32,7 +32,9 @@ runs:
       run: version
       shell: nu {0}
 
-    - run: git clone --depth 1 https://github.com/nushell/nupm ${{ inputs.nupm_clone_path }}
+    - run: |
+        git clone --depth 1 https://github.com/nushell/nupm ${{ inputs.nupm_clone_path }}
+        git -C ${{ inputs.nupm_clone_path }} checkout f7c0843f4d667194beae468614a46cc8d72cc5db
       shell: nu {0}
 
     - name: Install Nupm
