@@ -5,6 +5,8 @@ on:
     types: [closed]
     branches: [main]
 
+permissions:
+  contents: write
 jobs:
   sync_on_merge:
     runs-on: ubuntu-latest
