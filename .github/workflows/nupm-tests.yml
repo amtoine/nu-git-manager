@@ -24,6 +24,7 @@ on:
 
 env:
   NU_LOG_LEVEL: DEBUG
+  GITHUB_TOKEN: ${{ github.token }}
 
 defaults:
   run:
