@@ -6,8 +6,7 @@ export def throw-error [
         msg: $"(ansi red_bold)($error.msg)(ansi reset)"
         label: {
             text: $error.label.text
-            start: $error.label.span.start
-            end: $error.label.span.end
+            span: $error.label.span
         }
     }
 }

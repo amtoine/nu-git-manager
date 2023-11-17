@@ -268,3 +268,7 @@ export def store-cleaning [] {
         assert not ($env.GIT_REPOS_HOME | path exists)
     }
 }
+
+export def user-import [] {
+    ^$nu.current-exe --commands "use ./src/nu-git-manager/ *"
+}

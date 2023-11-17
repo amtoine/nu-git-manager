@@ -303,7 +303,7 @@ export def "gm remove" [
                 $choices | input list $prompt
             }
 
-            if ($choice | is-empty) {
+            if $choice == null {
                 log info "user chose to exit"
                 return
             }

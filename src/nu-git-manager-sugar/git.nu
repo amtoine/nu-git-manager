@@ -52,7 +52,7 @@ export def "lock clean" [] {
 }
 
 # go to the root of the repository from anywhere in the worktree
-export def-env root [] {
+export def --env root [] {
     cd (repo-root)
 }
 
@@ -127,13 +127,11 @@ export def "remote add" [
     --ssh  # use SSH as the communication protocol
 ] {
     if $name in (remote list | get remote) {
-        let span = (metadata $name | get span)
         error make {
             msg: $"(ansi red_bold)remote_already_in_index(ansi reset)"
             label: {
                 text: $"already a remote of ($env.PWD)"
-                start: $span.start
-                end: $span.end
+                span: (metadata $name | get span)
             }
         }
     }
@@ -186,13 +184,11 @@ export def fixup [
     revision: string  # the revision of the Git worktree to fixup
 ] {
     if (do --ignore-errors { git rev-parse $revision } | complete | get exit_code) != 0 {
-        let span = (metadata $revision | get span)
         error make {
             msg: $"(ansi red_bold)revision_not_found(ansi reset)"
             label: {
                 text: $"($revision) not found in the working tree of ($env.PWD)"
-                start: $span.start
-                end: $span.end
+                span: (metadata $revision | get span)
             }
         }
     }

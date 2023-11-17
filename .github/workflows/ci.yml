@@ -1,53 +1,16 @@
+name: 🧪 Tests
+
 on:
   pull_request:
+    paths-ignore:
+      - "**.md"
   push:
     branches:
       - main
-  workflow_dispatch:
-
-name: continuous-integration
-
-defaults:
-  run:
-    shell: nu {0}
-
-env:
-  NU_LOG_LEVEL: DEBUG
+      - nightly
 
 jobs:
   tests:
-    strategy:
-      fail-fast: true
-      matrix:
-        platform: [windows-latest, macos-latest, ubuntu-20.04]
-
-    runs-on: ${{ matrix.platform }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: hustcer/setup-nu@v3.6
-        with:
-          version: '0.86'
-
-      - name: Download the source of Nupm
-        run: git clone --depth 1 https://github.com/nushell/nupm /tmp/nupm/
-
-      - name: Install Nupm
-        run: |
-          use /tmp/nupm/nupm
-          with-env {NUPM_HOME: ("~/.local/share/nupm" | path expand)} {
-            # FIXME: use --no-confirm option
-            # related to https://github.com/nushell/nupm/pull/42
-            mkdir ("~/.local/share/nupm" | path expand)
-            nupm install --force --path /tmp/nupm
-          }
-
-      - name: Show Nushell Version
-        run: version
-
-      - name: Run the tests
-        run: |
-          # FIXME: is there a way to not rely on hardcoded paths here?
-          use ~/.local/share/nupm/modules/nupm
-          nupm test --show-stdout
+    uses: ./.github/workflows/nupm-tests.yml
+    with:
+      nu_version: "0.87.0"
