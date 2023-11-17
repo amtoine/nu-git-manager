@@ -5,7 +5,7 @@ inputs:
   nu_version:
     required: true
     description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
- 
+
   nupm_clone_path:
     required: true
     default: "/tmp/nupm"
@@ -19,7 +19,7 @@ inputs:
 outputs:
   nupm_path:
     value: ${{ steps.set-output.outputs.nupm-path }}
-    description: 'The path to the installed Nupm'
+    description: "The path to the installed Nupm"
 
 runs:
   using: composite
@@ -47,4 +47,5 @@ runs:
           mkdir $env.NUPM_HOME
           nupm install --force --path "${{ inputs.nupm_clone_path }}"
         }
-        $env.GITHUB_OUTPUT = 'nupm-path="${{ inputs.nupm_path }}"'
+
+        'nupm-path="${{ inputs.nupm_path }}"' | save --append $env.GITHUB_OUTPUT
