@@ -43,11 +43,12 @@ jobs:
 
       - name: Setup Nushell and Nupm
         uses: ./.github/actions/setup_nupm
+        id: "nu-setup"
         with:
           nu_version: ${{github.ref == 'refs/heads/nightly' && 'nightly' || inputs.nu_version}}
 
       - name: Run the tests
         run: |
           # FIXME: is there a way to not rely on hardcoded paths here?
-          use ~/.local/share/nupm/modules/nupm
+          use ${{ steps.nu-setup.outputs.nupm_path }}
           nupm test --show-stdout
