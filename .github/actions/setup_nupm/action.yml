@@ -1,5 +1,5 @@
-name: Setup Nupm
-description: Install and setup Nupm environment
+name: Setup nupm
+description: Install and setup nupm environment
 
 inputs:
   nu_version:
@@ -9,17 +9,17 @@ inputs:
   nupm_clone_path:
     required: true
     default: "/tmp/nupm"
-    description: "The path where Nupm will be cloned"
+    description: "The path where nupm will be cloned"
 
   nupm_path:
     required: true
     default: "~/.local/share/nupm"
-    description: "The path where Nupm will be installed"
+    description: "The path where nupm will be installed"
 
 outputs:
   nupm_path:
     value: ${{ steps.set-output.outputs.nupm-path }}
-    description: "The path to the installed Nupm"
+    description: "The path to the installed nupm (can be `use`d directly) "
 
 runs:
   using: composite
@@ -37,7 +37,7 @@ runs:
         git -C ${{ inputs.nupm_clone_path }} checkout f7c0843f4d667194beae468614a46cc8d72cc5db
       shell: nu {0}
 
-    - name: Install Nupm
+    - name: Install nupm
       shell: nu {0}
       id: set-output
       run: |

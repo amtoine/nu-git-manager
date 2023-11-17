@@ -1,4 +1,4 @@
-name: 🌃 Nightly Compatibility Check
+name: 🌃 Nightly compatibility check
 
 on:
   pull_request:

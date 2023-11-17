@@ -1,4 +1,4 @@
-name: 🌃 Sync Main to Nightly
+name: 🌃 Sync main to nightly
 
 on:
   pull_request:

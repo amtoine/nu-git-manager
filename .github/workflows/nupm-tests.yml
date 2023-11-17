@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Nushell and Nupm
+      - name: Setup nushell and nupm
         uses: ./.github/actions/setup_nupm
         id: "nu-setup"
         with:
@@ -49,6 +49,5 @@ jobs:
 
       - name: Run the tests
         run: |
-          # FIXME: is there a way to not rely on hardcoded paths here?
           use ${{ steps.nu-setup.outputs.nupm_path }}
           nupm test --show-stdout
