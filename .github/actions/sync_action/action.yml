@@ -1,19 +1,24 @@
-name: 'Sync Action'
-description: 'Checks the mergeability of main into nightly and optionally pushes it.'
+name: Sync Action
+description: Checks the mergeability of main into nightly and optionally pushes it.
 
 inputs:
   do_push:
-    description: 'Whether to push changes after syncing'
+    description: Whether to push changes after syncing
     required: true
-    default: 'false'
+    default: "false"
+  log_worktree:
+    description: Whether to log the worktree
+    required: true
+    default: "false"
+
+permissions:
+  contents: write
 
 runs:
-  using: 'composite'
+  using: composite
   steps:
-    - name: Setting up the repo
+    - name: Checkout nightly
       run: |
-        git clone https://github.com/amtoine/nu-git-manager /tmp/nu-git-manager
-        cd /tmp/nu-git-manager
         git fetch origin main
         git fetch origin nightly:nightly
         git checkout nightly
@@ -21,18 +26,17 @@ runs:
 
     - name: Set up Git
       shell: bash
-      working-directory: /tmp/nu-git-manager
       run: |
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
     - name: Show Git config and worktree
       shell: bash
-      working-directory: /tmp/nu-git-manager
       run: |
         git config --list | grep user.name
         git config --list | grep user.email
         git log --graph --branches --remotes --tags --oneline --decorate
+      if: ${{ inputs.log_worktree == 'true' }}
 
     - name: "Attempt to merge main into nightly"
       run: |
@@ -45,10 +49,8 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: /tmp/nu-git-manager
 
     - name: "Push to remote"
       run: git push origin nightly
       shell: bash
-      working-directory: /tmp/nu-git-manager
       if: ${{ inputs.do_push == 'true' && !env.ACT }}
