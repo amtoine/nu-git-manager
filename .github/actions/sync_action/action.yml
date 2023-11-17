@@ -35,7 +35,7 @@ runs:
         git config --list | grep user.name
         git config --list | grep user.email
         git log --graph --branches --remotes --tags --oneline --decorate
-      if: ${{ inputs.log_worktree == "true" }}
+      if: ${{ inputs.log_worktree == 'true' }}
 
     - name: "Attempt to merge main into nightly"
       run: |
