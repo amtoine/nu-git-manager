@@ -17,6 +17,13 @@ runs:
         git checkout nightly
       shell: bash
 
+    - name: Set up Git
+      shell: bash
+      run: |
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
+      if: ${{ inputs.do_push == 'true' && !env.ACT }}
+
     - name: "Attempt to merge main into nightly"
       run: |
         set +e
@@ -28,13 +35,6 @@ runs:
           exit 1
         fi
       shell: bash
-
-    - name: Set up Git
-      shell: bash
-      run: |
-        git config user.name "$(git log -n 1 --pretty=format:%an)"
-        git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      if: ${{ inputs.do_push == 'true' && !env.ACT }}
 
     - name: "Push to remote"
       run: git push origin nightly
