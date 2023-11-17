@@ -118,7 +118,7 @@ def "nu-complete list-local-gists" [] {
 }
 
 # jump to a gist in the `GIST_HOME`
-export def-env goto [
+export def --env goto [
     gist: string@"nu-complete list-local-gists"  # the gist to jump to
 ] {
     cd (gist-home | path join $gist)
