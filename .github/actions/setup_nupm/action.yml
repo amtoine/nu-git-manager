@@ -48,4 +48,4 @@ runs:
           nupm install --force --path "${{ inputs.nupm_clone_path }}"
         }
 
-        'nupm-path="${{ inputs.nupm_path }}"' | save --append $env.GITHUB_OUTPUT
+        'nupm-path="${{ inputs.nupm_path }}/modules/nupm"' | save --append $env.GITHUB_OUTPUT
