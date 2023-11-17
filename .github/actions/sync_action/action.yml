@@ -22,18 +22,21 @@ runs:
     - name: Set up Git
       shell: bash
       run: |
+        cd /tmp/nu-git-manager
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
     - name: Show Git config and worktree
       shell: bash
       run: |
+        cd /tmp/nu-git-manager
         git config --list | grep user.name
         git config --list | grep user.email
         git log --graph --branches --remotes --tags --oneline --decorate
 
     - name: "Attempt to merge main into nightly"
       run: |
+        cd /tmp/nu-git-manager
         set +e
         git merge --no-ff origin/main -m "Merge main into nightly"
         MERGE_STATUS=$?
@@ -45,6 +48,8 @@ runs:
       shell: bash
 
     - name: "Push to remote"
-      run: git push origin nightly
+      run: |
+        cd /tmp/nu-git-manager
+        git push origin nightly
       shell: bash
       if: ${{ inputs.do_push == 'true' && !env.ACT }}
