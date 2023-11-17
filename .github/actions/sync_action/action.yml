@@ -10,8 +10,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: "Fetching from origin"
+    - name: Setting up the repo
       run: |
+        git clone https://github.com/amtoine/nu-git-manager /tmp/nu-git-manager
+        cd /tmp/nu-git-manager
         git fetch origin main
         git fetch origin nightly:nightly
         git checkout nightly
