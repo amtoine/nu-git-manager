@@ -9,12 +9,10 @@ jobs:
   check-merge:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          # Fetches all history for all tags and branches
-          fetch-depth: 0
-
-      - run: |
+      - name: Checking out repository
+        uses: actions/checkout@v3
+      - name: Docker Fix (for act)
+        run: |
           git fetch origin
           git reset --hard ${{ github.sha }}
         shell: bash
