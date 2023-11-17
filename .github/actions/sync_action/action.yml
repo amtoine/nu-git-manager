@@ -10,8 +10,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: "Fetching from origin"
+    - name: Setting up the repo
       run: |
+        git clone https://github.com/amtoine/nu-git-manager /tmp/nu-git-manager
+        cd /tmp/nu-git-manager
         git fetch origin main
         git fetch origin nightly:nightly
         git checkout nightly
@@ -19,12 +21,14 @@ runs:
 
     - name: Set up Git
       shell: bash
+      working-directory: /tmp/nu-git-manager
       run: |
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
     - name: Show Git config and worktree
       shell: bash
+      working-directory: /tmp/nu-git-manager
       run: |
         git config --list | grep user.name
         git config --list | grep user.email
@@ -41,8 +45,10 @@ runs:
           exit 1
         fi
       shell: bash
+      working-directory: /tmp/nu-git-manager
 
     - name: "Push to remote"
       run: git push origin nightly
       shell: bash
+      working-directory: /tmp/nu-git-manager
       if: ${{ inputs.do_push == 'true' && !env.ACT }}
