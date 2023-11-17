@@ -22,7 +22,6 @@ runs:
       run: |
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      if: ${{ inputs.do_push == 'true' && !env.ACT }}
 
     - name: "Attempt to merge main into nightly"
       run: |
