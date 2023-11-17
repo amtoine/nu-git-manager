@@ -19,6 +19,7 @@ runs:
   steps:
     - name: Checkout nightly
       run: |
+        git fetch origin main
         git fetch origin nightly:nightly
         git checkout nightly
       shell: bash
