@@ -48,8 +48,7 @@ runs:
       working-directory: /tmp/nu-git-manager
 
     - name: "Push to remote"
-      run: |
-        git push origin nightly
+      run: git push origin nightly
       shell: bash
       working-directory: /tmp/nu-git-manager
       if: ${{ inputs.do_push == 'true' && !env.ACT }}
