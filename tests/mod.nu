@@ -8,6 +8,7 @@ use ../src/nu-git-manager/fs/cache.nu [
     save-cache, clean-cache-dir
 ]
 use ../src/nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 export def path-sanitization [] {
     assert equal ('\foo\bar' | path sanitize) "/foo/bar"
@@ -309,4 +310,45 @@ export def remote-listing [] {
         ["2", "2-fetch", "2-push"],
     ]
     assert equal (list-remotes $repo) $expected
+}
+
+export def store-cleaning [] {
+    with-env {GIT_REPOS_HOME: ($nu.home-path | path join ".local/share/nu-git-manager-tests")} {
+        mkdir $env.GIT_REPOS_HOME
+        # NOTE: this is to make sure the root of the test is not empty
+        # we don't want the test to go remove empty directories outside...
+        touch ($env.GIT_REPOS_HOME | path join ".lock")
+
+        let empty_directories = [
+            foo/bar/
+            bar/
+            baz/foo/bar/
+        ]
+
+        let actual = $empty_directories
+            | each {|it|
+                let path = $env.GIT_REPOS_HOME | path join $it | path sanitize
+
+                print $"making `($path)`"
+                mkdir $path
+
+                $path
+            }
+            | clean-empty-directories-rec
+            | str replace ($env.GIT_REPOS_HOME | path sanitize) ''
+            | str trim --char '/'
+        let expected = [
+            "foo/bar",
+            "bar",
+            "baz/foo/bar",
+            "foo",
+            "baz/foo",
+            "baz",
+            "",
+        ]
+
+        assert equal $actual $expected
+
+        rm --recursive --verbose --force $env.GIT_REPOS_HOME
+    }
 }

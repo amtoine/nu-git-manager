@@ -5,6 +5,7 @@ use fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
+use fs/dir.nu [clean-empty-directories-rec]
 use fs/path.nu ["path sanitize"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use git/repo.nu [is-grafted, get-root-commit, list-remotes]
@@ -352,7 +353,7 @@ export def "gm remove" [
                 $choices | input list $prompt
             }
 
-            if ($choice | is-empty) {
+            if $choice == null {
                 log info "user chose to exit"
                 return
             }
@@ -369,7 +370,9 @@ export def "gm remove" [
         }
     }
 
-    rm --recursive --force --verbose ($root | path join $repo_to_remove)
+    let repo_to_remove = $root | path join $repo_to_remove
+
+    rm --recursive --force --verbose $repo_to_remove
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
@@ -465,4 +468,36 @@ export def "gm squash-forks" [
     }
 
     null
+}
+
+# clean the store
+#
+# this command will mainly remove empty directory recursively.
+#
+# /!\ this command will return sanitized paths. /!\
+#
+# Examples
+#     clean the store
+#     > gm clean
+#
+#     list the leaves of the store that would have to be cleaned
+#     > gm clean --list
+export def "gm clean" [
+    --list # only list without cleaning
+]: nothing -> list<path> {
+    let empty_directories_in_store = ls (gm status | get root.path | path join "**")
+        | where (ls $it.name | is-empty)
+        | get name
+        | path expand
+        | each { path sanitize }
+    let cached_repos = gm list --full-path
+
+    let empty_non_repo_directories_in_store = $empty_directories_in_store
+        | where not ($cached_repos | any {|repo| $it | str starts-with $repo})
+
+    if $list {
+        return $empty_non_repo_directories_in_store
+    }
+
+    $empty_non_repo_directories_in_store | clean-empty-directories-rec
 }

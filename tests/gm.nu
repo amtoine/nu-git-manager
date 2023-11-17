@@ -295,3 +295,44 @@ export def squash-forks [] {
         assert equal $actual $expected
     }
 }
+
+export def store-cleaning-after-remove [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+        gm remove "github.com/amtoine/nu-git-manager" --no-confirm
+
+        # NOTE: the root should not exist anymore because there was only one repo in it and it's
+        # been cleaned
+        assert not ($env.GIT_REPOS_HOME | path exists)
+    }
+}
+
+export def store-cleaning [] {
+    run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+
+        let repo = (
+            $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
+        )
+
+        rm --force --recursive --verbose $repo
+
+        let expected = [($repo | path dirname)]
+        assert equal (gm clean --list) $expected
+
+        let expected = [
+            ($repo | path dirname)
+            ($repo | path dirname --num-levels 2)
+            ($repo | path dirname --num-levels 3)
+        ]
+        assert equal (gm clean) $expected
+
+        # NOTE: the root should not exist anymore because there was only one repo in it and it's
+        # been cleaned
+        assert not ($env.GIT_REPOS_HOME | path exists)
+    }
+}
+
+export def user-import [] {
+    ^$nu.current-exe --commands "use ./src/nu-git-manager/ *"
+}
