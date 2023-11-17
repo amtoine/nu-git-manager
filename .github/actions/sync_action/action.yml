@@ -23,6 +23,13 @@ runs:
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
 
+    - name: Show Git config and worktree
+      shell: bash
+      run: |
+        git config --list | grep user.name
+        git config --list | grep user.email
+        git log --graph --branches --remotes --tags --oneline --decorate
+
     - name: "Attempt to merge main into nightly"
       run: |
         set +e
