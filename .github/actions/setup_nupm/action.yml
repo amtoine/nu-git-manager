@@ -23,6 +23,8 @@ outputs:
 
 runs:
   using: composite
+  env:
+    GITHUB_TOKEN: ${{ github.token }}
   steps:
     - uses: hustcer/setup-nu@v3.7
       with:
