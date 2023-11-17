@@ -18,4 +18,8 @@
         }
     }
     type: "module"
+    modules: [
+        "./src/nu-git-manager/",
+        "./src/nu-git-manager-sugar/",
+    ]
 }

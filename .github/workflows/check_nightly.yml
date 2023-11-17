@@ -1,0 +1,23 @@
+name: 🌃 Nightly compatibility check
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out repository
+        uses: actions/checkout@v3
+      - name: Docker Fix (for act)
+        run: |
+          git fetch origin
+          git reset --hard ${{ github.sha }}
+        shell: bash
+        if: ${{ env.ACT }}
+
+      - uses: ./.github/actions/sync_action
+        with:
+          do_push: false

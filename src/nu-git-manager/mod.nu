@@ -1,18 +1,14 @@
 use std log
 
-use fs/store.nu [
-    check-cache-file, get-repo-store-path, get-repo-store-cache-path, list-repos-in-store
+use fs/store.nu [get-repo-store-path, list-repos-in-store]
+use fs/cache.nu [
+    get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
+    save-cache, clean-cache-dir
 ]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
+use error/error.nu [throw-error]
 
-def "nu-complete git-protocols" []: nothing -> table<value: string, description: string> {
-    [
-        [value, description];
-
-        ["https", "use the HTTP protocol: will require a PAT authentification for private repositories"],
-        ["ssh", "use the SSH protocol: will require a passphrase unless setup otherwise"],
-    ]
-}
+use completions/nu-complete.nu
 
 # manage your Git repositories with the main command of `nu-git-manager`
 #
@@ -22,16 +18,21 @@ def "nu-complete git-protocols" []: nothing -> table<value: string, description:
 # - `~/.local/share/repos`
 #
 # `nu-git-manager` will look for a cache in the following places, in order:
+# - `$env.GIT_REPOS_CACHE`
 # - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
 # - `~/.cache/nu-git-manager/cache.nuon`
 #
 # # Examples
-#     a contrived example, assuming you are in `~`
-#     > GIT_REPOS_HOME=foo gm status | get root.path
+#     a contrived example to set the path to the root of the store
+#     > with-env { GIT_REPOS_HOME: ($nu.home-path | path join "foo") } {
+#           gm status | get root.path | str replace $nu.home-path '~'
+#       }
 #     ~/foo
 #
-#     a contrived example, assuming you are in `~`
-#     > XDG_CACHE_HOME=foo gm status | get cache.path
+#     a contrived example to set the path to the cache of the store
+#     > with-env { XDG_CACHE_HOME: ($nu.home-path | path join "foo") } {
+#           gm status | get cache.path | str replace $nu.home-path '~'
+#       }
 #     ~/foo/nu-git-manager/cache.nuon
 export def "gm" []: nothing -> nothing {
     print (help gm)
@@ -53,6 +54,9 @@ export def "gm" []: nothing -> nothing {
 #
 #     setup a public repo in the local store and use HTTP to fetch without PAT and push with SSH
 #     > gm clone https://github.com/amtoine/nu-git-manager --fetch https --push ssh
+#
+#     clone a big repo as a single commit, avoiding all intermediate Git deltas
+#     > gm clone https://github.com/neovim/neovim --depth 1
 export def "gm clone" [
     url: string # the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
     --remote: string = "origin" # the name of the remote to setup
@@ -60,6 +64,7 @@ export def "gm clone" [
     --fetch: string@"nu-complete git-protocols" # setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
     --push: string@"nu-complete git-protocols" # setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
     --bare # clone the repository as a "bare" project
+    --depth: int # the depth at which to clone the repository
 ]: nothing -> nothing {
     let repository = $url | parse-git-url
 
@@ -69,39 +74,58 @@ export def "gm clone" [
         | path join
 
     if ($local_path | path exists) {
-        let span = metadata $url | get span
-        error make {
-            msg: $"(ansi red_bold)repository_already_in_store(ansi reset)"
+        throw-error {
+            msg: "repository_already_in_store"
             label: {
-                text: $"this repository has already been cloned by (ansi {fg: "default_dimmed", attr: "it"})gm(ansi reset)"
-                start: $span.start
-                end: $span.end
+                text: (
+                    "this repository has already been cloned by "
+                 + $"(ansi {fg: "default_dimmed", attr: "it"})gm(ansi reset)"
+                )
+                span: (metadata $url | get span)
             }
         }
     }
 
     let urls = get-fetch-push-urls $repository $fetch $push $ssh
 
-    if $bare {
-        ^git clone $urls.fetch $local_path --origin $remote --bare
+    mut args = [$urls.fetch $local_path --origin $remote]
+    if $depth != null {
+        if ($depth < 1) {
+            throw-error {
+                msg: "invalid_clone_depth"
+                label: {
+                    text: $"clone depth should be strictly positive, found ($depth)"
+                    span: (metadata $depth | get span)
+                }
+            }
+        }
+
+        $args = ($args ++ --depth ++ $depth)
+
+        if $bare {
+            $args = ($args ++ --bare)
+        }
     } else {
-        ^git clone $urls.fetch $local_path --origin $remote
+        if $bare {
+            $args = ($args ++ --bare)
+        }
     }
+
+    ^git clone $args
 
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-
-    print --no-newline "updating cache... "
-    open $cache_file | append $local_path | uniq | sort | save --force $cache_file
-    print "done"
+    add-to-cache $cache_file $local_path
 
     null
 }
 
 # list all the local repositories in your local store
+#
+# /!\ this command will return sanitized paths. /!\
 #
 # # Examples
 #     list all the repositories in the store
@@ -118,17 +142,18 @@ export def "gm list" [
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
 
-    let repos = open $cache_file
     if $full_path {
-        $repos
+        open-cache $cache_file
     } else {
-        $repos | each {
+        open-cache $cache_file | each {
             str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
 }
 
 # get current status about the repositories managed by `nu-git-manager`
+#
+# /!\ `$.root.path` and `$.cache.path` will be sanitized /!\
 #
 # Examples
 #     getting status when everything is fine
@@ -170,7 +195,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let cache_exists = ($cache | path type) == "file"
 
     let missing = if $cache_exists {
-        open $cache | where ($it | path type) != "dir"
+        open-cache $cache | where ($it | path type) != "dir"
     } else {
         null
     }
@@ -196,11 +221,10 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 #     > gm update-cache
 export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
-    rm --recursive --force $cache_file
-    mkdir ($cache_file | path dirname)
+    clean-cache-dir $cache_file
 
     print --no-newline "updating cache... "
-    list-repos-in-store | save --force $cache_file
+    list-repos-in-store | save-cache $cache_file
     print "done"
 
     null
@@ -217,9 +241,13 @@ export def "gm update-cache" []: nothing -> nothing {
 #
 #     remove a precise repo by giving its full name, a name collision is unlikely
 #     > gm remove amtoine/nu-git-manager
+#
+#     remove a precise repo without confirmation
+#     > gm remove amtoine/nu-git-manager --no-confirm
 export def "gm remove" [
     pattern?: string # a pattern to restrict the choices
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
+    --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
 ]: nothing -> nothing {
     let root = get-repo-store-path
     let choices = gm list
@@ -230,18 +258,42 @@ export def "gm remove" [
 
     let repo_to_remove = match ($choices | length) {
         0 => {
-            let span = metadata $pattern | get span
-            error make {
-                msg: $"(ansi red_bold)no_matching_repository(ansi reset)"
+            throw-error {
+                msg: "no_matching_repository"
                 label: {
-                    text: $"no repository matching this in (ansi {fg: "default_dimmed", attr: "it"})($root)(ansi reset)"
-                    start: $span.start
-                    end: $span.end
+                    text: (
+                        "no repository matching this in "
+                     + $"(ansi {fg: "default_dimmed", attr: "it"})($root)(ansi reset)"
+                    )
+                    span: (metadata $pattern | get span)
                 }
             }
         },
         1 => { $choices | first },
         _ => {
+            if $no_confirm {
+                if $pattern == null {
+                    error make --unspanned {
+                        msg: (
+                            $"(ansi red_bold)invalid_arguments_and_options(ansi reset):\n"
+                          + "no search pattern will match all projects and `--no-confirm` won't "
+                          + "remove multiple directories"
+                        )
+                    }
+                } else {
+                    throw-error {
+                        msg: "invalid_arguments_and_options"
+                        label: {
+                            text: (
+                                "this pattern is too broad, multiple repos won't be removed by "
+                              + "`--no-confirm`"
+                            )
+                            span: (metadata $pattern | get span)
+                        }
+                    }
+                }
+            }
+
             let prompt = $"please choose a repository to (ansi red)remove(ansi reset)"
             let choice = if $fuzzy {
                 $choices | input list --fuzzy $prompt
@@ -258,21 +310,19 @@ export def "gm remove" [
         },
     }
 
-    let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
-    match (["no", "yes"] | input list $prompt) {
-        "no" => {
+    if not $no_confirm {
+        let prompt = $"are you (ansi defu)sure(ansi reset) you want to (ansi red_bold)remove(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)? "
+        if (["no", "yes"] | input list $prompt) == "no" {
             log info $"user chose to (ansi green_bold)keep(ansi reset) (ansi yellow)($repo_to_remove)(ansi reset)"
             return
-        },
-        "yes" => { rm --recursive --force --verbose ($root | path join $repo_to_remove) },
+        }
     }
+
+    rm --recursive --force --verbose ($root | path join $repo_to_remove)
 
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-
-    print --no-newline "updating cache... "
-    open $cache_file | where $it != ($root | path join $repo_to_remove) | save --force $cache_file
-    print "done"
+    remove-from-cache $cache_file ($root | path join $repo_to_remove)
 
     null
 }

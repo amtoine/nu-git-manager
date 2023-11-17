@@ -1,31 +1,24 @@
 use std log
 use path.nu "path sanitize"
 
+# get the root of the local repo store
+#
+# /!\ this command will sanitize the output path. /!\
 export def get-repo-store-path []: nothing -> path {
     $env.GIT_REPOS_HOME? | default (
         $env.XDG_DATA_HOME? | default ($nu.home-path | path join ".local/share") | path join "repos"
     ) | path expand | path sanitize
 }
 
-export def get-repo-store-cache-path []: nothing -> path {
-    $env.XDG_CACHE_HOME?
-        | default ($nu.home-path | path join ".cache")
-        | path join "nu-git-manager/cache.nuon"
-        | path expand
-        | path sanitize
-}
-
-export def check-cache-file [cache_file: path]: nothing -> nothing {
-    if not ($cache_file | path exists) {
-        error make --unspanned {
-            msg: (
-                $"(ansi red_bold)cache_not_found(ansi reset):\n"
-              + $"please run `(ansi default_dimmed)gm update-cache(ansi reset)` to create the cache"
-            )
-        }
-    }
-}
-
+# list all the repos stored locally
+#
+# this command will return the empty list if the store does not exist.
+#
+# this command will
+# - catch *bare* repositories
+# - remove duplicates coming from nested repositories such as Git submodules
+#
+# /!\ this command will sanitize the output list of paths. /!\
 export def list-repos-in-store []: nothing -> list<path> {
     if not (get-repo-store-path | path exists) {
         log debug $"the store does not exist: `(get-repo-store-path)`"
