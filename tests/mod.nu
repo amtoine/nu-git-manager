@@ -329,6 +329,7 @@ export def store-cleaning [] {
             }
             | clean-empty-directories-rec
             | path remove-prefix ($env.GIT_REPOS_HOME | path sanitize)
+            | str trim --right --char '/'
         let expected = [
             "foo/bar",
             "bar",
