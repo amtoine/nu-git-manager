@@ -191,7 +191,7 @@ export def "gm list" [
     if $full_path {
         open-cache $cache_file | get path
     } else {
-        open-cache $cache_file | get path | each { path remove-prefix (get-repo-store-path) }
+        open-cache $cache_file | get path | path remove-prefix (get-repo-store-path)
     }
 }
 
@@ -298,7 +298,7 @@ export def "gm remove" [
     --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
 ]: nothing -> nothing {
     let root = get-repo-store-path
-    let choices = gm list | each { path remove-prefix $root } | find $pattern
+    let choices = gm list | path remove-prefix $root | find $pattern
 
     let repo_to_remove = match ($choices | length) {
         0 => {

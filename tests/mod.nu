@@ -160,7 +160,7 @@ export def list-all-repos-in-store [] {
     }
 
     # NOTE: remove the path to BASE so that the test output is easy to read
-    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each { path remove-prefix $BASE }
+    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | path remove-prefix $BASE
     let expected = $store | where in_store | get path | each {
         # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
         str trim --right --char "/"
@@ -190,7 +190,7 @@ export def cache-manipulation [] {
         let expected = $cache
             | each {|it|
                 $BASE_REPO | update path {
-                    $it | path expand | path sanitize | each { path remove-prefix (pwd | path sanitize) }
+                    $it | path expand | path sanitize | path remove-prefix (pwd | path sanitize)
                 }
             }
         assert equal $actual $expected
