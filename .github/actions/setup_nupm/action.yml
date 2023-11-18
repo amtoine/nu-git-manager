@@ -39,12 +39,12 @@ runs:
 
     - name: Check Cache Hit
       if: steps.cache-nushell.outputs.cache-hit == 'true'
-      run: echo -e "\e[32m\e[1mUSING CACHE\e[0m"
+      run: printf "\033[32;1mUSING CACHE\033[0m\n"
       shell: bash
 
     - name: Check Cache Miss
       if: steps.cache-nushell.outputs.cache-hit != 'true'
-      run: echo -e "\e[31m\e[1mNOT USING CACHE\e[0m"
+      run: printf "\033[31;1mNOT USING CACHE\033[0m\n"
       shell: bash
 
     - uses: hustcer/setup-nu@v3.7
