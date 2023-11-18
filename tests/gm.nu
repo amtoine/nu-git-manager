@@ -1,6 +1,7 @@
 use std assert
 
 use ../src/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../src/nu-git-manager/git/repo.nu [list-remotes]
 use ../src/nu-git-manager/ *
 
 def run-with-env [code: closure, --prepare-cache] {
@@ -229,6 +230,69 @@ export def remove [] {
             $env.GIT_REPOS_HOME | path join "github.com/nushell/nupm" | path sanitize | path exists
         )
         assert equal (gm list) []
+    }
+}
+
+export def squash-forks [] {
+    run-with-env --prepare-cache {
+        # this one shouldn't change
+        gm clone https://github.com/amtoine/dotfiles --depth 1
+
+        # these two should be merged
+        gm clone https://github.com/amtoine/nu-git-manager
+        gm clone https://github.com/stormasm/nu-git-manager
+
+        # there three should be merged
+        gm clone https://github.com/amtoine/nushell
+        gm clone https://github.com/fdncred/nushell
+        gm clone https://github.com/nushell/nushell
+
+        let expected = [
+            "github.com/amtoine/dotfiles",
+            "github.com/amtoine/nu-git-manager",
+            "github.com/amtoine/nushell",
+            "github.com/fdncred/nushell",
+            "github.com/nushell/nushell",
+            "github.com/stormasm/nu-git-manager",
+        ]
+        # NOTE: sorting is apparently required here for Windows
+        assert equal (gm list | sort) $expected
+
+        gm squash-forks --non-interactive-preselect {
+            2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
+            8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
+        }
+
+        let expected = [
+            "github.com/amtoine/dotfiles",
+            "github.com/amtoine/nu-git-manager",
+            "github.com/amtoine/nushell",
+        ]
+        assert equal (gm list) $expected
+
+        let actual = list-remotes (gm status | get root.path | path join "github.com/amtoine/dotfiles")
+        let expected = [
+            [remote, fetch, push];
+            ["origin", "https://github.com/amtoine/dotfiles",  "https://github.com/amtoine/dotfiles"]
+        ]
+        assert equal $actual $expected
+
+        let actual = list-remotes (gm status | get root.path | path join "github.com/amtoine/nu-git-manager")
+        let expected = [
+            [remote, fetch, push];
+            ["origin", "https://github.com/amtoine/nu-git-manager",  "https://github.com/amtoine/nu-git-manager"]
+            ["stormasm", "https://github.com/stormasm/nu-git-manager",  "https://github.com/stormasm/nu-git-manager"]
+        ]
+        assert equal $actual $expected
+
+        let actual = list-remotes (gm status | get root.path | path join "github.com/amtoine/nushell")
+        let expected = [
+            [remote, fetch, push];
+            ["fdncred", "https://github.com/fdncred/nushell",  "https://github.com/fdncred/nushell"]
+            ["nushell", "https://github.com/nushell/nushell",  "https://github.com/nushell/nushell"]
+            ["origin", "https://github.com/amtoine/nushell",  "https://github.com/amtoine/nushell"]
+        ]
+        assert equal $actual $expected
     }
 }
 
