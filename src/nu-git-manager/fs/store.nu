@@ -1,5 +1,5 @@
 use std log
-use path.nu "path sanitize"
+use path.nu ["path sanitize", "path remove-trailing-path-sep"]
 
 # get the root of the local repo store
 #
@@ -44,5 +44,5 @@ export def list-repos-in-store []: nothing -> list<path> {
         | filter {|it| not ($it.0 | str starts-with $it.1)}
         | each { get 0 }
         | prepend $sorted.0
-        | str trim --right --char "/"
+        | path remove-trailing-path-sep
 }

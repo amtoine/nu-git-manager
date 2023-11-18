@@ -7,7 +7,9 @@ use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use ../src/nu-git-manager/fs/path.nu ["path sanitize", "path remove-prefix"]
+use ../src/nu-git-manager/fs/path.nu [
+    "path sanitize", "path remove-prefix", "path remove-trailing-path-sep"
+]
 use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 export def path-sanitization [] {
@@ -161,10 +163,8 @@ export def list-all-repos-in-store [] {
 
     # NOTE: remove the path to BASE so that the test output is easy to read
     let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | path remove-prefix $BASE
-    let expected = $store | where in_store | get path | each {
-        # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
-        str trim --right --char "/"
-    }
+    # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
+    let expected = $store | where in_store | get path | path remove-trailing-path-sep
 
     # NOTE: need to sort the result to make sure the order of the `git init` does not influence the
     # results of the test
@@ -329,7 +329,7 @@ export def store-cleaning [] {
             }
             | clean-empty-directories-rec
             | path remove-prefix ($env.GIT_REPOS_HOME | path sanitize)
-            | str trim --right --char '/'
+            | path remove-trailing-path-sep
         let expected = [
             "foo/bar",
             "bar",
