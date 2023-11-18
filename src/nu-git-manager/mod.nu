@@ -8,7 +8,8 @@ use fs/cache.nu [
 use fs/dir.nu [clean-empty-directories-rec]
 use fs/path.nu ["path sanitize"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
-use error/error.nu [throw-error]
+use git/repo.nu [is-grafted, get-root-commit, list-remotes]
+use error/error.nu [throw-error, throw-warning]
 
 use completions/nu-complete.nu
 
@@ -118,9 +119,54 @@ export def "gm clone" [
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
 
+    let repo = {
+        path: $local_path,
+        grafted: (is-grafted $local_path),
+        root_hash: (get-root-commit $local_path)
+    }
+
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
-    add-to-cache $cache_file $local_path
+
+    if $repo.grafted {
+        throw-warning {
+            msg: "cloning_grafted_repository",
+            label: {
+                text: "this repo is grafted, cannot detect forks",
+                span: (metadata $url).span
+            }
+        }
+    } else {
+        let forks = open-cache $cache_file | where root_hash == $repo.root_hash
+
+        if not ($forks | is-empty) {
+            let msg = if ($forks | length) == 1 {
+                "1 other repo"
+            } else {
+                $"($forks | length) other repos"
+            }
+            throw-warning {
+                msg: "cloning_fork"
+                label: {
+                    text: (
+                        $"this repo is a fork of (ansi cyan)($msg)(ansi reset) because they share the same root commit: (ansi magenta)($repo.root_hash)(ansi reset)\n"
+                        + (
+                            $forks | get path | each {
+                                let repo = $in
+                                    | str replace (get-repo-store-path) ''
+                                    | str trim --left --char "/"
+                                $"- (ansi cyan)($repo)(ansi reset)"
+                            } | str join "\n"
+                        )
+
+                    )
+                    span: (metadata $url).span
+                }
+            }
+        }
+    }
+
+    add-to-cache $cache_file $repo
 
     null
 }
@@ -145,9 +191,9 @@ export def "gm list" [
     check-cache-file $cache_file
 
     if $full_path {
-        open-cache $cache_file
+        open-cache $cache_file | get path
     } else {
-        open-cache $cache_file | each {
+        open-cache $cache_file | get path | each {
             str replace (get-repo-store-path) '' | str trim --left --char "/"
         }
     }
@@ -197,7 +243,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
     let cache_exists = ($cache | path type) == "file"
 
     let missing = if $cache_exists {
-        open-cache $cache | where ($it | path type) != "dir"
+        open-cache $cache | get path | where ($it | path type) != "dir"
     } else {
         null
     }
@@ -226,7 +272,11 @@ export def "gm update-cache" []: nothing -> nothing {
     clean-cache-dir $cache_file
 
     print --no-newline "updating cache... "
-    list-repos-in-store | save-cache $cache_file
+    list-repos-in-store | each {{
+        path: $in,
+        grafted: (is-grafted $in),
+        root_hash: (get-root-commit $in)
+    }} | save-cache $cache_file
     print "done"
 
     null
@@ -335,6 +385,95 @@ export def "gm remove" [
         print $deleted
     } else {
         print "no empty directory to clean"
+    }
+
+    null
+}
+
+# squash multi-directory forks into a single repo
+#
+# Here, two forks are defined as *two non-grafted repositories that share the same initial commit,
+# i.e. that have the same root hash in their respective DAGs*.
+#
+# By default, `gm squash-forks` will prompt the user for a main fork for each repository with
+# multiple forks.
+# Once a *main* fork has been chosen, for each one of the other secondary forks, the command will
+# preform the following steps:
+# - add the secondary fork as a remote to the main one
+# - setup the FETCH and PUSH remotes to the same ones as the secondary fork in the main one
+# - remove the secondary fork entirely from the store and the cache
+#
+# This operation can be done in a non-interactive manner by specifying `--non-interactive-preselect`.
+# This option is a `record` with
+# - keys: the root hash of repos, e.g. [2ed2d87](https://github.com/amtoine/nu-git-manager/commit/2ed2d875d80505d78423328c6b2a60522715fcdf) for `nu-git-manager`
+# - values: the main fork to select in full-name form, e.g. `github.com/amtoine/nu-git-manager`
+#
+# # Examples
+#     squash forks interactively
+#     > gm squash-forks
+#
+#     squash forks non-interactively: `nu-git-manager` and `nushell` to the forks of @amtoine
+#     > gm squash-forks --non-interactive-preselect {
+#           2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
+#           8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
+#       }
+export def "gm squash-forks" [
+    --non-interactive-preselect: record = {} # the non-interactive preselection record, see documentation above
+]: nothing -> nothing {
+    let status = gm status
+
+    let forks_to_squash = open $status.cache.path --raw
+        | from nuon
+        | group-by root_hash
+        | transpose k v
+        | where ($it.v | length) > 1
+        | get v
+
+    if ($forks_to_squash | is-empty) {
+        log info "no forks to squash"
+        return
+    }
+
+    $forks_to_squash | each {|forks|
+        let default = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0
+        let main = if $default == null {
+            let choice = $forks.path
+                | str replace $status.root.path ''
+                | str trim --char '/'
+                | input list $"Please choose a main fork to squash ($forks.root_hash.0)"
+            if ($choice | is-empty) {
+                log warning $"skipping ($forks.root_hash.0)"
+                continue
+            }
+            $choice
+        } else {
+            $default
+        }
+
+        log debug $"squashing into ($main)"
+
+        let main = $status.root.path | path join $main | path sanitize
+        for fork in $forks.path {
+            if $fork != $main {
+                let fork_origin = list-remotes $fork | where remote == "origin" | into record
+
+                let fork_name = $fork | path split | reverse | get 1
+                let fork_full_name = $fork | str replace $status.root.path '' | str trim --char '/'
+
+                log debug $"    squashing ($fork_full_name)"
+
+                log debug $"        adding remote ($fork_name)"
+                ^git -C $main remote add ($fork_name) "PLACEHOLDER"
+
+                log debug $"        setting FETCH to ($fork_origin.fetch)"
+                ^git -C $main remote set-url ($fork_name) $fork_origin.fetch
+                log debug $"        setting PUSH to ($fork_origin.push)"
+                ^git -C $main remote set-url --push ($fork_name) $fork_origin.push
+
+                log debug $"    removing ($fork_full_name)"
+                gm remove --no-confirm $fork_full_name
+            }
+        }
     }
 
     null
