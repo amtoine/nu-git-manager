@@ -7,7 +7,7 @@ use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use ../src/nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/path.nu ["path sanitize", "path remove-prefix"]
 use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 export def path-sanitization [] {
@@ -160,9 +160,7 @@ export def list-all-repos-in-store [] {
     }
 
     # NOTE: remove the path to BASE so that the test output is easy to read
-    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each {
-        str replace $BASE '' | str trim --left --char "/"
-    }
+    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each { path remove-prefix $BASE }
     let expected = $store | where in_store | get path | each {
         # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
         str trim --right --char "/"
@@ -188,16 +186,11 @@ export def cache-manipulation [] {
     }
 
     def "assert cache" [cache: list<string>]: nothing -> nothing {
-        let actual = open-cache $CACHE
-            | update path { str replace (pwd | path sanitize) '' | str trim --left --char '/' }
+        let actual = open-cache $CACHE | update path { path remove-prefix (pwd | path sanitize) }
         let expected = $cache
             | each {|it|
                 $BASE_REPO | update path {
-                    $it
-                        | path expand
-                        | path sanitize
-                        | str replace (pwd | path sanitize) ''
-                        | str trim --left --char '/'
+                    $it | path expand | path sanitize | each { path remove-prefix (pwd | path sanitize) }
                 }
             }
         assert equal $actual $expected
@@ -335,8 +328,7 @@ export def store-cleaning [] {
                 $path
             }
             | clean-empty-directories-rec
-            | str replace ($env.GIT_REPOS_HOME | path sanitize) ''
-            | str trim --char '/'
+            | path remove-prefix ($env.GIT_REPOS_HOME | path sanitize)
         let expected = [
             "foo/bar",
             "bar",

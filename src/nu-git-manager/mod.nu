@@ -6,7 +6,7 @@ use fs/cache.nu [
     save-cache, clean-cache-dir
 ]
 use fs/dir.nu [clean-empty-directories-rec]
-use fs/path.nu ["path sanitize"]
+use fs/path.nu ["path sanitize", "path remove-prefix"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use git/repo.nu [is-grafted, get-root-commit, list-remotes]
 use error/error.nu [throw-error, throw-warning]
@@ -152,9 +152,7 @@ export def "gm clone" [
                         $"this repo is a fork of (ansi cyan)($msg)(ansi reset) because they share the same root commit: (ansi magenta)($repo.root_hash)(ansi reset)\n"
                         + (
                             $forks | get path | each {
-                                let repo = $in
-                                    | str replace (get-repo-store-path) ''
-                                    | str trim --left --char "/"
+                                let repo = $in | path remove-prefix (get-repo-store-path)
                                 $"- (ansi cyan)($repo)(ansi reset)"
                             } | str join "\n"
                         )
@@ -193,9 +191,7 @@ export def "gm list" [
     if $full_path {
         open-cache $cache_file | get path
     } else {
-        open-cache $cache_file | get path | each {
-            str replace (get-repo-store-path) '' | str trim --left --char "/"
-        }
+        open-cache $cache_file | get path | each { path remove-prefix (get-repo-store-path) }
     }
 }
 
@@ -302,11 +298,7 @@ export def "gm remove" [
     --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
 ]: nothing -> nothing {
     let root = get-repo-store-path
-    let choices = gm list
-        | each {
-            str replace $root '' | str trim --left --char "/"
-        }
-        | find $pattern
+    let choices = gm list | each { path remove-prefix $root } | find $pattern
 
     let repo_to_remove = match ($choices | length) {
         0 => {
@@ -438,8 +430,7 @@ export def "gm squash-forks" [
         let default = $non_interactive_preselect | get --ignore-errors $forks.root_hash.0
         let main = if $default == null {
             let choice = $forks.path
-                | str replace $status.root.path ''
-                | str trim --char '/'
+                | path remove-prefix $status.root.path
                 | input list $"Please choose a main fork to squash ($forks.root_hash.0)"
             if ($choice | is-empty) {
                 log warning $"skipping ($forks.root_hash.0)"
@@ -458,7 +449,7 @@ export def "gm squash-forks" [
                 let fork_origin = list-remotes $fork | where remote == "origin" | into record
 
                 let fork_name = $fork | path split | reverse | get 1
-                let fork_full_name = $fork | str replace $status.root.path '' | str trim --char '/'
+                let fork_full_name = $fork | path remove-prefix $status.root.path
 
                 log debug $"    squashing ($fork_full_name)"
 
