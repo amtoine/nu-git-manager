@@ -16,6 +16,11 @@ inputs:
     default: "~/.local/share/nupm"
     description: "The path where nupm will be installed"
 
+  skip_cache:
+    required: false
+    default: "false"
+    description: "Set to 'true' to skip caching"
+
 outputs:
   nupm_path:
     value: ${{ steps.set-output.outputs.nupm-path }}
@@ -24,6 +29,13 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Cache NuShell
+      if: inputs.skip_cache != 'true' && inputs.nu_version != 'nightly' && inputs.nu_version != '*' && inputs.nu_version != 'latest'
+      uses: actions/cache@v2
+      with:
+        path: /opt/hostedtoolcache/nushell/
+        key: nushell-${{ inputs.nu_version }}
+
     - uses: hustcer/setup-nu@v3.7
       with:
         version: ${{ inputs.nu_version }}
