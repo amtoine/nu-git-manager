@@ -30,11 +30,17 @@ runs:
   using: composite
   steps:
     - name: Cache NuShell
+      id: cache-nushell
       if: inputs.skip_cache != 'true' && inputs.nu_version != 'nightly' && inputs.nu_version != '*' && inputs.nu_version != 'latest'
       uses: actions/cache@v2
       with:
         path: /opt/hostedtoolcache/nushell/
         key: nushell-${{ inputs.nu_version }}
+
+    - name: Check Cache Hit
+      if: steps.cache-nushell.outputs.cache-hit == 'true'
+      run: echo -e "\e[32m\e[1mUSING CACHE\e[0m"
+      shell: bash
 
     - uses: hustcer/setup-nu@v3.7
       with:
