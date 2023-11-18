@@ -18,6 +18,6 @@ jobs:
         shell: bash
         if: ${{ env.ACT }}
 
-      - uses: ./.github/actions/sync_action
+      - uses: amtoine/merge-branches-action@0.1.0
         with:
           do_push: false
