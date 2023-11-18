@@ -41,6 +41,17 @@ git clone https://github.com/amtoine/nu-git-manager
 nupm install --path --force nu-git-manager
 ```
 
+> **Note**
+> if you are using the latest stable release of Nushell, then you should install `nu-git-manager`
+> from the `main` branch, i.e. by default.
+>
+> if you want to use the latest and hotest builds of Nushell, either by building from source yourself
+> or using the [nightly builds](https://github.com/nushell/nightly), you might want to _checkout_
+> the [`nightly`](https://github.com/amtoine/nu-git-manager/tree/nightly) branch and install from
+> there.
+> this alternative branch should contain all fixes and newest features from the latest versions of
+> Nushell :fire:
+
 ## :gear: usage [[toc](#table-of-content)]
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
 ```nu
