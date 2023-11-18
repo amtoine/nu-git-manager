@@ -42,6 +42,11 @@ runs:
       run: echo -e "\e[32m\e[1mUSING CACHE\e[0m"
       shell: bash
 
+    - name: Check Cache Miss
+      if: steps.cache-nushell.outputs.cache-hit != 'true'
+      run: echo -e "\e[31m\e[1mNOT USING CACHE\e[0m"
+      shell: bash
+
     - uses: hustcer/setup-nu@v3.7
       with:
         version: ${{ inputs.nu_version }}
