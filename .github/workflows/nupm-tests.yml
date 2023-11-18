@@ -10,6 +10,7 @@ on:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
         default: "*"
+        type: string
       timeout:
         description: "The timeout of the ci job. Default is 20min"
         default: 20
@@ -25,6 +26,7 @@ on:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
         default: "*"
+        type: string
       timeout:
         description: "The timeout of the ci job. Default is 20min"
         default: 20
