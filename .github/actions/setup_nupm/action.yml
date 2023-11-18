@@ -6,20 +6,14 @@ inputs:
     required: true
     description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
 
-  nupm_clone_path:
-    required: true
-    default: "/tmp/nupm"
-    description: "The path where nupm will be cloned"
-
-  nupm_path:
-    required: true
-    default: "~/.local/share/nupm"
-    description: "The path where nupm will be installed"
-
   skip_cache:
     required: false
     default: "false"
     description: "Set to 'true' to skip caching"
+
+  nupm_commit_hash:
+    required: true
+    description: "The nupm commit hash to checkout"
 
 outputs:
   nupm_path:
@@ -55,20 +49,32 @@ runs:
       run: version
       shell: nu {0}
 
+    - name: Initialize Environment Variables
+      run: |
+        echo "NUPM_CLONE_PATH=/tmp/nupm" >> $GITHUB_ENV
+        echo "NUPM_PATH=~/.local/share/nupm" >> $GITHUB_ENV
+
+    # - name: Cache nupm
+    #   if: inputs.skip_cache != 'true'
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ${{ env.NUPM_CLONE_PATH }}
+    #     key: nupm-${{ inputs.nupm_commit_hash }}
+
     - run: |
-        git clone --depth 1 https://github.com/nushell/nupm ${{ inputs.nupm_clone_path }}
-        git -C ${{ inputs.nupm_clone_path }} checkout f7c0843f4d667194beae468614a46cc8d72cc5db
+        git clone --depth 1 https://github.com/nushell/nupm ${{ env.NUPM_CLONE_PATH }}
+        git -C ${{ env.NUPM_CLONE_PATH }} checkout "${{ inputs.nupm_commit_hash}}"
       shell: nu {0}
 
     - name: Install nupm
       shell: nu {0}
       id: set-output
       run: |
-        use ${{ inputs.nupm_clone_path }}/nupm
-        let nupm_home = "${{ inputs.nupm_path }}" | path expand
+        use ${{ env.NUPM_CLONE_PATH }}/nupm
+        let nupm_home = "${{ env.NUPM_PATH }}" | path expand
         with-env {NUPM_HOME: $nupm_home} {
           mkdir $env.NUPM_HOME
-          nupm install --force --path "${{ inputs.nupm_clone_path }}"
+          nupm install --force --path "${{ env.NUPM_CLONE_PATH }}"
         }
 
-        'nupm-path="${{ inputs.nupm_path }}/modules/nupm"' | save --append $env.GITHUB_OUTPUT
+        'nupm-path="${{ env.NUPM_PATH }}/modules/nupm"' | save --append $env.GITHUB_OUTPUT

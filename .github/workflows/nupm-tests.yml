@@ -46,6 +46,7 @@ jobs:
         uses: ./.github/actions/setup_nupm
         id: "nu-setup"
         with:
+          nupm_commit_hash: f7c0843f4d667194beae468614a46cc8d72cc5db
           nu_version: ${{github.ref == 'refs/heads/nightly' && 'nightly' || inputs.nu_version}}
 
       - name: Set up Git
