@@ -23,6 +23,12 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Initialize Environment Variables
+      run: |
+        echo "NUPM_CLONE_PATH=/tmp/nupm" >> $GITHUB_ENV
+        echo "NUPM_PATH=~/.local/share/nupm" >> $GITHUB_ENV
+      shell: bash
+
     - name: Cache NuShell
       id: cache-nushell
       if: inputs.skip_cache != 'true' && inputs.nu_version != 'nightly' && inputs.nu_version != '*' && inputs.nu_version != 'latest'
@@ -48,11 +54,6 @@ runs:
     - name: Show Nushell Version
       run: version
       shell: nu {0}
-
-    - name: Initialize Environment Variables
-      run: |
-        echo "NUPM_CLONE_PATH=/tmp/nupm" >> $GITHUB_ENV
-        echo "NUPM_PATH=~/.local/share/nupm" >> $GITHUB_ENV
 
     # - name: Cache nupm
     #   if: inputs.skip_cache != 'true'
