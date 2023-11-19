@@ -16,6 +16,20 @@ export module path {
     export def sanitization [] {
         assert equal ('\foo\bar' | path sanitize) "/foo/bar"
     }
+
+    export def remove-prefix [] {
+        assert equal ("/foo/bar" | path remove-prefix "/foo") "bar"
+        assert equal ("/foo/bar" | path remove-prefix "/bar") "/foo/bar"
+        assert equal ("/foo/bar/baz" | path remove-prefix "/foo") "bar/baz"
+        assert equal (["/foo/bar", "/foo/bar/baz"] | path remove-prefix "/foo") ["bar", "bar/baz"]
+    }
+
+    export def remove-trailing-path-sep [] {
+        assert equal ("/foo/bar/" | path remove-trailing-path-sep) "/foo/bar"
+        assert equal ("/foo/bar" | path remove-trailing-path-sep) "/foo/bar"
+        assert equal (["/foo/bar", "/foo/bar/"] | path remove-trailing-path-sep) ["/foo/bar", "/foo/bar"]
+    }
+
 }
 
 export def git-url-parsing [] {
