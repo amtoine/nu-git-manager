@@ -12,8 +12,10 @@ use ../src/nu-git-manager/fs/path.nu [
 ]
 use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
-export def path-sanitization [] {
-    assert equal ('\foo\bar' | path sanitize) "/foo/bar"
+export module path {
+    export def sanitization [] {
+        assert equal ('\foo\bar' | path sanitize) "/foo/bar"
+    }
 }
 
 export def git-url-parsing [] {
