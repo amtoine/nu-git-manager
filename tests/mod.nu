@@ -174,8 +174,8 @@ export def list-all-repos-in-store [] {
 }
 
 export def cache-manipulation [] {
-    let CACHE = get-random-test-dir
-    let CACHE_DIR = $CACHE | path dirname
+    let CACHE_DIR = get-random-test-dir
+    let CACHE = $CACHE_DIR | path join "cache"
 
     const BASE_REPO = {
         path: null,
