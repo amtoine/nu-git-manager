@@ -6,7 +6,7 @@ export def "path sanitize" []: path -> path {
 # remove a prefix from a path or a list of paths
 #
 # /!\ paths need to be sanitized /!\
-export def "path remove-prefix" [prefix: path]: [path -> string, list<path> -> list<string>] {
+export def "path remove-prefix" [prefix: string]: [path -> string, list<path> -> list<string>] {
     str replace --regex ('^' + $prefix + '/') ''
 }
 
