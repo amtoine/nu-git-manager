@@ -353,7 +353,7 @@ export def store-cleaning [] {
             "foo",
             "baz/foo",
             "baz",
-            "",
+            ($env.GIT_REPOS_HOME | path sanitize),
         ]
 
         assert equal $actual $expected
