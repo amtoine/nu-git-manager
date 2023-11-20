@@ -250,8 +250,7 @@ export def install-package [] {
 }
 
 export def detect-grafting [] {
-    # NOTE: for the CI to run, the repos need to live inside `HOME`
-    let BASE = $nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid)
+    let BASE = get-random-test-dir --no-sanitize
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
     }
@@ -309,7 +308,7 @@ export def remote-listing [] {
 }
 
 export def store-cleaning [] {
-    with-env {GIT_REPOS_HOME: ($nu.home-path | path join ".local/share/nu-git-manager-tests")} {
+    with-env {GIT_REPOS_HOME: (get-random-test-dir --no-sanitize)} {
         mkdir $env.GIT_REPOS_HOME
         # NOTE: this is to make sure the root of the test is not empty
         # we don't want the test to go remove empty directories outside...
