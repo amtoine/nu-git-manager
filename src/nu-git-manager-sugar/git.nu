@@ -101,15 +101,20 @@ export def "gm repo branches" [
 }
 
 # return true iif the first revision is an ancestor of the second
-export def is-ancestor [
+#
+# # Examples
+#     HEAD~20 is an ancestor of HEAD
+#     > gm repo is-ancestor HEAD~20 HEAD
+#     true
+#
+#     HEAD is never an ancestor of HEAD~20
+#     > gm repo is-ancestor HEAD HEAD~20
+#     false
+export def "gm repo is-ancestor" [
     a: string  # the base commit-ish revision
     b: string  # the *head* commit-ish revision
-] {
-    let exit_code = (do -i {
-        git merge-base $a $b --is-ancestor
-    } | complete | get exit_code)
-
-    $exit_code == 0
+]: nothing -> bool {
+    (do -i { ^git merge-base $a $b --is-ancestor } | complete | get exit_code) == 0
 }
 
 # get the list of all the remotes in the current repository
