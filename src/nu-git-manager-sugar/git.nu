@@ -35,7 +35,7 @@ export def compare [
 }
 
 def repo-root [] {
-    git rev-parse --show-toplevel | str trim
+    ^git rev-parse --show-toplevel
 }
 
 # removes the index lock
@@ -52,7 +52,7 @@ export def "lock clean" [] {
 }
 
 # go to the root of the repository from anywhere in the worktree
-export def --env root [] {
+export def --env "gm repo goto root" []: nothing -> nothing {
     cd (repo-root)
 }
 
