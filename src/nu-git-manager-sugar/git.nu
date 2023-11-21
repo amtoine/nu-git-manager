@@ -58,39 +58,45 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 
 # inspect local branches
 #
-# without any options, `git branches` will show all dangling branches, i.e.
-# local branches that do not have a remote counterpart.
-export def branches [
-    --report  # will give a table report of all the
+# > **Note**  
+# > in the following, a "*dangling*" branch refers to a branch that does not have any remote
+# > counterpart, i.e. it's a purely local branch.
+#
+# # Examples
+#     list branches and their associated remotes
+#     > gm repo branches
+#
+#     clean all dangling branches
+#     > gm repo branches --clean
+export def "gm repo branches" [
     --clean  # clean all dangling branches
-] {
-    let local_branches = (git branch --list | lines | str replace --regex '..' "")
-    let remote_branches = (git branch -r | lines | str trim | find --invert "HEAD ->" | parse "{remote}/{branch}")
+]: nothing -> table<branch: string, remotes: list<string>> {
+    let local_branches = ^git branch --list | lines | str replace --regex '..' ""
+    let remote_branches = ^git branch --remotes
+        | lines
+        | str trim
+        | find --invert "HEAD ->"
+        | parse "{remote}/{branch}"
 
-    let branches_report = (
-        $local_branches | each {|branch|
-            {
-                branch: $branch
-                remotes: ($remote_branches | where branch == $branch | get remote)
-            }
-        }
-    )
-
-    if $report {
-        return $branches_report
-    }
-
-    let dangling_branches = ($branches_report | where remotes == [] | get branch)
-
-    if ($dangling_branches | length) == 0 {
-        print "no dangling branch"
-        return
-    }
+    let branches = $local_branches | each {|branch| {
+        branch: $branch
+        remotes: ($remote_branches | where branch == $branch | get remote)
+    } }
 
     if $clean {
-        $dangling_branches | each {|| git branch --delete --force $in}
+        let dangling_branches = $branches | where remotes == []
+
+        if ($dangling_branches | is-empty) {
+            log warning "no dangling branches"
+            return
+        }
+
+        for branch in $dangling_branches.branch {
+            log info $"deleting branch `($branch)`"
+            ^git branch --quiet --delete --force $branch
+        }
     } else {
-        $dangling_branches
+        $branches
     }
 }
 
