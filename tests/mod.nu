@@ -7,13 +7,30 @@ use ../src/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use ../src/nu-git-manager/fs/path.nu "path sanitize"
+use ../src/nu-git-manager/fs/path.nu [
+    "path sanitize", "path remove-prefix", "path remove-trailing-path-sep"
+]
 use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 use common/setup.nu [get-random-test-dir]
 
-export def path-sanitization [] {
-    assert equal ('\foo\bar' | path sanitize) "/foo/bar"
+export module path {
+    export def sanitization [] {
+        assert equal ('\foo\bar' | path sanitize) "/foo/bar"
+    }
+
+    export def remove-prefix [] {
+        assert equal ("/foo/bar" | path remove-prefix "/foo") "bar"
+        assert equal ("/foo/bar" | path remove-prefix "/bar") "/foo/bar"
+        assert equal ("/foo/bar/baz" | path remove-prefix "/foo") "bar/baz"
+        assert equal (["/foo/bar", "/foo/bar/baz"] | path remove-prefix "/foo") ["bar", "bar/baz"]
+    }
+
+    export def remove-trailing-path-sep [] {
+        assert equal ("/foo/bar/" | path remove-trailing-path-sep) "/foo/bar"
+        assert equal ("/foo/bar" | path remove-trailing-path-sep) "/foo/bar"
+        assert equal (["/foo/bar", "/foo/bar/"] | path remove-trailing-path-sep) ["/foo/bar", "/foo/bar"]
+    }
 }
 
 export def git-url-parsing [] {
@@ -158,13 +175,9 @@ export def list-all-repos-in-store [] {
     }
 
     # NOTE: remove the path to BASE so that the test output is easy to read
-    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | each {
-        str replace $BASE '' | str trim --left --char "/"
-    }
-    let expected = $store | where in_store | get path | each {
-        # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
-        str trim --right --char "/"
-    }
+    let actual = with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store } | path remove-prefix $BASE
+    # NOTE: `list-repos-in-store` does not add `/` at the end of the paths
+    let expected = $store | where in_store | get path | path remove-trailing-path-sep
 
     # NOTE: need to sort the result to make sure the order of the `git init` does not influence the
     # results of the test
@@ -184,16 +197,11 @@ export def cache-manipulation [] {
     }
 
     def "assert cache" [cache: list<string>]: nothing -> nothing {
-        let actual = open-cache $CACHE
-            | update path { str replace (pwd | path sanitize) '' | str trim --left --char '/' }
+        let actual = open-cache $CACHE | update path { path remove-prefix (pwd | path sanitize) }
         let expected = $cache
             | each {|it|
                 $BASE_REPO | update path {
-                    $it
-                        | path expand
-                        | path sanitize
-                        | str replace (pwd | path sanitize) ''
-                        | str trim --left --char '/'
+                    $it | path expand | path sanitize | path remove-prefix (pwd | path sanitize)
                 }
             }
         assert equal $actual $expected
@@ -330,8 +338,8 @@ export def store-cleaning [] {
                 $path
             }
             | clean-empty-directories-rec
-            | str replace ($env.GIT_REPOS_HOME | path sanitize) ''
-            | str trim --char '/'
+            | path remove-prefix ($env.GIT_REPOS_HOME | path sanitize)
+            | path remove-trailing-path-sep
         let expected = [
             "foo/bar",
             "bar",
@@ -339,7 +347,7 @@ export def store-cleaning [] {
             "foo",
             "baz/foo",
             "baz",
-            "",
+            ($env.GIT_REPOS_HOME | path sanitize),
         ]
 
         assert equal $actual $expected
