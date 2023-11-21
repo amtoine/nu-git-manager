@@ -4,9 +4,10 @@ use ../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../src/nu-git-manager/git/repo.nu [list-remotes]
 use ../src/nu-git-manager/ *
 
+use common/setup.nu [get-random-test-dir]
+
 def run-with-env [code: closure, --prepare-cache] {
-    # NOTE: for the CI to run, the repos need to live inside `HOME`
-    let TEST_ENV_BASE = $nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid)
+    let TEST_ENV_BASE = get-random-test-dir
 
     let TEST_ENV = {
         GIT_REPOS_HOME: ($TEST_ENV_BASE | path join "repos"),
