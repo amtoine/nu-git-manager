@@ -12,6 +12,8 @@ use ../src/nu-git-manager/fs/path.nu [
 ]
 use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
+use common/setup.nu [get-random-test-dir]
+
 export module path {
     export def sanitization [] {
         assert equal ('\foo\bar' | path sanitize) "/foo/bar"
@@ -29,7 +31,6 @@ export module path {
         assert equal ("/foo/bar" | path remove-trailing-path-sep) "/foo/bar"
         assert equal (["/foo/bar", "/foo/bar/"] | path remove-trailing-path-sep) ["/foo/bar", "/foo/bar"]
     }
-
 }
 
 export def git-url-parsing [] {
@@ -144,11 +145,7 @@ export def get-repo-cache [] {
 }
 
 export def list-all-repos-in-store [] {
-    # NOTE: `$BASE` is a constant, hence the capitalized name, but `path sanitize` is not a
-    # parse-time command
-    let BASE = (
-        $nu.temp-path | path join "nu-git-manager/tests/list-all-repos-in-store" | path sanitize
-    )
+    let BASE = get-random-test-dir
 
     assert length (with-env {GIT_REPOS_HOME: $BASE} { list-repos-in-store }) 0
 
@@ -190,10 +187,8 @@ export def list-all-repos-in-store [] {
 }
 
 export def cache-manipulation [] {
-    let CACHE = (
-        $nu.temp-path | path join "nu-git-manager/tests" (random uuid) | path sanitize
-    )
-    let CACHE_DIR = $CACHE | path dirname
+    let CACHE_DIR = get-random-test-dir
+    let CACHE = $CACHE_DIR | path join "cache"
 
     const BASE_REPO = {
         path: null,
@@ -249,7 +244,7 @@ export def install-package [] {
     # FIXME: is there a way to not rely on hardcoded paths here?
     use ~/.local/share/nupm/modules/nupm
 
-    with-env {NUPM_HOME: ($nu.temp-path | path join "nu-git-manager/tests" (random uuid))} {
+    with-env {NUPM_HOME: (get-random-test-dir)} {
         # FIXME: use --no-confirm option
         # related to https://github.com/nushell/nupm/pull/42
         mkdir $env.NUPM_HOME;
@@ -263,8 +258,7 @@ export def install-package [] {
 }
 
 export def detect-grafting [] {
-    # NOTE: for the CI to run, the repos need to live inside `HOME`
-    let BASE = $nu.home-path | path join ".local/share/nu-git-manager/tests" (random uuid)
+    let BASE = get-random-test-dir --no-sanitize
     if ($BASE | path exists) {
         rm --recursive --verbose --force $BASE
     }
@@ -293,7 +287,7 @@ export def detect-grafting [] {
 }
 
 export def root-commit [] {
-    let repo = $nu.temp-path | path join $"nu-git-manager-(random uuid)"
+    let repo = get-random-test-dir
     git clone https://github.com/amtoine/nu-git-manager $repo
 
     let actual = get-root-commit $repo
@@ -302,7 +296,7 @@ export def root-commit [] {
 }
 
 export def remote-listing [] {
-    let repo = $nu.temp-path | path join $"nu-git-manager-(random uuid)"
+    let repo = get-random-test-dir
 
     git init $repo
     git -C $repo remote add 0 0-default
@@ -322,7 +316,7 @@ export def remote-listing [] {
 }
 
 export def store-cleaning [] {
-    with-env {GIT_REPOS_HOME: ($nu.home-path | path join ".local/share/nu-git-manager-tests")} {
+    with-env {GIT_REPOS_HOME: (get-random-test-dir --no-sanitize)} {
         mkdir $env.GIT_REPOS_HOME
         # NOTE: this is to make sure the root of the test is not empty
         # we don't want the test to go remove empty directories outside...
