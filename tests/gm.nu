@@ -93,7 +93,7 @@ export def clone-full-repo [] {
             $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
         )
 
-        let actual = git -C $repo rev-list HEAD | lines | last
+        let actual = ^git -C $repo rev-list HEAD | lines | last
         let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
         assert equal $actual $expected
     }
@@ -118,7 +118,7 @@ export def clone-set-remote [] {
             $env.GIT_REPOS_HOME | path join "github.com/amtoine/nu-git-manager" | path sanitize
         )
 
-        let actual = git -C $repo remote --verbose
+        let actual = ^git -C $repo remote --verbose
             | lines
             | parse --regex '(?<remote>[-_\w]+)\s+(?<url>.*) \((?<mode>\w+)\)'
             | str trim
