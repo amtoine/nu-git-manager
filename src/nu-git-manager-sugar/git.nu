@@ -118,16 +118,18 @@ export def "gm repo is-ancestor" [
 }
 
 # get the list of all the remotes in the current repository
-export def "remote list" [] {
+export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
     ^git remote --verbose
-    | detect columns --no-headers
-    | rename remote url mode
-    | str trim
-    | group-by remote
-    | transpose
-    | update column1 { reject remote | select mode url | transpose -r | into record }
-    | flatten
-    | rename remote fetch push
+        | detect columns --no-headers
+        | rename remote url mode
+        | str trim
+        | group-by remote
+        | transpose
+        | update column1 {
+            reject remote | select mode url | transpose --header-row | into record
+        }
+        | flatten
+        | rename remote fetch push
 }
 
 # add a new remote to the repository
