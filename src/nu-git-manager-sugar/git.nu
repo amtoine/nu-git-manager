@@ -11,10 +11,10 @@ export def operations [] {
 }
 
 # get the commit hash of any revision
-export def "get commit" [
-    revision: string = "HEAD"  # the revision to get the hash of (defaults to "HEAD")
-] {
-    git rev-parse $revision | str trim
+export def "gm repo get commit" [
+    revision: string = "HEAD"  # the revision to get the hash of
+]: nothing -> string {
+    ^git rev-parse $revision
 }
 
 # compare two revisions in a `git` repository
