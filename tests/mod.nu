@@ -288,7 +288,7 @@ export def detect-grafting [] {
 
 export def root-commit [] {
     let repo = get-random-test-dir
-    git clone https://github.com/amtoine/nu-git-manager $repo
+    ^git clone https://github.com/amtoine/nu-git-manager $repo
 
     let actual = get-root-commit $repo
     let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
@@ -298,12 +298,12 @@ export def root-commit [] {
 export def remote-listing [] {
     let repo = get-random-test-dir
 
-    git init $repo
-    git -C $repo remote add 0 0-default
-    git -C $repo remote add 1 1-fetch
-    git -C $repo remote set-url 1 --push 1-push
-    git -C $repo remote add 2 2-fetch
-    git -C $repo remote set-url 2 --push 2-push
+    ^git init $repo
+    ^git -C $repo remote add 0 0-default
+    ^git -C $repo remote add 1 1-fetch
+    ^git -C $repo remote set-url 1 --push 1-push
+    ^git -C $repo remote add 2 2-fetch
+    ^git -C $repo remote set-url 2 --push 2-push
 
     let expected = [
         [remote, fetch, push];
