@@ -4,6 +4,7 @@ use std log
 export def "gm repo get commit" [
     revision: string = "HEAD"  # the revision to get the hash of
 ]: nothing -> string {
+    # FIXME: this `str trim` sounds like a bug :thinking:
     ^git rev-parse $revision | str trim
 }
 
