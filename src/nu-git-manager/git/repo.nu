@@ -22,6 +22,8 @@ export def get-root-commit [
 ]: nothing -> string {
     let repo = $repo | default (pwd)
 
+    # FIXME: this is a bug and should work without string interpolation
+    # see https://github.com/nushell/nushell/issues/11134
     $"(^git -C $repo rev-list HEAD | lines | last)"
 }
 
