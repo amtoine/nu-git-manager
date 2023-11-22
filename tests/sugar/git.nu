@@ -25,7 +25,17 @@ export def branches [] {
 }
 
 export def is-ancestor [] {
-    assert false
+    let repo = get-random-test-dir
+
+    ^git init $repo
+    cd $repo
+
+    git commit --allow-empty --no-gpg-sign --message "init"
+    git commit --allow-empty --no-gpg-sign --message "c1"
+    git commit --allow-empty --no-gpg-sign --message "c2"
+
+    assert (gm repo is-ancestor HEAD^ HEAD)
+    assert not (gm repo is-ancestor HEAD HEAD^)
 }
 
 export def remote-list [] {
