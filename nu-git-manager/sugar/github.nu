@@ -82,7 +82,7 @@ export def "github query-api" [
 ]: nothing -> any {
     let use_gh = if $no_gh {
         false
-    } else if (which gh | is-empty) {
+    } else if (which gh --all | where type == external | is-empty) {
         warning make {
                 title: "executable_not_found_warning"
                 body: (
