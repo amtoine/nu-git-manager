@@ -31,8 +31,8 @@ export def branches [] {
 
     assert equal (gm repo branches) []
 
-    git checkout --orphan foo
-    git commit --allow-empty --no-gpg-sign --message "init"
+    ^git checkout --orphan foo
+    ^git commit --allow-empty --no-gpg-sign --message "init"
 
     assert equal (gm repo branches) [{branch: foo, remotes: []}]
 }
@@ -40,9 +40,9 @@ export def branches [] {
 export def is-ancestor [] {
     init-repo-and-cd-into
 
-    git commit --allow-empty --no-gpg-sign --message "init"
-    git commit --allow-empty --no-gpg-sign --message "c1"
-    git commit --allow-empty --no-gpg-sign --message "c2"
+    ^git commit --allow-empty --no-gpg-sign --message "init"
+    ^git commit --allow-empty --no-gpg-sign --message "c1"
+    ^git commit --allow-empty --no-gpg-sign --message "c2"
 
     assert (gm repo is-ancestor HEAD^ HEAD)
     assert not (gm repo is-ancestor HEAD HEAD^)
