@@ -1,6 +1,7 @@
 use std assert
 
 use ../../src/nu-git-manager-sugar/ git *
+use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
 
 def --env init-repo-and-cd-into []: nothing -> path {
@@ -28,7 +29,7 @@ export def goto-root [] {
     cd init-repo-and-cd-into/bar/baz
 
     gm repo goto root
-    assert equal (pwd) $repo
+    assert equal (pwd | path sanitize) $repo
 }
 
 export def branches [] {
