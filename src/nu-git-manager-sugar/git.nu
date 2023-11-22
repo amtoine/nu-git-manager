@@ -83,7 +83,6 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
     ^git remote --verbose
         | detect columns --no-headers
         | rename remote url mode
-        | str trim
         | group-by remote
         | transpose
         | update column1 {
