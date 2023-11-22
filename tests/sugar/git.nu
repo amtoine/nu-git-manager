@@ -49,5 +49,11 @@ export def is-ancestor [] {
 }
 
 export def remote-list [] {
-    assert false
+    init-repo-and-cd-into
+
+    assert equal (gm repo remote list) []
+
+    ^git remote add foo foo-url
+
+    assert equal (gm repo remote list) [{remote: foo, fetch: foo-url, push: foo-url}]
 }
