@@ -13,7 +13,12 @@ def --env init-repo-and-cd-into []: nothing -> path {
 }
 
 export def get-commit [] {
-    assert false
+    init-repo-and-cd-into
+
+    ^git checkout --orphan main
+    ^git commit --allow-empty --no-gpg-sign --message "init"
+
+    assert equal (gm repo get commit) (^git rev-parse HEAD)
 }
 
 export def goto-root [] {
