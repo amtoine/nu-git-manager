@@ -79,6 +79,7 @@ export def "gm repo is-ancestor" [
 
 # get the list of all the remotes in the current repository
 export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
+    # FIXME: use the helper `list-remotes` command from ../nu-git-manager/git/repo.nu:29
     ^git remote --verbose
         | detect columns --no-headers
         | rename remote url mode
