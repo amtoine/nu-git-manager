@@ -4,7 +4,7 @@ use std log
 export def "gm repo get commit" [
     revision: string = "HEAD"  # the revision to get the hash of
 ]: nothing -> string {
-    ^git rev-parse $revision
+    ^git rev-parse $revision | str trim
 }
 
 def repo-root [] {
