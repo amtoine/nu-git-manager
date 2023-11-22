@@ -27,7 +27,14 @@ export def goto-root [] {
 }
 
 export def branches [] {
-    assert false
+    init-repo-and-cd-into
+
+    assert equal (gm repo branches) []
+
+    git checkout --orphan foo
+    git commit --allow-empty --no-gpg-sign --message "init"
+
+    assert equal (gm repo branches) [{branch: foo, remotes: []}]
 }
 
 export def is-ancestor [] {
