@@ -65,13 +65,11 @@ export def list [
     )}
 
     if ($user | is-empty) {
-        let span = (metadata $user | get span)
         error make {
             msg: $"(ansi red)gist::no_user_given(ansi reset)"
             label: {
                 text: "no user given"
-                start: $span.start
-                end: $span.end
+                span: (metadata $user | get span)
             }
         }
     }
@@ -118,7 +116,7 @@ def "nu-complete list-local-gists" [] {
 }
 
 # jump to a gist in the `GIST_HOME`
-export def-env goto [
+export def --env goto [
     gist: string@"nu-complete list-local-gists"  # the gist to jump to
 ] {
     cd (gist-home | path join $gist)

@@ -2,12 +2,14 @@
 A collection of Nushell tools to manage `git` repositories.
 
 # Table of content
-- [*what is `nu-git-manager`*](#bulb-what-is-nu-git-manager-toc)
-- [*requirements*](#link-requirements-toc)
-- [*installation*](#recycle-installation-toc)
-- [*usage*](#gear-usage-toc)
-    - [*getting help*](#pray-getting-help-toc)
-- [*some ideas of advanced (?) usage*](#exclamation-some-ideas-of-advanced--usage-toc)
+- [nu-git-manager](#nu-git-manager)
+- [Table of content](#table-of-content)
+  - [:bulb: what is `nu-git-manager`](#bulb-what-is-nu-git-manager-toc)
+  - [:link: requirements](#link-requirements-toc)
+  - [:recycle: installation](#recycle-installation-toc)
+  - [:gear: usage](#gear-usage-toc)
+    - [:pray: getting help](#pray-getting-help-toc)
+  - [:exclamation: some ideas of advanced (?) usage](#exclamation-some-ideas-of-advanced--usage-toc)
 
 ## :bulb: what is `nu-git-manager` [[toc](#table-of-content)]
 like [`ghq`](https://github.com/x-motemen/ghq), `nu-git-manager` aims at being a fully-featured
@@ -26,9 +28,6 @@ it provides two main modules:
 - `gh` (optional) 2.29.0 (used by `sugar gh`)
     - with Pacman and `pacman -S community/github-cli`
     - with Nix and `nix run nixpkgs#gh`
-- `find` 4.9.0
-    - with Pacman and `pacman -S core/findutils`
-    - with Nix and `nix run nixpkgs#findutils`
 
 ## :recycle: installation [[toc](#table-of-content)]
 - install [Nupm] (**recommended**) by following the [Nupm instructions]
@@ -42,18 +41,27 @@ git clone https://github.com/amtoine/nu-git-manager
 nupm install --path --force nu-git-manager
 ```
 
+> **Note**
+> if you are using the latest stable release of Nushell, then you should install `nu-git-manager`
+> from the `main` branch, i.e. by default.
+>
+> if you want to use the latest and hotest builds of Nushell, either by building from source yourself
+> or using the [nightly builds](https://github.com/nushell/nightly), you might want to _checkout_
+> the [`nightly`](https://github.com/amtoine/nu-git-manager/tree/nightly) branch and install from
+> there.
+> this alternative branch should contain all fixes and newest features from the latest versions of
+> Nushell :fire:
+
 ## :gear: usage [[toc](#table-of-content)]
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
 ```nu
-# config.nu
-
 # load the main `gm` command
-use nu-git-manager [gm, "gm clone", "gm list", "gm root", "gm remove"]
+use nu-git-manager *
 
 # the following are non-essential modules
-use nu-git-manager sugar git                # augmnet Git with custom commands
-use nu-git-manager sugar gh                 # load commands to interact with *GitHub*
-use nu-git-manager sugar gist               # load commands to interact with *GitHub* gists
+use nu-git-manager-sugar git                # augment Git with custom commands
+use nu-git-manager-sugar gh                 # load commands to interact with *GitHub*
+use nu-git-manager-sugar gist               # load commands to interact with *GitHub* gists
 ```
 
 then you have access to the whole `nu-git-manager` suite :partying_face:
