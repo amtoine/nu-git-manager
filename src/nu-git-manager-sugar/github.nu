@@ -1,7 +1,7 @@
 use std log
 
 const GH_ERROR_DEFAULT_HELP = (
-    "`(ansi default_dimmed)github query-api(ansi reset)` will default to using "
+    "`(ansi default_dimmed)gm gh query-api(ansi reset)` will default to using "
   + "`(ansi default_dimmed)http get(ansi reset)` and the REST API of GitHub"
 )
 
@@ -65,16 +65,16 @@ def "warning make" [
 #
 # # Examples
 #     list the releases of Nushell sorted by date
-#     > github query-api "/repos/nushell/nushell/releases"
+#     > gm gh query-api "/repos/nushell/nushell/releases"
 #           | select tag_name published_at
 #           | rename tag date
 #           | into datetime date
 #           | sort-by date
 #
 #     get the bio of @amtoine
-#     > github query-api --no-paginate "/users/amtoine" | get bio
+#     > gm gh query-api --no-paginate "/users/amtoine" | get bio
 #     you shall not rebase in the middle of a PR review nor close other's review threads :pray:
-export def "github query-api" [
+export def "gm gh query-api" [
     end_point: string # the end point in the GitHub API to query
     --page-size: int = 100 # the size of each page
     --no-paginate # do not paginate the API, useful when getting a single record
@@ -172,20 +172,20 @@ export def "github query-api" [
 #
 # # Examples
 #     get the last release of the `github.com:nushell/nushell` repository
-#     > github query-releases "nushell/nushell"
+#     > gm gh query-releases "nushell/nushell"
 #           | into datetime published_at
 #           | sort-by published_at
 #           | last
 #           | select tag_name published_at
-export def "github query-releases" [
+export def "gm gh query-releases" [
     repo: string # the GitHub repository to query the releases of
     --page-size: int = 100 # the size of each page
     --no-gh # force to use `http get` instead of `gh`
 ]: nothing -> table<url: string, assets_url: string, upload_url: string, html_url: string, id: int, author: record<login: string, id: int, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: bool>, node_id: string, tag_name: string, target_commitish: string, name: string, draft: bool, prerelease: bool, created_at: string, published_at: string, assets: list<any>, tarball_url: string, zipball_url: string, body: string, reactions: record<url: string, total_count: int, +1: int, -1: int, laugh: int, hooray: int, confused: int, heart: int, rocket: int, eyes: int>, mentions_count: int> {
     if $no_gh {
-        github query-api $"/repos/($repo)/releases" --page-size $page_size --no-gh
+        gm gh query-api $"/repos/($repo)/releases" --page-size $page_size --no-gh
     } else {
-        github query-api $"/repos/($repo)/releases" --page-size $page_size
+        gm gh query-api $"/repos/($repo)/releases" --page-size $page_size
     }
 }
 
@@ -193,14 +193,14 @@ export def "github query-releases" [
 #
 # Examples:
 #     get the avatar picture of @amtoine
-#     > github query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
-export def "github query-user" [
+#     > gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+export def "gm gh query-user" [
     user: string # the user to query information about
     --no-gh # force to use `http get` instead of `gh`
 ]: nothing -> record<login: string, id: int, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: bool, name: string, company: string, blog: string, location: string, email: nothing, hireable: nothing, bio: string, twitter_username: nothing, public_repos: int, public_gists: int, followers: int, following: int, created_at: string, updated_at: string> {
     if $no_gh {
-        github query-api $"/users/($user)" --no-paginate --no-gh
+        gm gh query-api $"/users/($user)" --no-paginate --no-gh
     } else {
-        github query-api $"/users/($user)" --no-paginate
+        gm gh query-api $"/users/($user)" --no-paginate
     }
 }
