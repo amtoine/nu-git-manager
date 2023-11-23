@@ -227,3 +227,33 @@ export def "gm gh query-user" [
         }
     }
 }
+
+# checkout one of the repo's PR interactively
+export def "gm gh pr checkout" [] {
+    if (which gh --all | where type == external | is-empty) {
+        error make --unspanned {
+            msg: (
+                $"(ansi red_bold)executable_not_found_warning(ansi reset):\n"
+              + $"`(ansi default_dimmed)gh(ansi reset)` was not found in "
+              + $"`(ansi default_dimmed)$env.PATH(ansi reset)`"
+            )
+        }
+    }
+
+    let repo = ^gh repo view --json nameWithOwner | from json | get --ignore-errors nameWithOwner
+    if $repo == null {
+        log warning "not in a valid GitHub repo"
+        return
+    }
+
+    log debug $"pulling down list of pull requests for '($repo)'"
+    let res = gm gh query-api $"/repos/($repo)/pulls"
+        | select number user.login title
+        | rename id author title
+        | input list --fuzzy
+    if $res == null {
+        log info "user chose to exit"
+    }
+
+    ^gh pr checkout $res.id
+}
