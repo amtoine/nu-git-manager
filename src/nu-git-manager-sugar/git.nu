@@ -1,6 +1,13 @@
 use std log
 
 # get the commit hash of any revision
+#
+# # Examples
+#     get the commit hash of the currently checked out revision
+#     > gm repo get commit
+#
+#     get the commit hash of the main branch
+#     > gm repo get commit main
 export def "gm repo get commit" [
     revision: string = "HEAD"  # the revision to get the hash of
 ]: nothing -> string {
@@ -13,6 +20,11 @@ def repo-root [] {
 }
 
 # go to the root of the repository from anywhere in the worktree
+#
+# # Examples
+#     go back to the root of a repo
+#     > cd foo/bar/baz; gm repo goto root; print (pwd)
+#     /path/to/repo
 export def --env "gm repo goto root" []: nothing -> nothing {
     cd (repo-root)
 }
@@ -79,6 +91,12 @@ export def "gm repo is-ancestor" [
 }
 
 # get the list of all the remotes in the current repository
+# # Examples
+#     list all the remotes in a default `nu-git-manager` repo
+#     > gm repo remote list
+#     #┬remote┬──────────────────fetch──────────────────┬─────────────────push──────────────────
+#     0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
+#     ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
 export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
     # FIXME: use the helper `list-remotes` command from ../nu-git-manager/git/repo.nu:29
     ^git remote --verbose
