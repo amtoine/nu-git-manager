@@ -245,10 +245,7 @@ export def install-package [] {
     use ~/.local/share/nupm/modules/nupm
 
     with-env {NUPM_HOME: (get-random-test-dir)} {
-        # FIXME: use --no-confirm option
-        # related to https://github.com/nushell/nupm/pull/42
-        mkdir $env.NUPM_HOME;
-        nupm install --path .
+        nupm install --no-confirm --path .
 
         assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
         assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
