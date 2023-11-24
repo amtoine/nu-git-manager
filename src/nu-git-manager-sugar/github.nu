@@ -230,6 +230,7 @@ export def "gm gh pr checkout" [] {
         | input list --fuzzy
     if $res == null {
         log info "user chose to exit"
+        return
     }
 
     ^gh pr checkout $res.id
