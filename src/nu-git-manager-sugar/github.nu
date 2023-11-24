@@ -216,12 +216,19 @@ export def "gm gh pr checkout" [] {
     }
 
     log debug $"pulling down list of pull requests for '($repo)'"
-    let res = gm gh query-api $"/repos/($repo)/pulls"
+    let prs = gm gh query-api $"/repos/($repo)/pulls"
         | select number user.login title
         | rename id author title
-        | input list --fuzzy
+    if ($prs | is-empty) {
+        log error $"repo '($repo)' does not have any PR to checkout"
+        log info "maybe the repo is not correct? you can try running `gh repo set-default` :)"
+        return
+    }
+
+    let res = $prs | input list --fuzzy
     if $res == null {
         log info "user chose to exit"
+        return
     }
 
     ^gh pr checkout $res.id
