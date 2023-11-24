@@ -1,6 +1,6 @@
 {
     name: "nu-git-manager"
-    version: 0.2.0
+    version: 0.3.0
     description: "A collection of Nushell tools to manage `git` repositories."
     documentation: "https://github.com/amtoine/nu-git-manager/blob/main/README.md"
     maintainers: [
@@ -18,4 +18,8 @@
         }
     }
     type: "module"
+    modules: [
+        "./src/nu-git-manager/",
+        "./src/nu-git-manager-sugar/",
+    ]
 }

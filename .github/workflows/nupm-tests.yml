@@ -1,0 +1,72 @@
+# reusable workflow to be able to provide defaults to the CI
+on:
+  workflow_dispatch:
+    inputs:
+      nu_version:
+        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        default: "*"
+        type: string
+      nupm_revision:
+        description: "A commit hash, branch name or tag to checkout before installing Nupm."
+        required: true
+        default: "*"
+        type: string
+      timeout:
+        description: "The timeout of the ci job. Default is 20min"
+        default: 20
+        type: number
+
+  workflow_call:
+    inputs:
+      nu_version:
+        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        default: "*"
+        type: string
+      nupm_revision:
+        description: "A commit hash, branch name or tag to checkout before installing Nupm."
+        required: true
+        default: "*"
+        type: string
+      timeout:
+        description: "The timeout of the ci job. Default is 20min"
+        default: 20
+        type: number
+
+env:
+  NU_LOG_LEVEL: DEBUG
+  GITHUB_TOKEN: ${{ github.token }}
+
+defaults:
+  run:
+    shell: nu {0}
+
+jobs:
+  nupm-tests:
+    timeout-minutes: ${{ inputs.timeout }}
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup nushell and nupm
+        uses: amtoine/setup-nupm-action@0.1.1
+        id: "nu-setup"
+        with:
+          nu_version: ${{github.ref == 'refs/heads/nightly' && 'nightly' || inputs.nu_version}}
+          nupm_revision: ${{github.ref == 'refs/heads/nightly' && 'main' || inputs.nupm_revision}}
+
+      - name: Set up Git
+        shell: bash
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global init.defaultBranch main
+
+      - name: Run the tests
+        run: |
+          use ${{ steps.nu-setup.outputs.nupm_path }}
+          nupm test --show-stdout
