@@ -84,13 +84,13 @@ export def "gm gh query-api" [
         false
     } else if (which gh --all | where type == external | is-empty) {
         warning make {
-                title: "executable_not_found_warning"
-                body: (
-                    "`(ansi default_dimmed)gh(ansi reset)` was not found in "
-                  + "`(ansi default_dimmed)$env.PATH(ansi reset)`"
-                )
-                help: $GH_ERROR_DEFAULT_HELP
-            }
+            title: "executable_not_found_warning"
+            body: (
+                "`(ansi default_dimmed)gh(ansi reset)` was not found in "
+              + "`(ansi default_dimmed)$env.PATH(ansi reset)`"
+            )
+            help: $GH_ERROR_DEFAULT_HELP
+        }
 
         false
     } else {
@@ -99,10 +99,10 @@ export def "gm gh query-api" [
 
         if $res.exit_code != 0 {
             warning make {
-                    title: "github_auth_warning"
-                    body: ($res.stderr | str trim)
-                    help: $GH_ERROR_DEFAULT_HELP
-                }
+                title: "github_auth_warning"
+                body: ($res.stderr | str trim)
+                help: $GH_ERROR_DEFAULT_HELP
+            }
 
             false
         } else {
