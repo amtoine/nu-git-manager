@@ -1,7 +1,5 @@
 # get a full report about the local store of repositories
-export def "gm report" [
-    --dirty # list only dirty repositories
-]: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int> {
+export def "gm report" []: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int, clean: bool> {
     if (which gstat | is-empty) {
         error make --unspanned {
             msg: (
@@ -14,8 +12,7 @@ export def "gm report" [
     }
 
     let repos = gm list --full-path
-
-    let report = $repos
+    $repos
         | enumerate
         | each {|it|
             print --no-newline $"(ansi erase_line)[($it.index + 1) / ($repos | length)]: ($it.item)\r"
@@ -51,10 +48,4 @@ export def "gm report" [
                 + $in.stashes
             ) == 0
         }
-
-    if $dirty {
-        $report | where not clean | reject clean
-    } else {
-        $report
-    }
 }
