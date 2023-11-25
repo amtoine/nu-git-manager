@@ -61,29 +61,6 @@ export def "gm report" [
     }
 }
 
-export def "gm repo switch" []: nothing -> nothing {
-    let res = ^git branch --all
-        | lines
-        | str replace --regex '^  (remotes/.*)' $'  (ansi default_dimmed)${1}(ansi reset)'
-        | str replace --regex '^\* (.*)' $'(ansi cyan_bold)${1}(ansi reset)'
-        | str trim
-        | input list --fuzzy
-
-    if $res == null {
-        return
-    }
-
-    let branch = $res | ansi strip
-
-    let branch = if ($branch | str starts-with "remotes/") {
-        $branch | split row '/' | skip 2 | str join '/'
-    } else {
-        $branch
-    }
-
-    git checkout $branch
-}
-
 export def "gm repo ls" [
     repo?: path, # the path to the repo (defaults to `.`)
 ]: nothing -> record<path: path, name: string, staged: int, unstaged: int, untracked: int, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {

@@ -178,3 +178,27 @@ export def "gm repo branch interactive-delete" [] {
 
     ^git branch --delete --force $choice
 }
+
+# switch between branches interactively
+export def "gm repo switch" []: nothing -> nothing {
+    let res = ^git branch --all
+        | lines
+        | str replace --regex '^  (remotes/.*)' $'  (ansi default_dimmed)${1}(ansi reset)'
+        | str replace --regex '^\* (.*)' $'(ansi cyan_bold)${1}(ansi reset)'
+        | str trim
+        | input list --fuzzy
+
+    if $res == null {
+        return
+    }
+
+    let branch = $res | ansi strip
+
+    let branch = if ($branch | str starts-with "remotes/") {
+        $branch | split row '/' | skip 2 | str join '/'
+    } else {
+        $branch
+    }
+
+    ^git checkout $branch
+}
