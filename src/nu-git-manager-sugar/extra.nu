@@ -1,5 +1,3 @@
-use log debug
-
 # get a full report about the local store of repositories
 export def "gm report" [
     --dirty # list only dirty repositories
