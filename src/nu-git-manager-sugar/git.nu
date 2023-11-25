@@ -72,6 +72,16 @@ export def "gm repo branches" [
     }
 }
 
+# wipe a branch completely, i.e. both locally and remotely
+export def "gm repo branch wipe" [
+    branch: string, # the branch to wipe
+    remote: string, # the remote to push to
+] {
+    ^git branch --delete --force $branch
+    ^git push $remote --delete $branch
+}
+
+
 # return true iif the first revision is an ancestor of the second
 #
 # # Examples

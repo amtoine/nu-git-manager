@@ -1,15 +1,6 @@
 use log debug
 
 # TODO: documentation
-export def "gm branch wipe" [
-    branch: string, # TODO: documentation
-    remote: string, # TODO: documentation
-] {
-    git branch --delete --force $branch
-    git push $remote --delete $branch
-}
-
-# TODO: documentation
 export def "gm report" [
     --dirty # list only dirty repositories
 ]: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int> {
