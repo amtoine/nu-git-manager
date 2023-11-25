@@ -14,6 +14,14 @@ export def "gm repo get commit" [
     (^git rev-parse $revision)
 }
 
+# compare the changes between two revisions, from a target to the "head"
+export def "gm repo compare" [
+    target: string, # the target to compare from
+    --head: string = "HEAD", # the "head" to use for the comparison
+] {
+    ^git diff (^git merge-base $target $head) $head
+}
+
 def repo-root [] {
     ^git rev-parse --show-toplevel
 }

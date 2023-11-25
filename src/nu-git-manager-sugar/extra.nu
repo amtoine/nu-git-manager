@@ -61,14 +61,6 @@ export def "gm report" [
     }
 }
 
-# TODO: documentation
-export def "gm compare" [
-    target: string, # TODO: documentation
-    --head: string = "HEAD", # TODO: documentation
-] {
-    git diff (git merge-base $target $head) $head
-}
-
 def get-branches [--merged, --no-merged]: nothing -> list<string> {
     let branches = if $merged {
         ^git branch --merged
