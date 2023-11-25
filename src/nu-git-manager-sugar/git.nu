@@ -119,3 +119,22 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
         | flatten
         | rename remote fetch push
 }
+
+# fetch a remote branch locally, without pulling down the whole remote
+export def "gm repo fetch branch" [
+    remote: string, # the branch to fetch
+    branch: string, # the remote to fetch the branch from
+] {
+    ^git fetch $remote $branch
+
+    if (^git branch --list | lines | str substring 2.. | where $it == $branch | is-empty) {
+        log debug $"($branch) was not found locally, creating the branch on top of FETCH_HEAD"
+        ^git branch $branch FETCH_HEAD
+    } else if (^git branch --show-current) == $branch {
+        log debug $"($branch) is currently checkout out, fast-forwarding to FECTH_HEAD"
+        ^git rebase $branch FETCH_HEAD
+    } else {
+        log debug $"moving ($branch) to the new FETCH_HEAD"
+        ^git branch --force $branch FETCH_HEAD
+    }
+}
