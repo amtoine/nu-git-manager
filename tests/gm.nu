@@ -335,5 +335,21 @@ export def store-cleaning [] {
 }
 
 export def user-import [] {
-    ^$nu.current-exe --commands "use ./src/nu-git-manager/ *"
+    let src = "
+        use ./src/nu-git-manager/ *
+        scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
+    "
+
+    let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
+    let expected = [
+        "gm clean",
+        "gm clone",
+        "gm list",
+        "gm remove",
+        "gm squash-forks",
+        "gm status",
+        "gm update-cache",
+    ]
+
+    assert equal $actual $expected
 }
