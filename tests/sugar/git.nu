@@ -69,3 +69,28 @@ export def remote-list [] {
 
     assert equal (gm repo remote list) [{remote: foo, fetch: foo-url, push: foo-url}]
 }
+
+export def branch-fetch [] {
+    exit 1
+}
+
+# ignored
+def branch-interactive-delete [] {
+    exit 0
+}
+
+export def branch-switch [] {
+    exit 1
+}
+
+export def list [] {
+    exit 1
+}
+
+export def branch-wipe [] {
+    exit 1
+}
+
+export def branch-compare [] {
+    exit 1
+}
