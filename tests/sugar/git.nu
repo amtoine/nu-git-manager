@@ -1,6 +1,12 @@
 use std assert
 
-use ../../src/nu-git-manager-sugar/ git *
+use ../../src/nu-git-manager-sugar/ git [
+    "gm repo get commit"
+    "gm repo goto root"
+    "gm repo branches"
+    "gm repo is-ancestor"
+    "gm repo remote list"
+]
 use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
 
