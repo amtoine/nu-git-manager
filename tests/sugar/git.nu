@@ -31,8 +31,8 @@ export def get-commit [] {
 export def goto-root [] {
     let repo = init-repo-and-cd-into
 
-    mkdir init-repo-and-cd-into/bar/baz
-    cd init-repo-and-cd-into/bar/baz
+    mkdir bar/baz
+    cd bar/baz
 
     gm repo goto root
     assert equal (pwd | path sanitize) $repo
