@@ -15,6 +15,7 @@ def --env init-repo-and-cd-into []: nothing -> path {
 
     ^git init $repo
     cd $repo
+    ^git checkout --orphan main
 
     $repo
 }
@@ -22,7 +23,6 @@ def --env init-repo-and-cd-into []: nothing -> path {
 export def get-commit [] {
     init-repo-and-cd-into
 
-    ^git checkout --orphan main
     ^git commit --allow-empty --no-gpg-sign --message "init"
 
     assert equal (gm repo get commit) (^git rev-parse HEAD)
@@ -43,10 +43,9 @@ export def branches [] {
 
     assert equal (gm repo branches) []
 
-    ^git checkout --orphan foo
     ^git commit --allow-empty --no-gpg-sign --message "init"
 
-    assert equal (gm repo branches) [{branch: foo, remotes: []}]
+    assert equal (gm repo branches) [{branch: main, remotes: []}]
 }
 
 export def is-ancestor [] {
