@@ -290,6 +290,8 @@ export def root-commit [] {
     let actual = get-root-commit $repo
     let expected = "2ed2d875d80505d78423328c6b2a60522715fcdf"
     assert equal $actual $expected
+
+    rm --recursive --force $repo
 }
 
 export def remote-listing [] {
@@ -310,6 +312,8 @@ export def remote-listing [] {
         ["2", "2-fetch", "2-push"],
     ]
     assert equal (list-remotes $repo) $expected
+
+    rm --recursive --force $repo
 }
 
 export def store-cleaning [] {
