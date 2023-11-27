@@ -8,6 +8,7 @@ use ../../src/nu-git-manager-sugar/ git [
     "gm repo remote list"
     "gm repo fetch branch"
     "gm repo ls"
+    "gm repo branch wipe"
 ]
 use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
@@ -234,7 +235,38 @@ export def list [] {
 }
 
 export def branch-wipe [] {
-    exit 1
+    let foo = init-repo-and-cd-into
+    let bar = get-random-test-dir
+
+    commit "initial commit"
+
+    ^git checkout -b foo
+    commit "c1" "c2" "c3"
+    ^git checkout main
+
+    ^git clone $"file://($foo)" $bar
+
+    assert equal (^git branch | lines | str substring 2..) ["foo", "main"]
+
+    do {
+        cd $bar
+
+        ^git branch foo origin/foo
+
+        assert simple-git-tree-equal [
+            "(origin/foo, foo) c3",
+            "c2",
+            "c1",
+            "(HEAD -> main, origin/main, origin/HEAD) initial commit",
+        ]
+        gm repo branch wipe foo origin
+        assert simple-git-tree-equal ["(HEAD -> main, origin/main, origin/HEAD) initial commit"]
+    }
+
+    assert equal (^git branch | lines | str substring 2..) ["main"]
+
+    clean $foo
+    clean $bar
 }
 
 export def branch-compare [] {
