@@ -147,7 +147,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo
+        gm repo fetch branch $"file://($foo)" foo --strategy "merge"
 
         assert simple-git-tree-equal [
             "(HEAD -> foo) c9",
