@@ -213,7 +213,7 @@ export def "gm repo ls" [
     let last_commit = if (do --ignore-errors { git -C $repo log -1 } | complete).exit_code == 0 { {
         date: (^git -C $repo log -1 --format=%cd | into datetime),
         title: (^git -C $repo log -1 --format=%s),
-        hash: (^git -C $repo log -1 --format=%t),
+        hash: (^git -C $repo log -1 --format=%h),
     } } else {
         null
     }
