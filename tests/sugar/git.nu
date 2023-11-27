@@ -34,11 +34,13 @@ def commit [...messages: string]: nothing -> list<string> {
 }
 
 export def get-commit [] {
-    init-repo-and-cd-into
+    let repo = init-repo-and-cd-into
 
     commit "init"
 
     assert equal (gm repo get commit) (^git rev-parse HEAD)
+
+    clean $repo
 }
 
 export def goto-root [] {
@@ -49,35 +51,43 @@ export def goto-root [] {
 
     gm repo goto root
     assert equal (pwd | path sanitize) $repo
+
+    clean $repo
 }
 
 export def branches [] {
-    init-repo-and-cd-into
+    let repo = init-repo-and-cd-into
 
     assert equal (gm repo branches) []
 
     commit "init"
 
     assert equal (gm repo branches) [{branch: main, remotes: []}]
+
+    clean $repo
 }
 
 export def is-ancestor [] {
-    init-repo-and-cd-into
+    let repo = init-repo-and-cd-into
 
     commit "init" "c1" "c2"
 
     assert (gm repo is-ancestor HEAD^ HEAD)
     assert not (gm repo is-ancestor HEAD HEAD^)
+
+    clean $repo
 }
 
 export def remote-list [] {
-    init-repo-and-cd-into
+    let repo = init-repo-and-cd-into
 
     assert equal (gm repo remote list) []
 
     ^git remote add foo foo-url
 
     assert equal (gm repo remote list) [{remote: foo, fetch: foo-url, push: foo-url}]
+
+    clean $repo
 }
 
 export def branch-fetch [] {
