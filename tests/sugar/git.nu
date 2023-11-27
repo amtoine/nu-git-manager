@@ -192,6 +192,8 @@ export def branch-fetch [] {
         ]
     }
 
+    assert error { gm repo fetch branch $"file://($foo)" foo --strategy "" }
+
     clean $foo
     clean $bar
 }
