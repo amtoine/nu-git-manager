@@ -20,10 +20,23 @@ def --env init-repo-and-cd-into []: nothing -> path {
     $repo
 }
 
+def clean [dir: path] {
+    cd
+    rm --recursive --force $dir
+}
+
+def commit [...messages: string]: nothing -> list<string> {
+    $messages | each {|msg|
+        ^git commit --allow-empty --no-gpg-sign --message $msg
+            | parse --regex '\[.* (?<hash>.*)\] .*'
+            | get hash.0
+    }
+}
+
 export def get-commit [] {
     init-repo-and-cd-into
 
-    ^git commit --allow-empty --no-gpg-sign --message "init"
+    commit "init"
 
     assert equal (gm repo get commit) (^git rev-parse HEAD)
 }
@@ -43,7 +56,7 @@ export def branches [] {
 
     assert equal (gm repo branches) []
 
-    ^git commit --allow-empty --no-gpg-sign --message "init"
+    commit "init"
 
     assert equal (gm repo branches) [{branch: main, remotes: []}]
 }
@@ -51,9 +64,7 @@ export def branches [] {
 export def is-ancestor [] {
     init-repo-and-cd-into
 
-    ^git commit --allow-empty --no-gpg-sign --message "init"
-    ^git commit --allow-empty --no-gpg-sign --message "c1"
-    ^git commit --allow-empty --no-gpg-sign --message "c2"
+    commit "init" "c1" "c2"
 
     assert (gm repo is-ancestor HEAD^ HEAD)
     assert not (gm repo is-ancestor HEAD HEAD^)
