@@ -75,3 +75,14 @@ export def "run" [
         with-env $GM_ENV $code
     }
 }
+
+# TODO: documentation
+export def get-ignored-tests []: nothing -> table<file: string, test: string, reason: string> {
+    ^rg '^# ignored: ' tests/ -A 1
+        | lines
+        | split list "--"
+        | each {|it|
+            let reason = $it.0 | parse "{file}:# ignored: {reason}" | get reason.0
+            $it.1 | parse "{file}-def {test} [{rest}" | reject rest | insert reason $reason | first
+        }
+}
