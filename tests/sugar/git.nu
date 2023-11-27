@@ -9,6 +9,7 @@ use ../../src/nu-git-manager-sugar/ git [
     "gm repo fetch branch"
     "gm repo ls"
     "gm repo branch wipe"
+    "gm repo compare"
 ]
 use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
@@ -270,5 +271,38 @@ export def branch-wipe [] {
 }
 
 export def branch-compare [] {
-    exit 1
+    let foo = init-repo-and-cd-into
+
+    commit "initial commit"
+
+    assert equal (gm repo compare main --head main) ""
+    assert equal (gm repo compare HEAD --head HEAD) ""
+
+    ^git checkout -b foo
+    "foo" | save foo.txt
+    ^git add foo.txt
+    commit "c1"
+
+    let expected = [
+        "diff --git a/foo.txt b/foo.txt",
+        "new file mode 100644",
+        "index 0000000..1910281",
+        "--- /dev/null",
+        "+++ b/foo.txt",
+        "@@ -0,0 +1 @@",
+        "+foo",
+        "\\ No newline at end of file"
+        "",
+    ]
+    assert equal (gm repo compare main) ($expected | str join "\n")
+    assert equal (gm repo compare main --head HEAD) ($expected | str join "\n")
+
+    ^git checkout main
+    "bar" | save --append foo.txt
+    ^git add foo.txt
+    commit "c2"
+
+    assert equal (gm repo compare main --head foo) ($expected | str join "\n")
+
+    clean $foo
 }
