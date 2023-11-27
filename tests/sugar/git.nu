@@ -7,6 +7,7 @@ use ../../src/nu-git-manager-sugar/ git [
     "gm repo is-ancestor"
     "gm repo remote list"
     "gm repo fetch branch"
+    "gm repo ls"
 ]
 use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
@@ -175,7 +176,61 @@ def branch-interactive-switch [] {
 }
 
 export def list [] {
-    exit 1
+    let repo = init-repo-and-cd-into
+
+    let BASE_LS = {
+        path: $repo,
+        name: ($repo | path basename),
+        staged: [],
+        unstaged: [],
+        untracked: [],
+        last_commit: null,
+        branch: main
+    }
+
+    assert equal (gm repo ls) $BASE_LS
+
+    let initial_hash = commit "init"
+
+    let actual = (gm repo ls | update $.last_commit.date null)
+    let expected = $BASE_LS | update last_commit {date: null, title: "init", hash: $initial_hash.0}
+    assert equal $actual $expected
+
+    touch foo.txt
+
+    let actual = (gm repo ls | update $.last_commit.date null)
+    let expected = $BASE_LS
+        | update last_commit {date: null, title: "init", hash: $initial_hash.0}
+        | update untracked ["foo.txt"]
+    assert equal $actual $expected
+
+    ^git add foo.txt
+
+    let actual = (gm repo ls | update $.last_commit.date null)
+    let expected = $BASE_LS
+        | update last_commit {date: null, title: "init", hash: $initial_hash.0}
+        | update staged ["foo.txt"]
+    assert equal $actual $expected
+
+    let hash = commit "add foo.txt"
+
+    let actual = (gm repo ls | update $.last_commit.date null)
+    let expected = $BASE_LS | update last_commit {date: null, title: "add foo.txt", hash: $hash.0}
+    assert equal $actual $expected
+
+    "foo" | save --append foo.txt
+    "bar" | save bar.txt
+    ^git add bar.txt
+    "bar" | save --append bar.txt
+
+    let actual = (gm repo ls | update $.last_commit.date null)
+    let expected = $BASE_LS
+        | update last_commit {date: null, title: "add foo.txt", hash: $hash.0}
+        | update unstaged ["bar.txt", "foo.txt"]
+        | update staged ["bar.txt"]
+    assert equal $actual $expected
+
+    clean $repo
 }
 
 export def branch-wipe [] {
