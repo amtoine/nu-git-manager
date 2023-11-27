@@ -144,7 +144,7 @@ export def "gm repo fetch branch" [
         match $strategy {
             "rebase" => {
                 log debug "rebasing to FECTH_HEAD according to strategy"
-                ^git rebase $branch FETCH_HEAD
+                ^git rebase FETCH_HEAD $branch
             },
             "merge" => {
                 log debug "fast-forwarding to FECTH_HEAD according to strategy"
