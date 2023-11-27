@@ -164,12 +164,13 @@ export def branch-fetch [] {
     clean $bar
 }
 
-# ignored
+# ignored: interactive
 def branch-interactive-delete [] {
     exit 0
 }
 
-export def branch-switch [] {
+# ignored: interactive
+def branch-interactive-switch [] {
     exit 1
 }
 
