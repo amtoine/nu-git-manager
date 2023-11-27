@@ -94,8 +94,8 @@ export def remote-list [] {
     clean $repo
 }
 
-def "assert simple-git-tree-equal" [expected: list<string>] {
-    let actual = ^git log --oneline --decorate --graph --all FETCH_HEAD
+def "assert simple-git-tree-equal" [expected: list<string>, --extra-revs: list<string> = []] {
+    let actual = ^git log --oneline --decorate --graph --all $extra_revs
         | lines
         | parse "* {hash} {tree}"
         | get tree
@@ -147,7 +147,7 @@ export def branch-fetch [] {
         cd $bar
         gm repo fetch branch $"file://($foo)" foo
 
-        assert simple-git-tree-equal [
+        assert simple-git-tree-equal --extra-revs ["FETCH_HEAD"] [
             "c6",
             "c5",
             "(HEAD -> foo) c4",
