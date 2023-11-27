@@ -111,30 +111,27 @@ export def branch-fetch [] {
     ^git clone $"file://($foo)" $bar
 
     ^git checkout -b foo
-    commit "c1" "c2" "c3"
+    commit "c1" "c2"
 
     do {
         cd $bar
         gm repo fetch branch $"file://($foo)" foo
 
         assert simple-git-tree-equal [
-            "(foo) c3",
-            "c2",
+            "(foo) c2",
             "c1",
             "(HEAD -> main, origin/main, origin/HEAD) initial commit",
         ]
     }
 
-    commit "c4" "c5" "c6"
+    commit "c3" "c4"
 
     do {
         cd $bar
         gm repo fetch branch $"file://($foo)" foo
 
         assert simple-git-tree-equal [
-            "(foo) c6",
-            "c5",
-            "c4",
+            "(foo) c4",
             "c3",
             "c2",
             "c1",
@@ -144,15 +141,46 @@ export def branch-fetch [] {
         ^git checkout foo
     }
 
-    commit "c7" "c8" "c9"
+    commit "c5" "c6"
+
+    do {
+        cd $bar
+        gm repo fetch branch $"file://($foo)" foo
+
+        assert simple-git-tree-equal [
+            "c6",
+            "c5",
+            "(HEAD -> foo) c4",
+            "c3",
+            "c2",
+            "c1",
+            "(origin/main, origin/HEAD, main) initial commit",
+        ]
+    }
+
+    do {
+        cd $bar
+        gm repo fetch branch $"file://($foo)" foo --strategy "rebase"
+
+        assert simple-git-tree-equal [
+            "(HEAD -> foo) c6",
+            "c5",
+            "c4",
+            "c3",
+            "c2",
+            "c1",
+            "(origin/main, origin/HEAD, main) initial commit",
+        ]
+    }
+
+    commit "c7" "c8"
 
     do {
         cd $bar
         gm repo fetch branch $"file://($foo)" foo --strategy "merge"
 
         assert simple-git-tree-equal [
-            "(HEAD -> foo) c9",
-            "c8",
+            "(HEAD -> foo) c8",
             "c7",
             "c6",
             "c5",
