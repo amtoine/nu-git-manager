@@ -6,6 +6,7 @@ use ../../src/nu-git-manager-sugar/ git [
     "gm repo branches"
     "gm repo is-ancestor"
     "gm repo remote list"
+    "gm repo fetch branch"
 ]
 use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
@@ -90,8 +91,77 @@ export def remote-list [] {
     clean $repo
 }
 
+def "assert simple-git-tree-equal" [expected: list<string>] {
+    let actual = (
+        ^git log --oneline --decorate --graph --all | lines | parse "* {hash} {tree}" | get tree
+    )
+    assert equal $actual $expected
+}
+
 export def branch-fetch [] {
-    exit 1
+    let foo = init-repo-and-cd-into
+    let bar = get-random-test-dir
+
+    commit "initial commit"
+
+    ^git clone $"file://($foo)" $bar
+
+    ^git checkout -b foo
+    commit "c1" "c2" "c3"
+
+    do {
+        cd $bar
+        gm repo fetch branch $"file://($foo)" foo
+
+        assert simple-git-tree-equal [
+            "(foo) c3",
+            "c2",
+            "c1",
+            "(HEAD -> main, origin/main, origin/HEAD) initial commit",
+        ]
+    }
+
+    commit "c4" "c5" "c6"
+
+    do {
+        cd $bar
+        gm repo fetch branch $"file://($foo)" foo
+
+        assert simple-git-tree-equal [
+            "(foo) c6",
+            "c5",
+            "c4",
+            "c3",
+            "c2",
+            "c1",
+            "(HEAD -> main, origin/main, origin/HEAD) initial commit",
+        ]
+
+        ^git checkout foo
+    }
+
+    commit "c7" "c8" "c9"
+
+    do {
+        cd $bar
+        gm repo fetch branch $"file://($foo)" foo
+
+        assert simple-git-tree-equal [
+            "(HEAD -> foo) c9",
+            "c8",
+            "c7",
+            "c6",
+            "c5",
+            "c4",
+            "c3",
+            "c2",
+            "c1",
+            "(origin/main, origin/HEAD, main) initial commit",
+        ]
+    }
+
+    clean $foo
+    clean $bar
 }
 
 # ignored
