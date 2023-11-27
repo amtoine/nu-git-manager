@@ -95,9 +95,10 @@ export def remote-list [] {
 }
 
 def "assert simple-git-tree-equal" [expected: list<string>] {
-    let actual = (
-        ^git log --oneline --decorate --graph --all | lines | parse "* {hash} {tree}" | get tree
-    )
+    let actual = ^git log --oneline --decorate --graph --all FETCH_HEAD
+        | lines
+        | parse "* {hash} {tree}"
+        | get tree
     assert equal $actual $expected
 }
 
