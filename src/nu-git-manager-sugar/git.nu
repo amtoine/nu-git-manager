@@ -132,6 +132,7 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
 export def "gm repo fetch branch" [
     remote: string, # the branch to fetch
     branch: string, # the remote to fetch the branch from
+    --strategy: string = "none" # the merge strategy to use
 ] {
     ^git fetch $remote $branch
 
@@ -139,8 +140,28 @@ export def "gm repo fetch branch" [
         log debug $"($branch) was not found locally, creating the branch on top of FETCH_HEAD"
         ^git branch $branch FETCH_HEAD
     } else if (^git branch --show-current) == $branch {
-        log debug $"($branch) is currently checkout out, fast-forwarding to FECTH_HEAD"
-        ^git rebase $branch FETCH_HEAD
+        log debug $"($branch) is currently checked out"
+        match $strategy {
+            "rebase" => {
+                log debug "rebasing to FECTH_HEAD according to strategy"
+                ^git rebase $branch FETCH_HEAD
+            },
+            "merge" => {
+                log debug "fast-forwarding to FECTH_HEAD according to strategy"
+                ^git merge $branch FETCH_HEAD
+            },
+            "none" => { log debug "not doing anything according to strategy" },
+            _ => {
+                # FIXME: should be using the `throw-error` command from `nu-git-manager`
+                error make {
+                    msg: $"(ansi red_bold)invalid_strategy(ansi reset)"
+                    label: {
+                        text: "expected one of ['merge', 'rebase', 'none']"
+                        span: (metadata $strategy).span
+                    }
+                }
+            },
+        }
     } else {
         log debug $"moving ($branch) to the new FETCH_HEAD"
         ^git branch --force $branch FETCH_HEAD
