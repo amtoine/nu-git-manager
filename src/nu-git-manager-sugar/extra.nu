@@ -49,3 +49,10 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
             ) == 0
         }
 }
+
+export def "gm for-each" [code: closure]: nothing -> any {
+    gm list --full-path | each {|repo|
+        cd $repo
+        do $code
+    }
+}
