@@ -9,11 +9,17 @@ module imports {
 
         let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
         let expected = [
+            "gm repo branch interactive-delete",
+            "gm repo branch wipe",
             "gm repo branches",
+            "gm repo compare",
+            "gm repo fetch branch",
             "gm repo get commit",
             "gm repo goto root",
             "gm repo is-ancestor",
+            "gm repo ls",
             "gm repo remote list",
+            "gm repo switch",
         ]
 
         assert equal $actual $expected
