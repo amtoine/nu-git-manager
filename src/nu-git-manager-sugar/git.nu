@@ -250,4 +250,3 @@ export def "gm repo ls" [
         branch: (^git -C $repo branch --show-current),
     }
 }
-
