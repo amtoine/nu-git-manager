@@ -48,6 +48,23 @@ module imports {
 
         assert equal $actual $expected
     }
+
+    export def github [] {
+        let src = "
+            use ./src/nu-git-manager-sugar/ github *
+            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
+        "
+
+        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
+        let expected = [
+            "gm gh pr checkout",
+            "gm gh query-api",
+            "gm gh query-releases",
+            "gm gh query-user",
+        ]
+
+        assert equal $actual $expected
+    }
 }
 
 export use imports
