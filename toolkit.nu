@@ -33,8 +33,9 @@ export def "install" [] {
 #     clean the environment before running the code
 #     > toolkit run --clean { gm clone https://github.com/amtoine/nu-git-manager --depth 1 }
 export def "run" [
-    code: closure, # the code to run in the environment
+    code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
+    --interactive, # run interactively
 ] {
     const GM_ENV = {
         GIT_REPOS_HOME: ($nu.temp-path | path join "nu-git-manager/repos/"),
@@ -51,5 +52,26 @@ export def "run" [
         }
     }
 
-    with-env $GM_ENV $code
+    if $interactive {
+        const CONFIG_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu")
+        const ENV_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "env.nu")
+
+        "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
+        "" | save --force $ENV_FILE
+
+        with-env ($GM_ENV | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
+            ^$nu.current-exe [
+                --env-config $ENV_FILE
+                --config $CONFIG_FILE
+                --execute "use ./src/nu-git-manager *"
+            ]
+        }
+    } else {
+        if $code == null {
+            error make --unspanned {
+                msg: "`toolkit.nu run requires a `$code` when `--interactive` is not used"
+            }
+        }
+        with-env $GM_ENV $code
+    }
 }
