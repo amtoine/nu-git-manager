@@ -5,6 +5,7 @@ use ../src/nu-git-manager/git/repo.nu [list-remotes]
 use ../src/nu-git-manager/ *
 
 use common/setup.nu [get-random-test-dir]
+use common/import.nu ["assert imports"]
 
 def run-with-env [code: closure, --prepare-cache] {
     let TEST_ENV_BASE = get-random-test-dir
@@ -335,5 +336,13 @@ export def store-cleaning [] {
 }
 
 export def user-import [] {
-    ^$nu.current-exe --commands "use ./src/nu-git-manager/ *"
+    assert imports "nu-git-manager" "" [
+        "gm clean",
+        "gm clone",
+        "gm list",
+        "gm remove",
+        "gm squash-forks",
+        "gm status",
+        "gm update-cache",
+    ]
 }
