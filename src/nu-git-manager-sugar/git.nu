@@ -14,6 +14,14 @@ export def "gm repo get commit" [
     (^git rev-parse $revision)
 }
 
+# compare the changes between two revisions, from a target to the "head"
+export def "gm repo compare" [
+    target: string, # the target to compare from
+    --head: string = "HEAD", # the "head" to use for the comparison
+] {
+    ^git diff (^git merge-base $target $head) $head
+}
+
 def repo-root [] {
     ^git rev-parse --show-toplevel
 }
@@ -72,6 +80,16 @@ export def "gm repo branches" [
     }
 }
 
+# wipe a branch completely, i.e. both locally and remotely
+export def "gm repo branch wipe" [
+    branch: string, # the branch to wipe
+    remote: string, # the remote to push to
+] {
+    ^git branch --delete --force $branch
+    ^git push $remote --delete $branch
+}
+
+
 # return true iif the first revision is an ancestor of the second
 #
 # # Examples
@@ -108,4 +126,127 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
         }
         | flatten
         | rename remote fetch push
+}
+
+# fetch a remote branch locally, without pulling down the whole remote
+export def "gm repo fetch branch" [
+    remote: string, # the branch to fetch
+    branch: string, # the remote to fetch the branch from
+    --strategy: string = "none" # the merge strategy to use
+] {
+    ^git fetch $remote $branch
+
+    if (^git branch --list | lines | str substring 2.. | where $it == $branch | is-empty) {
+        log debug $"($branch) was not found locally, creating the branch on top of FETCH_HEAD"
+        ^git branch $branch FETCH_HEAD
+    } else if (^git branch --show-current) == $branch {
+        log debug $"($branch) is currently checked out"
+        match $strategy {
+            "rebase" => {
+                log debug "rebasing to FECTH_HEAD according to strategy"
+                ^git rebase FETCH_HEAD $branch
+            },
+            "merge" => {
+                log debug "fast-forwarding to FECTH_HEAD according to strategy"
+                ^git merge $branch FETCH_HEAD
+            },
+            "none" => { log debug "not doing anything according to strategy" },
+            _ => {
+                # FIXME: should be using the `throw-error` command from `nu-git-manager`
+                error make {
+                    msg: $"(ansi red_bold)invalid_strategy(ansi reset)"
+                    label: {
+                        text: "expected one of ['merge', 'rebase', 'none']"
+                        span: (metadata $strategy).span
+                    }
+                }
+            },
+        }
+    } else {
+        log debug $"moving ($branch) to the new FETCH_HEAD"
+        ^git branch --force $branch FETCH_HEAD
+    }
+}
+
+def get-branches [--merged, --no-merged]: nothing -> list<string> {
+    let branches = if $merged {
+        ^git branch --merged
+    } else if $no_merged {
+        ^git branch --no-merged
+    } else {
+        ^git branch
+    }
+
+    $branches | lines | str substring 2..
+}
+
+# remove a branch interactively
+export def "gm repo branch interactive-delete" [] {
+    let choice = get-branches | input list --multi "remove"
+    if ($choice | is-empty) {
+        return
+    }
+
+    let not_merged = get-branches --no-merged
+    let merged = get-branches --merged
+
+    ^git branch --delete ($choice | where $it in $merged)
+
+    let choice = $choice | where $it in $not_merged | input list --multi "sure?"
+    if ($choice | is-empty) {
+        return
+    }
+
+    ^git branch --delete --force $choice
+}
+
+# switch between branches interactively
+export def "gm repo switch" []: nothing -> nothing {
+    let res = ^git branch --all
+        | lines
+        | str replace --regex '^  (remotes/.*)' $'  (ansi default_dimmed)${1}(ansi reset)'
+        | str replace --regex '^\* (.*)' $'(ansi cyan_bold)${1}(ansi reset)'
+        | str trim
+        | input list --fuzzy
+
+    if $res == null {
+        return
+    }
+
+    let branch = $res | ansi strip
+
+    let branch = if ($branch | str starts-with "remotes/") {
+        $branch | split row '/' | skip 2 | str join '/'
+    } else {
+        $branch
+    }
+
+    ^git checkout $branch
+}
+
+# get some information about a repo
+export def "gm repo ls" [
+    repo?: path, # the path to the repo (defaults to `.`)
+]: nothing -> record<path: path, name: string, staged: int, unstaged: int, untracked: int, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
+    let repo = $repo | default (pwd)
+    let status = ^git -C $repo status --short | lines
+
+    let last_commit = if (do --ignore-errors { git -C $repo log -1 } | complete).exit_code == 0 { {
+        date: (^git -C $repo log -1 --format=%cd | into datetime),
+        title: (^git -C $repo log -1 --format=%s),
+        hash: (^git -C $repo log -1 --format=%h),
+    } } else {
+        null
+    }
+
+    {
+        # FIXME: should be using `path sanitize` defined in `nu-git-manager`
+        path: ($repo | str replace --regex '^.:' '' | str replace --all '\' '/'),
+        name: ($repo | path basename),
+        staged: ($status | parse --regex '^\w. (?<file>.*)' | get file),
+        unstaged: ($status | parse --regex '^.\w (?<file>.*)' | get file),
+        untracked: ($status | parse --regex '^\?\? (?<file>.*)' | get file),
+        last_commit: $last_commit,
+        branch: (^git -C $repo branch --show-current),
+    }
 }
