@@ -1,26 +1,20 @@
 use std assert
 
+use ../common/import.nu ["assert imports"]
+
+const MODULE = "nu-git-manager-sugar"
+
 module imports {
-    def "assert imports" [module: string, expected: list<string>] {
-        let src = $"
-            use ./src/nu-git-manager-sugar/ ($module) *
-            scope commands | get name | where \($it | str starts-with 'gm '\) | to nuon
-        "
-
-        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-        assert equal $actual $expected
-    }
-
     export def main [] {
-        assert imports "" []
+         assert imports $MODULE "" []
     }
 
     export def extra [] {
-        assert imports "extra" [ "gm report" ]
+         assert imports $MODULE "extra" [ "gm report" ]
     }
 
     export def git [] {
-        assert imports "git" [
+         assert imports $MODULE "git" [
             "gm repo branch interactive-delete",
             "gm repo branch wipe",
             "gm repo branches",
@@ -36,7 +30,7 @@ module imports {
     }
 
     export def github [] {
-        assert imports "github" [
+         assert imports $MODULE "github" [
             "gm gh pr checkout",
             "gm gh query-api",
             "gm gh query-releases",
