@@ -1,38 +1,26 @@
 use std assert
 
 module imports {
-    export def main [] {
-        let src = "
-            use ./src/nu-git-manager-sugar/ *
-            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
+    def "assert imports" [module: string, expected: list<string>] {
+        let src = $"
+            use ./src/nu-git-manager-sugar/ ($module) *
+            scope commands | get name | where \($it | str starts-with 'gm '\) | to nuon
         "
 
         let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-        let expected = []
-
         assert equal $actual $expected
+    }
+
+    export def main [] {
+        assert imports "" []
     }
 
     export def extra [] {
-        let src = "
-            use ./src/nu-git-manager-sugar/ extra *
-            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
-        "
-
-        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-        let expected = [ "gm report" ]
-
-        assert equal $actual $expected
+        assert imports "extra" [ "gm report" ]
     }
 
     export def git [] {
-        let src = "
-            use ./src/nu-git-manager-sugar/ git *
-            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
-        "
-
-        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-        let expected = [
+        assert imports "git" [
             "gm repo branch interactive-delete",
             "gm repo branch wipe",
             "gm repo branches",
@@ -45,25 +33,15 @@ module imports {
             "gm repo remote list",
             "gm repo switch",
         ]
-
-        assert equal $actual $expected
     }
 
     export def github [] {
-        let src = "
-            use ./src/nu-git-manager-sugar/ github *
-            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
-        "
-
-        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-        let expected = [
+        assert imports "github" [
             "gm gh pr checkout",
             "gm gh query-api",
             "gm gh query-releases",
             "gm gh query-user",
         ]
-
-        assert equal $actual $expected
     }
 }
 
