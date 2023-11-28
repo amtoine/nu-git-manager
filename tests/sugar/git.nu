@@ -15,7 +15,7 @@ use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../common/setup.nu [get-random-test-dir]
 
 def --env init-repo-and-cd-into []: nothing -> path {
-    let repo = get-random-test-dir
+    let repo = get-random-test-dir --no-sanitize
 
     ^git init $repo
     cd $repo
@@ -48,7 +48,7 @@ export def get-commit [] {
 }
 
 export def goto-root [] {
-    let repo = init-repo-and-cd-into
+    let repo = init-repo-and-cd-into | path sanitize
 
     mkdir bar/baz
     cd bar/baz
@@ -209,7 +209,7 @@ def branch-interactive-switch [] {
 }
 
 export def list [] {
-    let repo = init-repo-and-cd-into
+    let repo = init-repo-and-cd-into | path sanitize
 
     let BASE_LS = {
         path: $repo,
