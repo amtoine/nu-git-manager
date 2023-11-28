@@ -240,7 +240,8 @@ export def "gm repo ls" [
     }
 
     {
-        path: $repo,
+        # FIXME: should be using `path sanitize` defined in `nu-git-manager`
+        path: ($repo | str replace --regex '^.:' '' | str replace --all '\' '/'),
         name: ($repo | path basename),
         staged: ($status | parse --regex '^\w. (?<file>.*)' | get file),
         unstaged: ($status | parse --regex '^.\w (?<file>.*)' | get file),
