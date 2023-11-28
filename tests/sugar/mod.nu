@@ -1,6 +1,18 @@
 use std assert
 
 module imports {
+    export def main [] {
+        let src = "
+            use ./src/nu-git-manager-sugar/ *
+            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
+        "
+
+        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
+        let expected = []
+
+        assert equal $actual $expected
+    }
+
     export def git [] {
         let src = "
             use ./src/nu-git-manager-sugar/ git *
