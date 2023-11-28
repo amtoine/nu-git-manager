@@ -13,6 +13,18 @@ module imports {
         assert equal $actual $expected
     }
 
+    export def extra [] {
+        let src = "
+            use ./src/nu-git-manager-sugar/ extra *
+            scope commands | get name | where ($it | str starts-with 'gm ') | to nuon
+        "
+
+        let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
+        let expected = [ "gm report" ]
+
+        assert equal $actual $expected
+    }
+
     export def git [] {
         let src = "
             use ./src/nu-git-manager-sugar/ git *
