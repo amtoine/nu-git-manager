@@ -10,7 +10,7 @@ module imports {
     }
 
     export def extra [] {
-         assert imports $MODULE "extra" [ "gm report" ]
+         assert imports $MODULE "extra" [ "gm for-each", "gm report" ]
     }
 
     export def git [] {
