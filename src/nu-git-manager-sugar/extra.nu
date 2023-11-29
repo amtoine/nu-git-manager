@@ -62,8 +62,10 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
 #     get the number of files tracked by each repo: list<int>
 #     > gm for-each { git lf | lines | length }
 export def "gm for-each" [code: closure]: nothing -> any {
-    gm list --full-path | each {|repo|
-        cd $repo
-        do $code
+    let root = gm status | get root.path
+
+    gm list | each {|repo|
+        cd ($root | path join $repo)
+        do $code $repo
     }
 }
