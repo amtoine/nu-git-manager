@@ -1,6 +1,9 @@
 use std assert
 
+use ../../src/nu-git-manager-sugar extra ["gm for-each"]
+
 use ../common/import.nu ["assert imports"]
+use ../common/main.nu [run-with-env]
 
 const MODULE = "nu-git-manager-sugar"
 
@@ -44,4 +47,14 @@ export use imports
 # ignored: `nu_plugin_gstat` is required
 def report [] {
     exit 1
+}
+
+export def for-each [] {
+   use ../../src/nu-git-manager ["gm clone", "gm list", "gm status"]
+
+   run-with-env --prepare-cache {
+        gm clone https://github.com/amtoine/nu-git-manager --depth 1
+
+        assert equal (gm for-each { pwd }) (gm list)
+   }
 }
