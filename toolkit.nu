@@ -5,7 +5,7 @@
 export def "test" [
     pattern?: string = "" # the pattern a test name should match to run
     --verbose # show the output of each tests
-] {
+]: nothing -> nothing {
     use nupm
 
     if $verbose {
@@ -16,7 +16,7 @@ export def "test" [
 }
 
 # install `nu-git-manager` with Nupm
-export def "install" [] {
+export def "install" []: nothing -> nothing {
     use nupm
     nupm install --force --path (^git rev-parse --show-toplevel)
 }
@@ -36,7 +36,7 @@ export def "run" [
     code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
     --interactive, # run interactively
-] {
+]: nothing -> nothing {
     const GM_ENV = {
         GIT_REPOS_HOME: ($nu.temp-path | path join "nu-git-manager/repos/"),
         GIT_REPOS_CACHE: ($nu.temp-path | path join "nu-git-manager/repos.cache"),
@@ -55,6 +55,8 @@ export def "run" [
     if $interactive {
         const CONFIG_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu")
         const ENV_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "env.nu")
+
+        mkdir ($CONFIG_FILE | path dirname)
 
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
