@@ -6,23 +6,7 @@ use ../src/nu-git-manager/ *
 
 use common/setup.nu [get-random-test-dir]
 use common/import.nu ["assert imports"]
-
-def run-with-env [code: closure, --prepare-cache] {
-    let TEST_ENV_BASE = get-random-test-dir
-
-    let TEST_ENV = {
-        GIT_REPOS_HOME: ($TEST_ENV_BASE | path join "repos"),
-        GIT_REPOS_CACHE: ($TEST_ENV_BASE | path join "repos.cache"),
-    }
-
-    if $prepare_cache {
-        with-env $TEST_ENV { gm update-cache }
-    }
-
-    with-env $TEST_ENV $code
-
-    rm --recursive --force --verbose $TEST_ENV_BASE
-}
+use common/main.nu [run-with-env]
 
 export def error-with-empty-store [] {
     run-with-env {
