@@ -56,6 +56,8 @@ export def "run" [
         const CONFIG_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu")
         const ENV_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "env.nu")
 
+        mkdir ($CONFIG_FILE | path dirname)
+
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
 
