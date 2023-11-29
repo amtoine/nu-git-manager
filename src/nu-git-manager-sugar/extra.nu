@@ -50,6 +50,17 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
         }
 }
 
+# run a piece of code on all the repositories of the local store
+#
+# depending on the code given to `gm for-each`, the command might return any
+# kind of data, e.g. nothing or a table.
+#
+# # Examples
+#     get the status of all the repos: empty list
+#     > gm for-each { git status }
+#
+#     get the number of files tracked by each repo: list<int>
+#     > gm for-each { git lf | lines | length }
 export def "gm for-each" [code: closure]: nothing -> any {
     gm list --full-path | each {|repo|
         cd $repo
