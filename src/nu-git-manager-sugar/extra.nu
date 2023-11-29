@@ -55,12 +55,20 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
 # depending on the code given to `gm for-each`, the command might return any
 # kind of data, e.g. nothing or a table.
 #
+# the name of each repo will be passed as the first and only argument.
+#
 # # Examples
 #     get the status of all the repos: empty list
 #     > gm for-each { git status }
 #
 #     get the number of files tracked by each repo: list<int>
 #     > gm for-each { git lf | lines | length }
+#
+#     get the number of status lines of each repo: table<repo: string, status: int>
+#     > gm for-each { |r| {
+#           repo: $r,
+#           status: (git status --short | lines | length)
+#       } }
 export def "gm for-each" [code: closure]: nothing -> any {
     let root = gm status | get root.path
 
