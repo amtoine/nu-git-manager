@@ -76,7 +76,7 @@ export def "run" [
     }
 }
 
-# TODO: documentation
+# will give a report about all the tests that are currently ignored
 export def get-ignored-tests []: nothing -> table<file: string, test: string, reason: string> {
     ^rg '^# ignored: ' tests/ -A 1
         | lines
