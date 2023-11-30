@@ -32,10 +32,17 @@ export def "install" []: nothing -> nothing {
 #
 #     clean the environment before running the code
 #     > toolkit run --clean { gm clone https://github.com/amtoine/nu-git-manager --depth 1 }
+#
+#     run gm commands in an interactive shell
+#     > toolkit run --interactive
+#
+#     include more sugar commands in the interactive shell, e.g. Git and extra gm
+#     > toolkit run --interactive --sugar ["git", "extra"]
 export def "run" [
     code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
     --interactive, # run interactively
+    --sugar: list<string>, # additional `sugar` modules to import
 ]: nothing -> nothing {
     const GM_ENV = {
         GIT_REPOS_HOME: ($nu.temp-path | path join "nu-git-manager/repos/"),
@@ -61,12 +68,28 @@ export def "run" [
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
 
+        let sugar_imports = if $sugar != null {
+            $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" }
+        } else {
+            []
+        }
+        let imports = $sugar_imports | prepend "use ./src/nu-git-manager *" | str join "\n"
+
+        let nu_args = [
+            --env-config $ENV_FILE
+            --config $CONFIG_FILE
+        ]
+
+        let res = do { ^$nu.current-exe $nu_args --commands $imports } | complete
+        if $res.exit_code != 0 {
+            print $res.stderr
+            error make --unspanned {
+                msg: $"`--sugar` \(($sugar)\) contains modules that are not part of `nu-git-manager-sugar`"
+            }
+        }
+
         with-env ($GM_ENV | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
-            ^$nu.current-exe [
-                --env-config $ENV_FILE
-                --config $CONFIG_FILE
-                --execute "use ./src/nu-git-manager *"
-            ]
+            ^$nu.current-exe $nu_args --execute $imports
         }
     } else {
         if $code == null {
