@@ -50,11 +50,11 @@ def report [] {
 }
 
 export def for-each [] {
-   use ../../src/nu-git-manager ["gm clone", "gm list", "gm status"]
+    use ../../src/nu-git-manager ["gm clone", "gm list", "gm status"]
 
-   run-with-env --prepare-cache {
+    run-with-env --prepare-cache {
         gm clone https://github.com/amtoine/nu-git-manager --depth 1
 
         assert equal (gm for-each { pwd }) (gm list)
-   }
+    }
 }
