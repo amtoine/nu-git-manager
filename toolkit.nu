@@ -68,10 +68,12 @@ export def "run" [
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
 
-        let imports = $sugar
-            | each { $"use ./src/nu-git-manager-sugar ($in) *" }
-            | prepend "use ./src/nu-git-manager *"
-            | str join "\n"
+        let sugar_imports = if $sugar != null {
+            $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" }
+        } else {
+            []
+        }
+        let imports = $sugar_imports | prepend "use ./src/nu-git-manager *" | str join "\n"
 
         let nu_args = [
             --env-config $ENV_FILE
