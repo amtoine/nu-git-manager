@@ -42,6 +42,7 @@ export def "run" [
     code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
     --interactive, # run interactively
+    --sugar: list<string>, # additional `sugar` modules to import
 ]: nothing -> nothing {
     const GM_ENV = {
         GIT_REPOS_HOME: ($nu.temp-path | path join "nu-git-manager/repos/"),
@@ -67,11 +68,13 @@ export def "run" [
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
 
+        let sugar = $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" } | str join "; "
+
         with-env ($GM_ENV | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
             ^$nu.current-exe [
                 --env-config $ENV_FILE
                 --config $CONFIG_FILE
-                --execute "use ./src/nu-git-manager *"
+                --execute $"use ./src/nu-git-manager *; ($sugar)"
             ]
         }
     } else {
