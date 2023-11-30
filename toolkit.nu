@@ -71,7 +71,7 @@ export def "run" [
         let imports = $sugar
             | each { $"use ./src/nu-git-manager-sugar ($in) *" }
             | prepend "use ./src/nu-git-manager *"
-            | str join "; "
+            | str join "\n"
 
         let nu_args = [
             --env-config $ENV_FILE
@@ -82,7 +82,7 @@ export def "run" [
         if $res.exit_code != 0 {
             print $res.stderr
             error make --unspanned {
-                msg: "see above"
+                msg: $"`--sugar` \(($sugar)\) contains modules that are not part of `nu-git-manager-sugar`"
             }
         }
 
