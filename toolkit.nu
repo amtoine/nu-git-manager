@@ -32,6 +32,12 @@ export def "install" []: nothing -> nothing {
 #
 #     clean the environment before running the code
 #     > toolkit run --clean { gm clone https://github.com/amtoine/nu-git-manager --depth 1 }
+#
+#     run gm commands in an interactive shell
+#     > toolkit run --interactive
+#
+#     include more sugar commands in the interactive shell, e.g. Git and extra gm
+#     > toolkit run --interactive --sugar ["git", "extra"]
 export def "run" [
     code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
