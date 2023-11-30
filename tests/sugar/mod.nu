@@ -6,15 +6,15 @@ const MODULE = "nu-git-manager-sugar"
 
 module imports {
     export def main [] {
-         assert imports $MODULE "" []
+        assert imports $MODULE "" []
     }
 
     export def extra [] {
-         assert imports $MODULE "extra" [ "gm report" ]
+        assert imports $MODULE "extra" [ "gm report" ]
     }
 
     export def git [] {
-         assert imports $MODULE "git" [
+        assert imports $MODULE "git" [
             "gm repo branch interactive-delete",
             "gm repo branch wipe",
             "gm repo branches",
@@ -30,7 +30,7 @@ module imports {
     }
 
     export def github [] {
-         assert imports $MODULE "github" [
+        assert imports $MODULE "github" [
             "gm gh pr checkout",
             "gm gh query-api",
             "gm gh query-releases",
