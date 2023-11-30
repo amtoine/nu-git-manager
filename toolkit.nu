@@ -68,14 +68,26 @@ export def "run" [
         "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
         "" | save --force $ENV_FILE
 
-        let sugar = $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" } | str join "; "
+        let imports = $sugar
+            | each { $"use ./src/nu-git-manager-sugar ($in) *" }
+            | prepend "use ./src/nu-git-manager *"
+            | str join "; "
+
+        let nu_args = [
+            --env-config $ENV_FILE
+            --config $CONFIG_FILE
+        ]
+
+        let res = do { ^$nu.current-exe $nu_args --commands $imports } | complete
+        if $res.exit_code != 0 {
+            print $res.stderr
+            error make --unspanned {
+                msg: "see above"
+            }
+        }
 
         with-env ($GM_ENV | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
-            ^$nu.current-exe [
-                --env-config $ENV_FILE
-                --config $CONFIG_FILE
-                --execute $"use ./src/nu-git-manager *; ($sugar)"
-            ]
+            ^$nu.current-exe $nu_args --execute $imports
         }
     } else {
         if $code == null {
