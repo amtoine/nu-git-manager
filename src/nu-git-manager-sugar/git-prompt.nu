@@ -1,0 +1,226 @@
+const DEFAULT_PROMPT_INDICATORS = {
+    plain: "> ",
+    vi: {insert: ": ", normal: "> "}
+}
+
+def simplify-path []: path -> string {
+    str replace $nu.home-path "~" | str replace --regex '^/' "!/"
+}
+
+def color [color]: string -> string {
+    $"(ansi $color)($in)(ansi reset)"
+}
+
+# give the revision of the repo you're in
+#
+# in the output, $.type is guaranteed to be one of
+# - "branch"
+# - "tag"
+# - "detached"
+#
+# # Examples
+#     when on a branch
+#     > get-revision # would show the same even if the current branch commit is tagged
+#     ╭──────┬──────────────────────────────────────────╮
+#     │ name │ main                                     │
+#     │ hash │ fa3c06510b3250f4a901db2e9a026a45c971b518 │
+#     │ type │ branch                                   │
+#     ╰──────┴──────────────────────────────────────────╯
+#
+#     when on a tag
+#     > get-revision
+#     ╭──────┬──────────────────────────────────────────╮
+#     │ name │ 1.2.3                                    │
+#     │ hash │ fa3c06510b3250f4a901db2e9a026a45c971b518 │
+#     │ type │ tag                                      │
+#     ╰──────┴──────────────────────────────────────────╯
+#
+#     when the HEAD is detached
+#     > get-revision
+#     ╭──────┬──────────────────────────────────────────╮
+#     │ name │                                          │
+#     │ hash │ fa3c06510b3250f4a901db2e9a026a45c971b518 │
+#     │ type │ detached                                 │
+#     ╰──────┴──────────────────────────────────────────╯
+#
+#     when the HEAD is detached (short-version)
+#     > get-revision --short-hash
+#     ╭──────┬──────────╮
+#     │ name │          │
+#     │ hash │ fa3c0651 │
+#     │ type │ detached │
+#     ╰──────┴──────────╯
+def get-revision [
+    --short-hash: bool  # print the hash of a detached HEAD in short format
+]: nothing -> record<name: string, hash: string, type: string> {
+    let tag = do -i {
+        ^git describe HEAD --tags
+    } | complete
+    let is_tag = $tag.exit_code == 0 and (
+        $tag.stdout
+            | str trim
+            | parse --regex '(?<tag>.*)-(?<n>\d+)-(?<hash>[0-9a-fg]+)'
+            | is-empty
+    )
+
+    let branch = ^git branch --show-current
+    let hash = if $short_hash {
+        (^git rev-parse --short HEAD)
+    } else {
+        (^git rev-parse HEAD)
+    }
+
+    if not ($branch | is-empty) {
+        {name: $branch, hash: $hash, type: "branch"}
+    } else if $is_tag {
+        {name: ($tag.stdout | str trim), hash: $hash, type: "tag"}
+    } else {
+        {name: null, hash: $hash, type: "detached"}
+    }
+}
+
+# https://stackoverflow.com/questions/59603312/git-how-can-i-easily-tell-if-im-in-the-middle-of-a-rebase
+def git-action []: nothing -> string {
+    let git_dir = ^git rev-parse --git-dir | path expand
+
+    def test-dir [target: string]: nothing -> bool {
+        ($git_dir | path join $target | path type) == "dir"
+    }
+
+    def test-file [target: string]: nothing -> bool {
+        ($git_dir | path join $target | path type) == "file"
+    }
+
+    if (test-dir "rebase-merge") {
+        if (test-file "rebase-merge/interactive") {
+            "REBASE-i" | color blue
+        } else {
+            "REBASE-m" | color magenta
+        }
+    } else {
+        if (test-dir "rebase-apply") {
+            if (test-file "rebase-apply/rebasing") {
+                "REBASE" | color cyan
+            } else if (test-file "rebase-apply/applying") {
+                "AM" | color cyan
+            } else {
+                "AM/REBASE" | color cyan
+            }
+        } else if (test-file "MERGE_HEAD") {
+            "MERGING" | color dark_gray
+        } else if (test-file "CHERRY_PICK_HEAD") {
+            "CHERRY-PICKING" | color green
+        } else if (test-file "REVERT_HEAD") {
+            "REVERTING" | color red
+        } else if (test-file "BISECT_LOG") {
+            "BISECTING" | color yellow
+        } else {
+            null
+        }
+    }
+}
+
+export def --env setup [
+    --indicators = $DEFAULT_PROMPT_INDICATORS,
+    --duration-threshold: duration = 1sec  # the threshold above which the command duration is shown
+] {
+    let pwd = {
+        let is_git_repo = not (
+            do --ignore-errors { git rev-parse --is-inside-work-tree } | is-empty
+        )
+
+        if $is_git_repo {
+            let repo_root = (
+                ^git rev-parse --show-toplevel
+            )
+            let repo = $repo_root | path basename | color "magenta_bold"
+            let sub_dir = pwd
+                | str replace $repo_root ''
+                | str trim --char (char path_sep)
+                | simplify-path
+
+            if $sub_dir != "" {
+                [$repo, ($sub_dir | color "magenta_dimmed")]
+                    | str join (char path_sep | color "magenta_dimmed")
+            } else {
+                $repo
+            }
+        } else {
+            pwd | simplify-path | color "green"
+        }
+    }
+
+    $env.PROMPT_COMMAND = {
+        let admin_segment = if (is-admin) {
+            "!!" | color "red_bold"
+        } else {
+            null
+        }
+
+        let is_git_repo = not (
+            do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
+        )
+        let git_branch_segment = if $is_git_repo {
+            let revision = get-revision --short-hash true
+            let pretty_branch_tokens = match $revision.type {
+                "branch" => [
+                    ($revision.name | color {fg: "yellow", attr: "ub"}),
+                    ($revision.hash | color "yellow_dimmed")
+                ],
+                "tag" => [
+                    ($revision.name | color {fg: "blue", attr: "ub"}),
+                    ($revision.hash | color "blue_dimmed")
+                ],
+                "detached" => ["_", ($revision.hash | color "default_dimmed")]
+            }
+
+            $"\(($pretty_branch_tokens | str join ":")\)"
+        } else {
+            null
+        }
+
+        let git_action_segment = if $is_git_repo {
+            let action = git-action
+            if $action != null {
+                $"\(($action)\)"
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+
+        let command_failed_segment = if $env.LAST_EXIT_CODE != 0 {
+            $env.LAST_EXIT_CODE | color "red_bold"
+        } else {
+            null
+        }
+
+        let cmd_duration = $"($env.CMD_DURATION_MS)ms" | into duration
+        let duration_segment = if $cmd_duration > $duration_threshold {
+            $cmd_duration | color "light_yellow"
+        } else {
+            null
+        }
+
+        let login_segment = if $nu.is-login { "l" | color "cyan" } else { "" }
+
+        [
+            $admin_segment
+            (do $pwd)
+            $git_branch_segment
+            $git_action_segment
+            $duration_segment
+            $command_failed_segment
+            $login_segment
+        ]
+            | compact
+            | str join " "
+    }
+    $env.PROMPT_COMMAND_RIGHT = ""
+
+    let indicators = $DEFAULT_PROMPT_INDICATORS | merge $indicators
+    $env.PROMPT_INDICATOR = $indicators.plain
+    $env.PROMPT_INDICATOR_VI_INSERT = $indicators.vi.insert
+    $env.PROMPT_INDICATOR_VI_NORMAL = $indicators.vi.normal
+}
