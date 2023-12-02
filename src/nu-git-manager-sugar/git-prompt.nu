@@ -120,13 +120,10 @@ def git-action []: nothing -> string {
     }
 }
 
-export def --env setup [
-    --indicators = $DEFAULT_PROMPT_INDICATORS,
-    --duration-threshold: duration = 1sec  # the threshold above which the command duration is shown
-] {
-    let pwd = {
+def get-left-prompt [duration_threshold: duration]: nothing -> string {
+    let pwd = do {
         let is_git_repo = not (
-            do --ignore-errors { git rev-parse --is-inside-work-tree } | is-empty
+            do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
         )
 
         if $is_git_repo {
@@ -150,73 +147,78 @@ export def --env setup [
         }
     }
 
-    $env.PROMPT_COMMAND = {
-        let admin_segment = if (is-admin) {
-            "!!" | color "red_bold"
-        } else {
-            null
-        }
-
-        let is_git_repo = not (
-            do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
-        )
-        let git_branch_segment = if $is_git_repo {
-            let revision = get-revision --short-hash true
-            let pretty_branch_tokens = match $revision.type {
-                "branch" => [
-                    ($revision.name | color {fg: "yellow", attr: "ub"}),
-                    ($revision.hash | color "yellow_dimmed")
-                ],
-                "tag" => [
-                    ($revision.name | color {fg: "blue", attr: "ub"}),
-                    ($revision.hash | color "blue_dimmed")
-                ],
-                "detached" => ["_", ($revision.hash | color "default_dimmed")]
-            }
-
-            $"\(($pretty_branch_tokens | str join ":")\)"
-        } else {
-            null
-        }
-
-        let git_action_segment = if $is_git_repo {
-            let action = git-action
-            if $action != null {
-                $"\(($action)\)"
-            } else {
-                null
-            }
-        } else {
-            null
-        }
-
-        let command_failed_segment = if $env.LAST_EXIT_CODE != 0 {
-            $env.LAST_EXIT_CODE | color "red_bold"
-        } else {
-            null
-        }
-
-        let cmd_duration = $"($env.CMD_DURATION_MS)ms" | into duration
-        let duration_segment = if $cmd_duration > $duration_threshold {
-            $cmd_duration | color "light_yellow"
-        } else {
-            null
-        }
-
-        let login_segment = if $nu.is-login { "l" | color "cyan" } else { "" }
-
-        [
-            $admin_segment
-            (do $pwd)
-            $git_branch_segment
-            $git_action_segment
-            $duration_segment
-            $command_failed_segment
-            $login_segment
-        ]
-            | compact
-            | str join " "
+    let admin_segment = if (is-admin) {
+        "!!" | color "red_bold"
+    } else {
+        null
     }
+
+    let is_git_repo = not (
+        do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
+    )
+    let git_branch_segment = if $is_git_repo {
+        let revision = get-revision --short-hash true
+        let pretty_branch_tokens = match $revision.type {
+            "branch" => [
+                ($revision.name | color {fg: "yellow", attr: "ub"}),
+                ($revision.hash | color "yellow_dimmed")
+            ],
+            "tag" => [
+                ($revision.name | color {fg: "blue", attr: "ub"}),
+                ($revision.hash | color "blue_dimmed")
+            ],
+            "detached" => ["_", ($revision.hash | color "default_dimmed")]
+        }
+
+        $"\(($pretty_branch_tokens | str join ":")\)"
+    } else {
+        null
+    }
+
+    let git_action_segment = if $is_git_repo {
+        let action = git-action
+        if $action != null {
+            $"\(($action)\)"
+        } else {
+            null
+        }
+    } else {
+        null
+    }
+
+    let command_failed_segment = if $env.LAST_EXIT_CODE != 0 {
+        $env.LAST_EXIT_CODE | color "red_bold"
+    } else {
+        null
+    }
+
+    let cmd_duration = $"($env.CMD_DURATION_MS)ms" | into duration
+    let duration_segment = if $cmd_duration > $duration_threshold {
+        $cmd_duration | color "light_yellow"
+    } else {
+        null
+    }
+
+    let login_segment = if $nu.is-login { "l" | color "cyan" } else { "" }
+
+    [
+        $admin_segment
+        $pwd
+        $git_branch_segment
+        $git_action_segment
+        $duration_segment
+        $command_failed_segment
+        $login_segment
+    ]
+        | compact
+        | str join " "
+}
+
+export def --env setup [
+    --indicators = $DEFAULT_PROMPT_INDICATORS,
+    --duration-threshold: duration = 1sec  # the threshold above which the command duration is shown
+] {
+    $env.PROMPT_COMMAND = { get-left-prompt $duration_threshold }
     $env.PROMPT_COMMAND_RIGHT = ""
 
     let indicators = $DEFAULT_PROMPT_INDICATORS | merge $indicators
