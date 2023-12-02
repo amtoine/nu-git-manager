@@ -3,6 +3,7 @@ const DEFAULT_PROMPT_INDICATORS = {
     vi: {insert: ": ", normal: "> "}
 }
 
+# TODO: write a test
 def simplify-path []: path -> string {
     str replace $nu.home-path "~" | str replace --regex '^/' "!/"
 }
@@ -50,6 +51,7 @@ def color [color]: string -> string {
 #     │ hash │ fa3c0651 │
 #     │ type │ detached │
 #     ╰──────┴──────────╯
+# TODO: write a test
 def get-revision [
     --short-hash: bool  # print the hash of a detached HEAD in short format
 ]: nothing -> record<name: string, hash: string, type: string> {
@@ -80,6 +82,7 @@ def get-revision [
 }
 
 # https://stackoverflow.com/questions/59603312/git-how-can-i-easily-tell-if-im-in-the-middle-of-a-rebase
+# TODO: write a test
 def git-action []: nothing -> string {
     let git_dir = ^git rev-parse --git-dir | path expand
 
@@ -120,6 +123,7 @@ def git-action []: nothing -> string {
     }
 }
 
+# TODO: write a test
 def get-left-prompt [duration_threshold: duration]: nothing -> string {
     let pwd = do {
         let is_git_repo = not (
