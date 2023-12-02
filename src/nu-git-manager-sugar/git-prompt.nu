@@ -125,41 +125,30 @@ def git-action []: nothing -> string {
 
 # TODO: write a test
 def get-left-prompt [duration_threshold: duration]: nothing -> string {
-    let pwd = do {
-        let is_git_repo = not (
-            do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
-        )
-
-        if $is_git_repo {
-            let repo_root = (
-                ^git rev-parse --show-toplevel
-            )
-            let repo = $repo_root | path basename | color "magenta_bold"
-            let sub_dir = pwd
-                | str replace $repo_root ''
-                | str trim --char (char path_sep)
-                | simplify-path
-
-            if $sub_dir != "" {
-                [$repo, ($sub_dir | color "magenta_dimmed")]
-                    | str join (char path_sep | color "magenta_dimmed")
-            } else {
-                $repo
-            }
-        } else {
-            pwd | simplify-path | color "green"
-        }
-    }
-
-    let admin_segment = if (is-admin) {
-        "!!" | color "red_bold"
-    } else {
-        null
-    }
-
     let is_git_repo = not (
         do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
     )
+
+    let pwd = if $is_git_repo {
+        let repo_root = (
+            ^git rev-parse --show-toplevel
+        )
+        let repo = $repo_root | path basename | color "magenta_bold"
+        let sub_dir = pwd
+            | str replace $repo_root ''
+            | str trim --char (char path_sep)
+            | simplify-path
+
+        if $sub_dir != "" {
+            [$repo, ($sub_dir | color "magenta_dimmed")]
+                | str join (char path_sep | color "magenta_dimmed")
+        } else {
+            $repo
+        }
+    } else {
+        pwd | simplify-path | color "green"
+    }
+
     let git_branch_segment = if $is_git_repo {
         let revision = get-revision --short-hash true
         let pretty_branch_tokens = match $revision.type {
@@ -190,6 +179,12 @@ def get-left-prompt [duration_threshold: duration]: nothing -> string {
         null
     }
 
+    let admin_segment = if (is-admin) {
+        "!!" | color "red_bold"
+    } else {
+        null
+    }
+
     let command_failed_segment = if $env.LAST_EXIT_CODE != 0 {
         $env.LAST_EXIT_CODE | color "red_bold"
     } else {
@@ -203,19 +198,23 @@ def get-left-prompt [duration_threshold: duration]: nothing -> string {
         null
     }
 
-    let login_segment = if $nu.is-login { "l" | color "cyan" } else { "" }
+    let login_segment = if $nu.is-login {
+        "l" | color "cyan"
+    } else {
+        ""
+    }
 
-    [
-        $admin_segment
-        $pwd
-        $git_branch_segment
-        $git_action_segment
-        $duration_segment
-        $command_failed_segment
-        $login_segment
+    let segments = [
+        $admin_segment,
+        $pwd,
+        $git_branch_segment,
+        $git_action_segment,
+        $duration_segment,
+        $command_failed_segment,
+        $login_segment,
     ]
-        | compact
-        | str join " "
+
+    $segments | compact | str join " "
 }
 
 export def --env setup [
