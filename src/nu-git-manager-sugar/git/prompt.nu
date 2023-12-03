@@ -1,4 +1,3 @@
-use ../git/lib/lib.nu [get-revision, git-action]
 use ../git/lib/prompt.nu [get-left-prompt]
 
 const DEFAULT_PROMPT_INDICATORS = {
