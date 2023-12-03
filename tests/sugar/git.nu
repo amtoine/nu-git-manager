@@ -392,6 +392,17 @@ export module prompt {
         do --ignore-errors { ^git merge some }
         assert equal (git-action) $"(ansi dark_gray)MERGING(ansi reset)"
 
+        ^git merge --abort
+        do --ignore-errors { ^git rebase some }
+        assert equal (git-action) $"(ansi blue)REBASE-i(ansi reset)"
+
+        ^git rebase --abort
+        do --ignore-errors { ^git cherry-pick some }
+        assert equal (git-action) $"(ansi green)CHERRY-PICKING(ansi reset)"
+
+        ^git cherry-pick --abort
+        assert equal (git-action) null
+
         clean $repo
     }
 
