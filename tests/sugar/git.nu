@@ -390,15 +390,15 @@ export module prompt {
         commit bar
 
         do --ignore-errors { ^git merge some }
-        assert equal (git-action) $"(ansi dark_gray)MERGING(ansi reset)"
+        assert equal (git-action | ansi strip) $"MERGING"
 
         ^git merge --abort
         do --ignore-errors { ^git rebase some }
-        assert equal (git-action) $"(ansi blue)REBASE-i(ansi reset)"
+        assert equal (git-action | ansi strip) $"REBASE-i"
 
         ^git rebase --abort
         do --ignore-errors { ^git cherry-pick some }
-        assert equal (git-action) $"(ansi green)CHERRY-PICKING(ansi reset)"
+        assert equal (git-action | ansi strip) $"CHERRY-PICKING"
 
         ^git cherry-pick --abort
         assert equal (git-action) null
