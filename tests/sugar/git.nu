@@ -339,7 +339,7 @@ export def branch-compare [] {
 }
 
 export module prompt {
-    use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision]
+    use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision, git-action]
 
     def "assert revision" [expected: record] {
         let actual = get-revision --short-hash true
@@ -372,9 +372,27 @@ export module prompt {
     }
 
     export def repo-current-action [] {
-        error make --unspanned {
-            msg: "todo"
-        }
+        let repo = init-repo-and-cd-into
+
+        assert equal (git-action) null
+
+        commit init
+        assert equal (git-action) null
+
+        ^git checkout -b some main
+        "foo" | save --force file.txt
+        ^git add file.txt
+        commit foo
+
+        ^git checkout -b other main
+        "bar" | save --force file.txt
+        ^git add file.txt
+        commit bar
+
+        do -i { ^git merge some }
+        assert equal (git-action) $"(ansi dark_gray)MERGING(ansi reset)"
+
+        clean $repo
     }
 
     export def build-left-prompt [] {
