@@ -37,7 +37,6 @@
 #     │ hash │ fa3c0651 │
 #     │ type │ detached │
 #     ╰──────┴──────────╯
-# TODO: write a test
 export def get-revision [
     --short-hash: bool  # print the hash of a detached HEAD in short format
 ]: nothing -> record<name: string, hash: string, type: string> {
@@ -68,7 +67,6 @@ export def get-revision [
 }
 
 # https://stackoverflow.com/questions/59603312/git-how-can-i-easily-tell-if-im-in-the-middle-of-a-rebase
-# TODO: write a test
 export def git-action []: nothing -> string {
     let git_dir = ^git rev-parse --git-dir | path expand
 

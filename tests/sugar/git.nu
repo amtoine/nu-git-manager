@@ -337,3 +337,23 @@ export def branch-compare [] {
 
     clean $foo
 }
+
+export module prompt {
+    export def repo-revision [] {
+        error make --unspanned {
+            msg: "todo"
+        }
+    }
+
+    export def repo-current-action [] {
+        error make --unspanned {
+            msg: "todo"
+        }
+    }
+
+    export def build-left-prompt [] {
+        error make --unspanned {
+            msg: "todo"
+        }
+    }
+}

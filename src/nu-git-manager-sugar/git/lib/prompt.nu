@@ -6,7 +6,6 @@ def color [color]: string -> string {
     $"(ansi $color)($in)(ansi reset)"
 }
 
-# TODO: write a test
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     let is_git_repo = not (
         do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
