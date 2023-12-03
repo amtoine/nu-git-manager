@@ -1,4 +1,3 @@
-# TODO: write a test
 def simplify-path []: path -> string {
     str replace $nu.home-path "~" | str replace --regex '^/' "!/"
 }
