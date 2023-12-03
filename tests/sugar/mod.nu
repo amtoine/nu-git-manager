@@ -4,7 +4,7 @@ use ../common/import.nu ["assert imports"]
 
 const MODULE = "nu-git-manager-sugar"
 
-module imports {
+export module imports {
     export def main [] {
         assert imports $MODULE "" []
     }
@@ -38,8 +38,6 @@ module imports {
         ]
     }
 }
-
-export use imports
 
 # ignored: `nu_plugin_gstat` is required
 def report [] {
