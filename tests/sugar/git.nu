@@ -340,9 +340,16 @@ export def branch-compare [] {
 
 export module prompt {
     use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision, git-action]
+    use ../../src/nu-git-manager-sugar/git/lib/prompt.nu [get-left-prompt]
+    use ../../src/nu-git-manager-sugar/git/lib/style.nu [simplify-path]
 
     def "assert revision" [expected: record] {
         let actual = get-revision --short-hash true
+        assert equal $actual $expected
+    }
+
+    def "assert prompt" [expected: string] {
+        let actual = get-left-prompt 10hr | ansi strip
         assert equal $actual $expected
     }
 
@@ -407,8 +414,25 @@ export module prompt {
     }
 
     export def build-left-prompt [] {
-        error make --unspanned {
-            msg: "todo"
-        }
+        let repo = init-repo-and-cd-into
+
+        assert prompt $"($repo | path basename) \(main:\) "
+
+        let hash = commit init | get 0
+        assert prompt $"($repo | path basename) \(main:($hash)\) "
+
+        mkdir foo
+        cd foo
+        let pwd = $repo | path basename | append foo | str join (char path_sep)
+        assert prompt $"($pwd) \(main:($hash)\) "
+
+        cd ..
+        ^git checkout $hash
+        assert prompt $"($repo | path basename) \(_:($hash)\) "
+
+        cd ..
+        assert prompt $"($repo | path dirname | simplify-path) "
+
+        clean $repo
     }
 }
