@@ -1,10 +1,5 @@
-def simplify-path []: path -> string {
-    str replace $nu.home-path "~" | str replace --regex '^/' "!/"
-}
-
-def color [color]: string -> string {
-    $"(ansi $color)($in)(ansi reset)"
-}
+use ../../git/lib/lib.nu [get-revision, git-action]
+use ../../git/lib/style.nu [color, simplify-path]
 
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     let is_git_repo = not (

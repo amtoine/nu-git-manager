@@ -1,3 +1,5 @@
+use ../../git/lib/style.nu [color]
+
 # give the revision of the repo you're in
 #
 # in the output, $.type is guaranteed to be one of
