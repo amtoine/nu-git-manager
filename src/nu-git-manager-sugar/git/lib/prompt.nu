@@ -68,7 +68,11 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         null
     }
 
-    let cmd_duration = $env.CMD_DURATION_MS | into int | $in * 1ms
+    let cmd_duration = if $env.CMD_DURATION_MS == "0823" {
+        -1ms
+    } else {
+        $env.CMD_DURATION_MS | into int | $in * 1ms
+    }
     let duration_segment = if $cmd_duration > $duration_threshold {
         $cmd_duration | color "light_yellow"
     } else {
