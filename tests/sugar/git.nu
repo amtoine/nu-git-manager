@@ -389,7 +389,7 @@ export module prompt {
         ^git add file.txt
         commit bar
 
-        do -i { ^git merge some }
+        do --ignore-errors { ^git merge some }
         assert equal (git-action) $"(ansi dark_gray)MERGING(ansi reset)"
 
         clean $repo
