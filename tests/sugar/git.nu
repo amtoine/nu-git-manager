@@ -339,10 +339,36 @@ export def branch-compare [] {
 }
 
 export module prompt {
+    use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision]
+
+    def "assert revision" [expected: record] {
+        let actual = get-revision --short-hash true
+        assert equal $actual $expected
+    }
+
     export def repo-revision [] {
-        error make --unspanned {
-            msg: "todo"
-        }
+        let repo = init-repo-and-cd-into
+        ^git config tag.gpgSign false
+
+        assert revision {name: "main", hash: "", type: "branch"}
+
+        let hashes = commit c1 c2 c3
+        assert revision {name: "main", hash: ($hashes | last), type: "branch"}
+
+        ^git checkout $hashes.1
+        assert revision {name: null, hash: $hashes.1, type: "detached"}
+
+        ^git tag foo --annotate --message ""
+        assert revision {name: "foo", hash: $hashes.1, type: "tag"}
+
+        ^git checkout main
+        ^git tag bar --annotate --message ""
+        assert revision {name: "main", hash: ($hashes | last), type: "branch"}
+
+        ^git checkout bar
+        assert revision {name: "bar", hash: ($hashes | last), type: "tag"}
+
+        clean $repo
     }
 
     export def repo-current-action [] {
