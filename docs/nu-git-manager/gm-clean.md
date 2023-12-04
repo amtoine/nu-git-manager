@@ -3,8 +3,6 @@
 clean the store
 this command will mainly remove empty directory recursively.
 
-/!\ this command will return sanitized paths. /!\
-
 Examples
     clean the store
     > gm clean
