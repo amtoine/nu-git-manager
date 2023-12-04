@@ -8,19 +8,22 @@ export def "test" [
     pattern?: string = "" # the pattern a test name should match to run
     --verbose # show the output of each tests
 ]: nothing -> nothing {
-    use nupm
-
-    if $verbose {
-        nupm test $pattern --show-stdout
+    let command = if $verbose {
+        $"nupm test ($pattern) --show-stdout"
     } else {
-        nupm test $pattern
+        $"nupm test ($pattern)"
     }
+
+    # NOTE: this is for the CI to pass without installing Nupm
+    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
 }
 
 # install `nu-git-manager` with Nupm
 export def "install" []: nothing -> nothing {
-    use nupm
-    nupm install --force --path (^git rev-parse --show-toplevel)
+    let command = "nupm install --force --path (^git rev-parse --show-toplevel)"
+
+    # NOTE: this is for the CI to pass without installing Nupm
+    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
 }
 
 # run some code inside an isolated environment
