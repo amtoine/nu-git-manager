@@ -1,3 +1,5 @@
+use std repeat
+
 # run the tests of the `nu-git-manager` package
 #
 # > **Important**  
@@ -110,4 +112,141 @@ export def get-ignored-tests []: nothing -> table<file: string, test: string, re
             let reason = $it.0 | parse "{file}:# ignored: {reason}" | get reason.0
             $it.1 | parse "{file}-def {test} [{rest}" | reject rest | insert reason $reason | first
         }
+}
+
+def document-command [
+    args: record<module_name: string, main_index: path, full_module_name_with_leading_path: string, root: path>
+]: string -> string {
+    let command = $in
+
+    let command_file = $command
+        | str replace --all ' ' '-'
+        | path parse
+        | update extension md
+        | path join
+
+    let help = ^$nu.current-exe --no-config-file --commands $"
+        use ($args.root)/($args.full_module_name_with_leading_path) '($command)'
+        scope commands | where name == '($command)' | into record
+    | to nuon" | from nuon
+
+    let page = [
+        $"# `($args.module_name) ($command)`",
+        $"## Description",
+        $help.usage,
+        $help.extra_usage,
+        "",
+        $"## Signature",
+        (
+            $help.signatures
+                | transpose
+                | get column1
+                | each { where parameter_type in ["input", "output"]
+                | select parameter_type syntax_shape | transpose --header-row }
+                | flatten
+                | to md --pretty
+        ),
+    ]
+
+    $page | flatten | str join "\n" | save --force --append $command_file
+
+    $command_file
+}
+
+# /!\ will save each command encountered to the main index file as a side effect
+def document-module [module_path: string, --root: path]: nothing -> nothing {
+    let main_index = $root | path join "docs" "index.md"
+
+    def aux [
+        full_module_name_with_leading_path: string,
+        depth?: int = 0,
+    ]: record<name: string, commands: list<string>, submodules: list<record>> -> nothing {
+        let module = $in
+
+        mkdir ($module.name | path basename)
+        cd ($module.name | path basename)
+
+        let module_name = (
+            ($full_module_name_with_leading_path | split row ' ' | get 0 | path basename)
+            + ' '
+            + ($full_module_name_with_leading_path | split row ' ' | skip 1 | str join ' ')
+        )
+            | str trim
+
+        let commands = if ($module.commands.name | is-empty) {
+            "no commands"
+        } else {
+            $module.commands.name | each {|command|
+                let command_file = $command | document-command {
+                    module_name: $module_name,
+                    main_index: $main_index,
+                    full_module_name_with_leading_path: $full_module_name_with_leading_path,
+                    root: $root,
+                }
+
+                let full_command_file = (
+                    $module_name | str replace --all ' ' '/' | path join $command_file
+                )
+                $"- [`($command)`]\(($full_command_file)\)\n" | save --force --append $main_index
+
+                $"- [`($command)`]\(($command_file)\)"
+            }
+        }
+
+        let submodules = if ($module.submodules | is-empty) {
+            ""
+        } else {
+            $module.submodules | each {|submodule|
+                $"- [`($submodule.name)`]\(($submodule.name)/index.md\)"
+            }
+        }
+
+        let page = [
+            $"# Module `($module_name)`",
+            "## Description",
+            $module.usage,
+            "",
+            "## Commands",
+            $commands,
+        ]
+        let page = if ($submodules | is-empty) {
+            $page
+        } else {
+            $page | append ["", "## Submodules", $submodules]
+        }
+
+        $page | flatten | str join "\n" | save --force index.md
+
+
+        for submodule in $module.submodules {
+            $submodule | aux ($full_module_name_with_leading_path + ' ' + $submodule.name) ($depth + 1)
+        }
+    }
+
+    let module = ^$nu.current-exe --no-config-file --commands $"
+        use ($root)/($module_path)
+        scope modules | where name == ($module_path | path basename) | into record
+    | to nuon" | from nuon
+
+    $module | aux $module_path
+}
+
+export def doc [--documentation-dir: path = "./docs/"] {
+    let modules = open package.nuon | get modules
+
+    let documentation_dir = $documentation_dir | path expand
+
+    mkdir $documentation_dir
+    cd $documentation_dir
+
+    "## Modules\n" | save --force --append index.md
+    for module in ($modules | path basename) {
+        $"- [`($module)`]\(./($module)/index.md\)\n" | save --force --append index.md
+    }
+
+    "\n" | save --force --append index.md
+    "## Commands\n" | save --force --append index.md
+    for module in $modules {
+        document-module $module --root (pwd | path dirname)
+    }
 }
