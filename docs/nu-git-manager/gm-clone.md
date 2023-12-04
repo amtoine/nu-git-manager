@@ -20,6 +20,6 @@ will give a nice error if the repository is already in the local store.
     > gm clone https://github.com/neovim/neovim --depth 1
 
 ## Signature
-| input   | output  |
-| ------- | ------- |
-| nothing | nothing |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

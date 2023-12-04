@@ -6,4 +6,4 @@ remove a branch interactively
 ## Signature
 | input | output |
 | ----- | ------ |
-| any   | any    |
+| `any` | `any`  |

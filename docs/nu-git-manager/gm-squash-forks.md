@@ -28,6 +28,6 @@ This option is a `record` with
       }
 
 ## Signature
-| input   | output  |
-| ------- | ------- |
-| nothing | nothing |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

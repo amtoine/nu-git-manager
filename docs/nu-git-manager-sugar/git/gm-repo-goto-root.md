@@ -7,6 +7,6 @@ go to the root of the repository from anywhere in the worktree
     /path/to/repo
 
 ## Signature
-| input   | output  |
-| ------- | ------- |
-| nothing | nothing |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

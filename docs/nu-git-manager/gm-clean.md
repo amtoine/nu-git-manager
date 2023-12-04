@@ -13,6 +13,6 @@ Examples
     > gm clean --list
 
 ## Signature
-| input   | output       |
-| ------- | ------------ |
-| nothing | list<string> |
+| input     | output         |
+| --------- | -------------- |
+| `nothing` | `list<string>` |

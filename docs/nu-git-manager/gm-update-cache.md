@@ -6,6 +6,6 @@ update the local cache of repositories
     > gm update-cache
 
 ## Signature
-| input   | output  |
-| ------- | ------- |
-| nothing | nothing |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

@@ -15,6 +15,6 @@ remove one of the repositories from your local store
     > gm remove amtoine/nu-git-manager --no-confirm
 
 ## Signature
-| input   | output  |
-| ------- | ------- |
-| nothing | nothing |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

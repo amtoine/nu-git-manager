@@ -13,6 +13,6 @@ inspect local branches
     > gm repo branches --clean
 
 ## Signature
-| input   | output                                       |
-| ------- | -------------------------------------------- |
-| nothing | table<branch: string, remotes: list<string>> |
+| input     | output                                         |
+| --------- | ---------------------------------------------- |
+| `nothing` | `table<branch: string, remotes: list<string>>` |

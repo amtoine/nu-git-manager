@@ -29,4 +29,4 @@ the different sections of the prompt are the following, in order and separated b
 ## Signature
 | input | output |
 | ----- | ------ |
-| any   | any    |
+| `any` | `any`  |

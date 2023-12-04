@@ -9,6 +9,6 @@ get the commit hash of any revision
     > gm repo get commit main
 
 ## Signature
-| input   | output |
-| ------- | ------ |
-| nothing | string |
+| input     | output   |
+| --------- | -------- |
+| `nothing` | `string` |

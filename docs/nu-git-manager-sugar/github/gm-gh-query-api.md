@@ -18,6 +18,6 @@ query the GitHub API for any end point
     you shall not rebase in the middle of a PR review nor close other's review threads :pray:
 
 ## Signature
-| input   | output |
-| ------- | ------ |
-| nothing | any    |
+| input     | output |
+| --------- | ------ |
+| `nothing` | `any`  |

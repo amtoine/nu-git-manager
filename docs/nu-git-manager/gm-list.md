@@ -14,6 +14,6 @@ list all the local repositories in your local store
     > cd (gm list --full-path | input list)
 
 ## Signature
-| input   | output       |
-| ------- | ------------ |
-| nothing | list<string> |
+| input     | output         |
+| --------- | -------------- |
+| `nothing` | `list<string>` |

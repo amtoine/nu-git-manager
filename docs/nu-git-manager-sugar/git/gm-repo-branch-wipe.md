@@ -6,4 +6,4 @@ wipe a branch completely, i.e. both locally and remotely
 ## Signature
 | input | output |
 | ----- | ------ |
-| any   | any    |
+| `any` | `any`  |

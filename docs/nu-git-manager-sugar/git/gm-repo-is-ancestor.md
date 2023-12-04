@@ -11,6 +11,6 @@ return true iif the first revision is an ancestor of the second
     false
 
 ## Signature
-| input   | output |
-| ------- | ------ |
-| nothing | bool   |
+| input     | output |
+| --------- | ------ |
+| `nothing` | `bool` |
