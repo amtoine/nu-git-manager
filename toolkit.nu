@@ -241,6 +241,7 @@ export def doc [--documentation-dir: path = "./docs/"] {
 
     let documentation_dir = $documentation_dir | path expand
 
+    rm --force --recursive $documentation_dir
     mkdir $documentation_dir
     cd $documentation_dir
 
