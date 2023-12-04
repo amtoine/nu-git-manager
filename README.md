@@ -59,31 +59,16 @@ in your `config.nu` you can add the following to load `nu-git-manager` modules:
 use nu-git-manager *
 
 # the following are non-essential modules
-use nu-git-manager-sugar git                # augment Git with custom commands
-use nu-git-manager-sugar gh                 # load commands to interact with *GitHub*
-use nu-git-manager-sugar gist               # load commands to interact with *GitHub* gists
+use nu-git-manager-sugar extra *              # augment `gm` with additional commands
 ```
+
+> **Note**  
+> please have a look at the [documentation of NGM](./docs/index.md) for more modules and commands
 
 then you have access to the whole `nu-git-manager` suite :partying_face:
 
 ### :pray: getting help [[toc](#table-of-content)]
-do not hesitate to run one of the following to have more information about what `nu-git-manager` has to offer :thumbsup:
-```nu
-help gm
-# or
-gm
-```
-```nu
-help modules git
-```
-```nu
-help modules gh
-```
-```nu
-help modules gist
-# or
-gist
-```
+please have a look at the [documentation of NGM](./docs/index.md)
 
 ## :exclamation: some ideas of advanced (?) usage [[toc](#table-of-content)]
 everytime i open a terminal, i use [Tmux] to manage sessions, switch between them, detach and reattach, quite a ***BLAZZINGLY FAST*** workflow for my taste :smirk:
