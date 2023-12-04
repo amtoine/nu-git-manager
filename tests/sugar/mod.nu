@@ -5,10 +5,6 @@ use ../common/import.nu ["assert imports"]
 const MODULE = "nu-git-manager-sugar"
 
 export module imports {
-    export def main [] {
-        assert imports $MODULE "" []
-    }
-
     export def extra [] {
         assert imports $MODULE "extra" [ "gm report" ]
     }
@@ -26,6 +22,7 @@ export module imports {
             "gm repo ls",
             "gm repo remote list",
             "gm repo switch",
+            "prompt setup",
         ]
     }
 
