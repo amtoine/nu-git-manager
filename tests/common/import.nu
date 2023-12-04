@@ -1,11 +1,16 @@
 export def "assert imports" [
-    module: string, submodule: string, expected: list<string>, --prefix: string = "gm "
+    module: string, submodule: string, expected: list<string>
 ] {
-    let src = $"
+    let before = ^$nu.current-exe --no-config-file --commands "
+        scope commands | get name
+    | to nuon
+    " | from nuon
+    let after = ^$nu.current-exe --no-config-file --commands $"
         use ./src/($module)/ ($submodule) *
-        scope commands | get name | where \($it | str starts-with '($prefix)'\) | to nuon
-    "
+        scope commands | get name
+    | to nuon" | from nuon
 
-    let actual = ^$nu.current-exe --no-config-file --commands $src | from nuon
-    assert equal $actual $expected
+    let imported = $after | where $it not-in $before
+
+    assert equal $imported $expected
 }

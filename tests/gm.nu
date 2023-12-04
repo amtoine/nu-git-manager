@@ -337,6 +337,7 @@ export def store-cleaning [] {
 
 export def user-import [] {
     assert imports "nu-git-manager" "" [
+        "gm",
         "gm clean",
         "gm clone",
         "gm list",
