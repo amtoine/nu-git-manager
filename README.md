@@ -54,7 +54,7 @@ nupm install --path --force nu-git-manager
 
 ## :gear: usage [[toc](#table-of-content)]
 in your `config.nu` you can add the following to load `nu-git-manager` modules:
-```nu
+```nushell
 # load the main `gm` command
 use nu-git-manager *
 
