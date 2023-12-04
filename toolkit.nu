@@ -147,6 +147,8 @@ def document-command [
                         | transpose --header-row
                 }
                 | flatten
+                | update input { $"`($in)`" }
+                | update output { $"`($in)`" }
                 | to md --pretty
         ),
     ]
