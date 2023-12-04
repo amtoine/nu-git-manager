@@ -141,8 +141,11 @@ def document-command [
             $help.signatures
                 | transpose
                 | get column1
-                | each { where parameter_type in ["input", "output"]
-                | select parameter_type syntax_shape | transpose --header-row }
+                | each {
+                    where parameter_type in ["input", "output"]
+                        | select parameter_type syntax_shape
+                        | transpose --header-row
+                }
                 | flatten
                 | to md --pretty
         ),
