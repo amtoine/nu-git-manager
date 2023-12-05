@@ -244,8 +244,8 @@ export def "gm gh pr checkout" [] {
         | update author { fill --alignment right --character ' ' --width $width.author }
         | update id { fill --alignment right --character ' ' --width $width.id }
         | update title { fill --alignment left --character ' ' --width $width.title }
-        | each {|it|
-            $"($in.author) \(($in.id)\): ($it.title)" | str substring ..((term size).columns - 2)
+        | each {
+            $"($in.author) \(($in.id)\): ($in.title)" | str substring ..((term size).columns - 2)
         }
 
     let res = $prs | input list --fuzzy
