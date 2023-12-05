@@ -233,11 +233,28 @@ export def "gm gh pr checkout" [] {
         return
     }
 
+    let width = $prs
+        | each { {
+            author: ($in.author | str length),
+            id: ($in.id | into string | str length),
+            title: ($in.title | str length),
+        }}
+        | math max
+    let prs = $prs
+        | update author { fill --alignment right --character ' ' --width $width.author }
+        | update id { fill --alignment right --character ' ' --width $width.id }
+        | update title { fill --alignment left --character ' ' --width $width.title }
+        | each {|it|
+            $"($in.author) \(($in.id)\): ($it.title)" | str substring ..((term size).columns - 2)
+        }
+
     let res = $prs | input list --fuzzy
     if $res == null {
         log info "user chose to exit"
         return
     }
 
-    ^gh pr checkout $res.id
+    ^gh pr checkout (
+        $res | ansi strip | parse "{author} ({number}): {title}" | into record | get number
+    )
 }
