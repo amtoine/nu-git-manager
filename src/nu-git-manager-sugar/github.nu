@@ -233,6 +233,10 @@ export def "gm gh pr checkout" [] {
         return
     }
 
+    # NOTE: `input list` has trouble with large inputs...
+    # this part of the command makes sure each line fits in the terminal width nicely.
+    #
+    # related to https://github.com/nushell/nushell/issues/11245
     let width = $prs
         | each { {
             author: ($in.author | str length),
