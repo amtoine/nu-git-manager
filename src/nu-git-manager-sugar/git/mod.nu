@@ -72,6 +72,11 @@ export def "gm repo branches" [
         }
 
         for branch in $dangling_branches.branch {
+            if $branch == (^git branch --show-current) {
+                log warning $"($branch) is currently checked out and cannot be deleted"
+                continue
+            }
+
             log info $"deleting branch `($branch)`"
             ^git branch --quiet --delete --force $branch
         }
