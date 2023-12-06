@@ -75,7 +75,7 @@ export def "run" [
     }
 
     if $interactive {
-        let config_file = $env.GIT_REPOS_HOME | path dirname | path join "config.nu"
+        let config_file = $GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu"
         let env_file = if $personal {
             $nu.env-path
         } else {
