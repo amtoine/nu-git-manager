@@ -233,11 +233,32 @@ export def "gm gh pr checkout" [] {
         return
     }
 
+    # NOTE: `input list` has trouble with large inputs...
+    # this part of the command makes sure each line fits in the terminal width nicely.
+    #
+    # related to https://github.com/nushell/nushell/issues/11245
+    let width = $prs
+        | each { {
+            author: ($in.author | str length),
+            id: ($in.id | into string | str length),
+            title: ($in.title | str length),
+        }}
+        | math max
+    let prs = $prs
+        | update author { fill --alignment right --character ' ' --width $width.author }
+        | update id { fill --alignment right --character ' ' --width $width.id }
+        | update title { fill --alignment left --character ' ' --width $width.title }
+        | each {
+            $"($in.author) \(($in.id)\): ($in.title)" | str substring ..((term size).columns - 2)
+        }
+
     let res = $prs | input list --fuzzy
     if $res == null {
         log info "user chose to exit"
         return
     }
 
-    ^gh pr checkout $res.id
+    ^gh pr checkout (
+        $res | ansi strip | parse "{author} ({number}): {title}" | into record | get number
+    )
 }
