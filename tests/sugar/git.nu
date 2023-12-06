@@ -71,6 +71,20 @@ export def branches [] {
     clean $repo
 }
 
+export def branches-checked-out [] {
+    let repo = init-repo-and-cd-into
+
+    commit "init"
+
+    ^git branch bar
+    ^git branch foo
+    ^git checkout bar
+
+    gm repo branches --clean
+
+    clean $repo
+}
+
 export def is-ancestor [] {
     let repo = init-repo-and-cd-into
 
