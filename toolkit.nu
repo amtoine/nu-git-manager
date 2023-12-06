@@ -56,7 +56,7 @@ export def "run" [
         $GM_ENV
     }
 
-    if $clean {
+    if $clean { do {
         if $personal {
             let prompt = $"You are about to (ansi red_bold)clean your personal store of repositories(ansi reset) :o (ansi yellow_bold)Are you sure?(ansi reset)"
             match (["no", "yes"] | input list $prompt) {
@@ -72,7 +72,7 @@ export def "run" [
                 }
             }
         }
-    }
+    } }
 
     if $interactive {
         let config_file = $GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu"
