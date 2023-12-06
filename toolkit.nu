@@ -42,6 +42,7 @@ export def "run" [
     code?: closure, # the code to run in the environment (required without `--interactive`)
     --clean, # raise this to clean the environment before running the code
     --interactive, # run interactively
+    --personal, # run in the personal store
     --sugar: list<string>, # additional `sugar` modules to import
 ]: nothing -> nothing {
     const GM_ENV = {
@@ -49,8 +50,21 @@ export def "run" [
         GIT_REPOS_CACHE: ($nu.temp-path | path join "nu-git-manager/repos.cache"),
     }
 
+    let gm_env = if $personal {
+        {}
+    } else {
+        $GM_ENV
+    }
+
     if $clean {
-        with-env $GM_ENV {
+        if $personal {
+            let prompt = $"You are about to (ansi red_bold)clean your personal store of repositories(ansi reset) :o (ansi yellow_bold)Are you sure?(ansi reset)"
+            match (["no", "yes"] | input  list $prompt) {
+                null | "no" => { return },
+                "yes" => {},
+            }
+        }
+        with-env $gm_env {
             gm status | select root.path cache.path | values | each {
                 if ($in | path exists) {
                     rm --recursive --force --verbose $in
@@ -60,13 +74,19 @@ export def "run" [
     }
 
     if $interactive {
-        const CONFIG_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "config.nu")
-        const ENV_FILE = ($GM_ENV.GIT_REPOS_HOME | path dirname | path join "env.nu")
+        let config_file = $env.GIT_REPOS_HOME | path dirname | path join "config.nu"
+        let env_file = if $personal {
+            $nu.env-path
+        } else {
+            $gm_env.GIT_REPOS_HOME | path dirname | path join "env.nu"
+        }
 
-        mkdir ($CONFIG_FILE | path dirname)
+        mkdir ($config_file | path dirname)
 
-        "$env.config = {show_banner: false}" | save --force $CONFIG_FILE
-        "" | save --force $ENV_FILE
+        "$env.config = {show_banner: false}" | save --force $config_file
+        if not $personal {
+            "" | save --force $env_file
+        }
 
         let sugar_imports = if $sugar != null {
             $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" }
@@ -76,8 +96,8 @@ export def "run" [
         let imports = $sugar_imports | prepend "use ./src/nu-git-manager *" | str join "\n"
 
         let nu_args = [
-            --env-config $ENV_FILE
-            --config $CONFIG_FILE
+            --env-config $env_file
+            --config $config_file
         ]
 
         let res = do { ^$nu.current-exe $nu_args --commands $imports } | complete
@@ -88,7 +108,7 @@ export def "run" [
             }
         }
 
-        with-env ($GM_ENV | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
+        with-env ($gm_env | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
             ^$nu.current-exe $nu_args --execute $imports
         }
     } else {
@@ -97,7 +117,7 @@ export def "run" [
                 msg: "`toolkit.nu run requires a `$code` when `--interactive` is not used"
             }
         }
-        with-env $GM_ENV $code
+        with-env $gm_env $code
     }
 }
 
