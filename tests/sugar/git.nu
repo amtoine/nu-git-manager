@@ -81,6 +81,7 @@ export def branches-checked-out [] {
     ^git checkout bar
 
     gm repo branches --clean
+    assert equal (gm repo branches) [{branch: bar, remotes: []}, ]
 
     clean $repo
 }
