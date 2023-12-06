@@ -59,11 +59,12 @@ export def "run" [
     if $clean {
         if $personal {
             let prompt = $"You are about to (ansi red_bold)clean your personal store of repositories(ansi reset) :o (ansi yellow_bold)Are you sure?(ansi reset)"
-            match (["no", "yes"] | input  list $prompt) {
+            match (["no", "yes"] | input list $prompt) {
                 null | "no" => { return },
                 "yes" => {},
             }
         }
+
         with-env $gm_env {
             gm status | select root.path cache.path | values | each {
                 if ($in | path exists) {
