@@ -254,7 +254,7 @@ export def "gm repo ls" [
 }
 
 # TODO: documentation
-export def "gm repo query" [table: string@git-query-tables] {
+export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
     if $table not-in $GIT_QUERY_TABLES {
         error make {
             msg: $"(ansi red_bold)invalid_qit_query_table(ansi reset)",
