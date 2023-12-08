@@ -253,6 +253,7 @@ export def "gm repo ls" [
     }
 }
 
+# TODO: documentation
 export def "gm repo query" [table: string@git-query-tables] {
     if $table not-in $GIT_QUERY_TABLES {
         error make {
