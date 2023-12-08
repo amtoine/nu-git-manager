@@ -1,4 +1,4 @@
-use ../../git/lib/lib.nu [get-revision, git-action]
+use ../../git/lib/lib.nu [get-revision, git-action, get-status]
 use ../../git/lib/style.nu [color, simplify-path]
 
 # TODO: write a test
@@ -57,6 +57,25 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         null
     }
 
+    let git_changes_segment = if $is_git_repo {
+        let status = get-status .
+
+        let markers = [
+            (if not ($status.staged | is-empty) { "_" }),
+            (if not ($status.unstaged | is-empty) { "!" }),
+            (if not ($status.untracked | is-empty) { "?" }),
+        ]
+        let markers = $markers | compact | str join ""
+
+        if $markers == "" {
+            null
+        } else {
+            $"[($markers)]" | color default_dimmed
+        }
+    } else {
+        null
+    }
+
     let admin_segment = if (is-admin) {
         "!!" | color "red_bold"
     } else {
@@ -87,6 +106,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         $pwd,
         $git_branch_segment,
         $git_action_segment,
+        $git_changes_segment,
         $duration_segment,
         $command_failed_segment,
         $login_segment,
