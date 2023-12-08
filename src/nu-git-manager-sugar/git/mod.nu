@@ -234,7 +234,7 @@ export def "gm repo switch" []: nothing -> nothing {
 # get some information about a repo
 export def "gm repo ls" [
     repo?: path, # the path to the repo (defaults to `.`)
-]: nothing -> record<path: path, name: string, staged: int, unstaged: int, untracked: int, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
+]: nothing -> record<path: path, name: string, staged: list<string>, unstaged: list<string>, untracked: list<string>, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
     let repo = $repo | default (pwd)
     let status = get-status $repo
 
