@@ -276,5 +276,9 @@ export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
         }
     }
 
-    query git $"select * from ($table)"
+    if $table == "commits" {
+        query git $"select * from commits" | into datetime datetime
+    } else {
+        query git $"select * from ($table)"
+    }
 }
