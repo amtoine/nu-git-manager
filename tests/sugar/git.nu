@@ -438,7 +438,13 @@ export module prompt {
         assert prompt $"($repo | path basename) \(_:($hash)\) "
 
         cd ..
-        assert prompt $"($repo | path dirname | simplify-path) "
+        # FIXME: use `path sanitize` from `nu-git-manager`
+        let expected_pwd = $repo
+            | path dirname
+            | str replace --regex '^.:' ''
+            | str replace --all '\' '/'
+            | simplify-path
+        assert prompt $"($expected_pwd) "
 
         clean $repo
     }
