@@ -350,7 +350,14 @@ export module prompt {
 
     def "assert prompt" [expected: string] {
         let actual = get-left-prompt 10hr | ansi strip
-        assert equal $actual $expected
+
+        let admin_segment = if $nu.os-info.name == "windows" {
+            "!!"
+        } else {
+            null
+        }
+
+        assert equal $actual ($admin_segment | append $expected | compact | str join " ")
     }
 
     export def repo-revision [] {
