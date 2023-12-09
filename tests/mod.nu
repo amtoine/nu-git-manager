@@ -14,6 +14,9 @@ use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
 use common/setup.nu [get-random-test-dir]
 
+export module gm.nu
+export module sugar
+
 export module path {
     export def sanitization [] {
         assert equal ('\foo\bar' | path sanitize) "/foo/bar"
