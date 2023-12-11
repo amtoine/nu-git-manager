@@ -135,12 +135,17 @@ export def "gm repo is-ancestor" [
 }
 
 # get the list of all the remotes in the current repository
-# # Examples
-#     list all the remotes in a default `nu-git-manager` repo
-#     > gm repo remote list
-#     #┬remote┬──────────────────fetch──────────────────┬─────────────────push──────────────────
-#     0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
-#     ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
+#
+# ## Examples
+# ```nushell
+# # list all the remotes in a default `nu-git-manager` repo
+# gm repo remote list
+# ```
+# ```
+# #┬remote┬──────────────────fetch──────────────────┬─────────────────push──────────────────
+# 0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
+# ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
+# ```
 export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
     # FIXME: use the helper `list-remotes` command from ../nu-git-manager/git/repo.nu:29
     ^git remote --verbose
