@@ -304,9 +304,11 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 
 # update the local cache of repositories
 #
-# # Examples
-#     update the cache of repositories
-#     > gm update-cache
+# ## Examples
+# ```nushell
+# # update the cache of repositories
+# gm update-cache
+# ```
 export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
     clean-cache-dir $cache_file
