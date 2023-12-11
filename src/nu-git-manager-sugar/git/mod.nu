@@ -28,7 +28,7 @@ export def "gm repo compare" [
     ^git diff (^git merge-base $target $head) $head
 }
 
-def repo-root [] {
+def repo-root []: nothing -> string {
     ^git rev-parse --show-toplevel
 }
 
