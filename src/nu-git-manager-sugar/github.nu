@@ -187,9 +187,11 @@ export def "gm gh query-releases" [
 
 # get information about a GitHub user
 #
-# Examples:
-#     get the avatar picture of @amtoine
-#     > gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+# ## Examples:
+# ```nushell
+# # get the avatar picture of @amtoine
+# gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+# ```
 export def "gm gh query-user" [
     user: string # the user to query information about
     --no-gh # force to use `http get` instead of `gh`
