@@ -28,7 +28,7 @@ This option is a `record` with
           8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
       }
 
-## Signature
+## Signatures
 | input     | output    |
 | --------- | --------- |
 | `nothing` | `nothing` |

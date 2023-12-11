@@ -4,7 +4,7 @@ switch between branches interactively
 
 
 
-## Signature
+## Signatures
 | input     | output    |
 | --------- | --------- |
 | `nothing` | `nothing` |

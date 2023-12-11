@@ -25,7 +25,7 @@ manage your Git repositories with the main command of `nu-git-manager`
       }
     ~/foo/nu-git-manager/cache.nuon
 
-## Signature
+## Signatures
 | input     | output    |
 | --------- | --------- |
 | `nothing` | `nothing` |

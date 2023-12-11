@@ -20,7 +20,7 @@ will give a nice error if the repository is already in the local store.
     clone a big repo as a single commit, avoiding all intermediate Git deltas
     > gm clone https://github.com/neovim/neovim --depth 1
 
-## Signature
+## Signatures
 | input     | output    |
 | --------- | --------- |
 | `nothing` | `nothing` |

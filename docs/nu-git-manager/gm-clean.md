@@ -13,7 +13,7 @@ Examples
     list the leaves of the store that would have to be cleaned
     > gm clean --list
 
-## Signature
+## Signatures
 | input     | output         |
 | --------- | -------------- |
 | `nothing` | `list<string>` |

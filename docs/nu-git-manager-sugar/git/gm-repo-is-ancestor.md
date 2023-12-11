@@ -11,7 +11,7 @@ return true iif the first revision is an ancestor of the second
     > gm repo is-ancestor HEAD HEAD~20
     false
 
-## Signature
+## Signatures
 | input     | output |
 | --------- | ------ |
 | `nothing` | `bool` |

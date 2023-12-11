@@ -7,7 +7,7 @@ go to the root of the repository from anywhere in the worktree
     > cd foo/bar/baz; gm repo goto root; print (pwd)
     /path/to/repo
 
-## Signature
+## Signatures
 | input     | output    |
 | --------- | --------- |
 | `nothing` | `nothing` |

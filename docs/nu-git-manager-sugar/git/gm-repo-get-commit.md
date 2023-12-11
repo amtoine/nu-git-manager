@@ -9,7 +9,7 @@ get the commit hash of any revision
     get the commit hash of the main branch
     > gm repo get commit main
 
-## Signature
+## Signatures
 | input     | output   |
 | --------- | -------- |
 | `nothing` | `string` |

@@ -18,7 +18,7 @@ query the GitHub API for any end point
     > gm gh query-api --no-paginate "/users/amtoine" | get bio
     you shall not rebase in the middle of a PR review nor close other's review threads :pray:
 
-## Signature
+## Signatures
 | input     | output |
 | --------- | ------ |
 | `nothing` | `any`  |

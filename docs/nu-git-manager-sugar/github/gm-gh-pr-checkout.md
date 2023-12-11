@@ -4,7 +4,7 @@ checkout one of the repo's PR interactively
 
 
 
-## Signature
+## Signatures
 | input | output |
 | ----- | ------ |
 | `any` | `any`  |

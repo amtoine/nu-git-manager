@@ -4,7 +4,7 @@ wipe a branch completely, i.e. both locally and remotely
 
 
 
-## Signature
+## Signatures
 | input | output |
 | ----- | ------ |
 | `any` | `any`  |

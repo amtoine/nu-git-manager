@@ -4,7 +4,7 @@ remove a branch interactively
 
 
 
-## Signature
+## Signatures
 | input | output |
 | ----- | ------ |
 | `any` | `any`  |

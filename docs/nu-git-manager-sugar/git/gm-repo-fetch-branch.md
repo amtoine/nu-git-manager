@@ -4,7 +4,7 @@ fetch a remote branch locally, without pulling down the whole remote
 
 
 
-## Signature
+## Signatures
 | input | output |
 | ----- | ------ |
 | `any` | `any`  |

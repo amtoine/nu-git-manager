@@ -38,7 +38,7 @@ Examples
     update the cache if necessary
     > if (gm status).should_update_cache { gm update-cache }
 
-## Signature
+## Signatures
 | input     | output                                                                                                                                          |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `nothing` | `record<root: record<path: string, exists: bool>, missing: list<string>, cache: record<path: string, exists: bool>, should_update_cache: bool>` |

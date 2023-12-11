@@ -10,7 +10,7 @@ get the list of all the remotes in the current repository
 
 
 
-## Signature
+## Signatures
 | input     | output                                               |
 | --------- | ---------------------------------------------------- |
 | `nothing` | `table<remote: string, fetch: string, push: string>` |

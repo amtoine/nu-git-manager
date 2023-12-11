@@ -27,7 +27,7 @@ the different sections of the prompt are the following, in order and separated b
           }
       }
 
-## Signature
+## Signatures
 | input | output |
 | ----- | ------ |
 | `any` | `any`  |
