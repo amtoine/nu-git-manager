@@ -170,13 +170,15 @@ export def "gm gh query-api" [
 
 # list the releases of a GitHub repository
 #
-# # Examples
-#     get the last release of the `github.com:nushell/nushell` repository
-#     > gm gh query-releases "nushell/nushell"
-#           | into datetime published_at
-#           | sort-by published_at
-#           | last
-#           | select tag_name published_at
+# ## Examples
+# ```nushell
+# # get the last release of the `github.com:nushell/nushell` repository
+# gm gh query-releases "nushell/nushell"
+#     | into datetime published_at
+#     | sort-by published_at
+#     | last
+#     | select tag_name published_at
+# ```
 export def "gm gh query-releases" [
     repo: string # the GitHub repository to query the releases of
     --page-size: int = 100 # the size of each page
