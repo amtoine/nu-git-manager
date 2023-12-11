@@ -24,7 +24,7 @@ export def "gm repo get commit" [
 export def "gm repo compare" [
     target: string, # the target to compare from
     --head: string = "HEAD", # the "head" to use for the comparison
-] {
+]: nothing -> string {
     ^git diff (^git merge-base $target $head) $head
 }
 
