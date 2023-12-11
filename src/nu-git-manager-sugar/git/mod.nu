@@ -44,12 +44,16 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 # > in the following, a "*dangling*" branch refers to a branch that does not have any remote
 # > counterpart, i.e. it's a purely local branch.
 #
-# # Examples
-#     list branches and their associated remotes
-#     > gm repo branches
-#
-#     clean all dangling branches
-#     > gm repo branches --clean
+# ## Examples
+# ```nushell
+# # list branches and their associated remotes
+# gm repo branches
+# ```
+# ---
+# ```nushell
+# # clean all dangling branches
+# gm repo branches --clean
+# ```
 export def "gm repo branches" [
     --clean  # clean all dangling branches
 ]: nothing -> table<branch: string, remotes: list<string>> {
