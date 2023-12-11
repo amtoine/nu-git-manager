@@ -213,7 +213,7 @@ def get-branches [--merged, --no-merged]: nothing -> list<string> {
 }
 
 # remove a branch interactively
-export def "gm repo branch interactive-delete" [] {
+export def "gm repo branch interactive-delete" []: nothing -> nothing {
     let choice = get-branches | input list --multi "remove"
     if ($choice | is-empty) {
         return
