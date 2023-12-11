@@ -208,7 +208,7 @@ export def "gm gh query-user" [
 }
 
 # checkout one of the repo's PR interactively
-export def "gm gh pr checkout" [] {
+export def "gm gh pr checkout" []: nothing -> nothing {
     if (which gh --all | where type == external | is-empty) {
         error make --unspanned {
             msg: (
