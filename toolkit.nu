@@ -162,7 +162,6 @@ def document-command [
 
     let page = [
         $"# `($args.module_name) ($command)`",
-        $"## Description",
         $help.usage,
         "",
         $help.extra_usage,
