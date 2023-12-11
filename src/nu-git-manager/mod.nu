@@ -434,15 +434,19 @@ export def "gm remove" [
 # - keys: the root hash of repos, e.g. [2ed2d87](https://github.com/amtoine/nu-git-manager/commit/2ed2d875d80505d78423328c6b2a60522715fcdf) for `nu-git-manager`
 # - values: the main fork to select in full-name form, e.g. `github.com/amtoine/nu-git-manager`
 #
-# # Examples
-#     squash forks interactively
-#     > gm squash-forks
-#
-#     squash forks non-interactively: `nu-git-manager` and `nushell` to the forks of @amtoine
-#     > gm squash-forks --non-interactive-preselect {
-#           2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
-#           8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
-#       }
+# ## Examples
+# ```nushell
+# # squash forks interactively
+# gm squash-forks
+# ```
+# ---
+# ```nushell
+# # squash forks non-interactively: `nu-git-manager` and `nushell` to the forks of @amtoine
+# gm squash-forks --non-interactive-preselect {
+#     2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
+#     8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
+# }
+# ```
 export def "gm squash-forks" [
     --non-interactive-preselect: record = {} # the non-interactive preselection record, see documentation above
 ]: nothing -> nothing {
