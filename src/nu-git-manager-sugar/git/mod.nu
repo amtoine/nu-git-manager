@@ -165,7 +165,7 @@ export def "gm repo fetch branch" [
     remote: string, # the branch to fetch
     branch: string, # the remote to fetch the branch from
     --strategy: string = "none" # the merge strategy to use
-] {
+]: nothing -> nothing {
     ^git fetch $remote $branch
 
     if (^git branch --list | lines | str substring 2.. | where $it == $branch | is-empty) {
