@@ -140,7 +140,7 @@ def document-command [
         "",
         $help.extra_usage,
         "",
-        $"## Signature",
+        $"## Signatures",
         (
             $help.signatures
                 | transpose
