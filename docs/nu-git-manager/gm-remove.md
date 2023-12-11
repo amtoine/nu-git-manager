@@ -1,6 +1,7 @@
 # `nu-git-manager gm remove`
 ## Description
 remove one of the repositories from your local store
+
 # Examples
     remove any repository by fuzzy-finding the whole store
     > gm remove --fuzzy

@@ -1,6 +1,7 @@
 # `nu-git-manager gm list`
 ## Description
 list all the local repositories in your local store
+
 /!\ this command will return sanitized paths. /!\
 
 # Examples

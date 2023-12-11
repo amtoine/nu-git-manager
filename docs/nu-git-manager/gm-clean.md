@@ -1,6 +1,7 @@
 # `nu-git-manager gm clean`
 ## Description
 clean the store
+
 this command will mainly remove empty directory recursively.
 
 /!\ this command will return sanitized paths. /!\

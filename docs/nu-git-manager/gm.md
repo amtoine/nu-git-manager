@@ -1,6 +1,7 @@
 # `nu-git-manager gm`
 ## Description
 manage your Git repositories with the main command of `nu-git-manager`
+
 `nu-git-manager` will look for a store in the following places, in order:
 - `$env.GIT_REPOS_HOME`
 - `$env.XDG_DATA_HOME | path join "repos"

@@ -1,6 +1,7 @@
 # `nu-git-manager gm squash-forks`
 ## Description
 squash multi-directory forks into a single repo
+
 Here, two forks are defined as *two non-grafted repositories that share the same initial commit,
 i.e. that have the same root hash in their respective DAGs*.
 

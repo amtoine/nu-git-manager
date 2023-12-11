@@ -1,6 +1,7 @@
 # `nu-git-manager-sugar github gm gh query-releases`
 ## Description
 list the releases of a GitHub repository
+
 # Examples
     get the last release of the `github.com:nushell/nushell` repository
     > gm gh query-releases "nushell/nushell"

@@ -1,6 +1,7 @@
 # `nu-git-manager-sugar git gm repo branches`
 ## Description
 inspect local branches
+
 > **Note**  
 > in the following, a "*dangling*" branch refers to a branch that does not have any remote
 > counterpart, i.e. it's a purely local branch.

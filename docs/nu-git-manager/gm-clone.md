@@ -1,6 +1,7 @@
 # `nu-git-manager gm clone`
 ## Description
 clone a remote Git repository into your local store
+
 will give a nice error if the repository is already in the local store.
 
 # Examples

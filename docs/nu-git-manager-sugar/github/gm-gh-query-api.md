@@ -1,6 +1,7 @@
 # `nu-git-manager-sugar github gm gh query-api`
 ## Description
 query the GitHub API for any end point
+
 > :bulb: **Note**  
 > see the [rest API of GitHub](https://docs.github.com/en/rest) for a complete
 > list of available end points and documentation

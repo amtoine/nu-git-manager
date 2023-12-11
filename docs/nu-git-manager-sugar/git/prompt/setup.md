@@ -1,6 +1,7 @@
 # `nu-git-manager-sugar git prompt setup`
 ## Description
 setup the Git prompt of NGM
+
 the different sections of the prompt are the following, in order and separated by a single space:
 - "admin_segment": shows if you are an admin of the session
 - "pwd": shows the current working directory, in long form outside of a repo or with only the

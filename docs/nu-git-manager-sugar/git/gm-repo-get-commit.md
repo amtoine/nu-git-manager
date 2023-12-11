@@ -1,6 +1,7 @@
 # `nu-git-manager-sugar git gm repo get commit`
 ## Description
 get the commit hash of any revision
+
 # Examples
     get the commit hash of the currently checked out revision
     > gm repo get commit

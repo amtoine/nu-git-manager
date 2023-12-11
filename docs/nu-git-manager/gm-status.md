@@ -1,6 +1,7 @@
 # `nu-git-manager gm status`
 ## Description
 get current status about the repositories managed by `nu-git-manager`
+
 /!\ `$.root.path` and `$.cache.path` will be sanitized /!\
 
 Examples
