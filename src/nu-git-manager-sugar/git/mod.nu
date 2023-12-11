@@ -103,7 +103,7 @@ export def "gm repo branches" [
 export def "gm repo branch wipe" [
     branch: string, # the branch to wipe
     remote: string, # the remote to push to
-] {
+]: nothing -> nothing {
     ^git branch --delete --force $branch
     ^git push $remote --delete $branch
 }
