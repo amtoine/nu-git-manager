@@ -221,43 +221,61 @@ export def "gm list" [
     }
 }
 
-# get current status about the repositories managed by `nu-git-manager`
+# get current status about the repositories managed by NGM
 #
-# /!\ `$.root.path` and `$.cache.path` will be sanitized /!\
+# **/!\\** `$.root.path` and `$.cache.path` will be sanitized **/!\\**
 #
-# Examples
-#     getting status when everything is fine
-#     > gm status | reject missing | flatten | into record
-#     ╭─────────────────────┬────────────────────────────────────╮
-#     │ path                │ ~/.local/share/repos               │
-#     │ exists              │ true                               │
-#     │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
-#     │ cache_exists        │ true                               │
-#     │ should_update_cache │ false                              │
-#     ╰─────────────────────┴────────────────────────────────────╯
-#
-#     getting status when there is no store
-#     > gm status | get root
-#     ╭────────┬──────────────────────╮
-#     │ path   │ ~/.local/share/repos │
-#     │ exists │ false                │
-#     ╰────────┴──────────────────────╯
-#
-#     getting status when there is no cache
-#     > gm status | get root
-#     ╭────────┬────────────────────────────────────╮
-#     │ path   │ ~/.cache/nu-git-manager/cache.nuon │
-#     │ exists │ false                              │
-#     ╰────────┴────────────────────────────────────╯
-#
-#     getting status when a project is in the cache but is missing on the filesystem
-#     > gm status | get missing
-#     ╭──────────────────────────────────────╮
-#     │ 0 │ ~/.local/share/repos/foo/bar/baz │
-#     ╰──────────────────────────────────────╯
-#
-#     update the cache if necessary
-#     > if (gm status).should_update_cache { gm update-cache }
+# ## Examples
+# ```nushell
+# # getting status when everything is fine
+# gm status | reject missing | flatten | into record
+# ```
+# ```
+# ╭─────────────────────┬────────────────────────────────────╮
+# │ path                │ ~/.local/share/repos               │
+# │ exists              │ true                               │
+# │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
+# │ cache_exists        │ true                               │
+# │ should_update_cache │ false                              │
+# ╰─────────────────────┴────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when there is no store
+# gm status | get root
+# ```
+# ```
+# ╭────────┬──────────────────────╮
+# │ path   │ ~/.local/share/repos │
+# │ exists │ false                │
+# ╰────────┴──────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when there is no cache
+# gm status | get root
+# ```
+# ```
+# ╭────────┬────────────────────────────────────╮
+# │ path   │ ~/.cache/nu-git-manager/cache.nuon │
+# │ exists │ false                              │
+# ╰────────┴────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when a project is in the cache but is missing on the filesystem
+# gm status | get missing
+# ```
+# ```
+# ╭──────────────────────────────────────╮
+# │ 0 │ ~/.local/share/repos/foo/bar/baz │
+# ╰──────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # update the cache if necessary
+# if (gm status).should_update_cache { gm update-cache }
+# ```
 export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
     let root = get-repo-store-path
     let cache = get-repo-store-cache-path
