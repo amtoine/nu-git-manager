@@ -137,6 +137,7 @@ def document-command [
         $"# `($args.module_name) ($command)`",
         $"## Description",
         $help.usage,
+        "",
         $help.extra_usage,
         "",
         $"## Signature",
