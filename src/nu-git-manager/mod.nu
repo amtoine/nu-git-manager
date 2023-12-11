@@ -191,17 +191,23 @@ export def "gm clone" [
 
 # list all the local repositories in your local store
 #
-# /!\ this command will return sanitized paths. /!\
+# **/!\\** this command will return sanitized paths. **/!\\**
 #
-# # Examples
-#     list all the repositories in the store
-#     > gm list
-#
-#     list all the repositories in the store with their full paths
-#     > gm list --full-path
-#
-#     jump to a directory in the store
-#     > cd (gm list --full-path | input list)
+# ## Examples
+# ```nushell
+# # list all the repositories in the store
+# gm list
+# ```
+# ---
+# ```nushell
+# # list all the repositories in the store with their full paths
+# gm list --full-path
+# ```
+# ---
+# ```nushell
+# # jump to a directory in the store
+# cd (gm list --full-path | input list)
+# ```
 export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
 ]: nothing -> list<path> {
