@@ -180,8 +180,10 @@ def document-command [
 }
 
 # /!\ will save each command encountered to the main index file as a side effect
-def document-module [module_path: string, --root: path]: nothing -> nothing {
-    let main_index = $root | path join "docs" "index.md"
+def document-module [
+    module_path: string, --root: path, --documentation-dir: path
+]: nothing -> nothing {
+    let main_index = $root | path join $documentation_dir "index.md"
 
     def aux [
         full_module_name_with_leading_path: string,
@@ -273,6 +275,6 @@ export def doc [--documentation-dir: path = "./docs/"] {
     "\n" | save --force --append index.md
     "## Commands\n" | save --force --append index.md
     for module in $modules {
-        document-module $module --root (pwd | path dirname)
+        document-module $module --root (pwd | path dirname) --documentation-dir $documentation_dir
     }
 }
