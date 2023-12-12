@@ -118,7 +118,7 @@ export def get-ignored-tests []: nothing -> table<file: string, test: string, re
 }
 
 def document-command [
-    args: record<module_name: string, main_index: path, full_module_name_with_leading_path: string, root: path>
+    args: record<module_name: string, full_module_name_with_leading_path: string, root: path>
 ]: string -> string {
     let command = $in
 
@@ -188,7 +188,6 @@ def document-module [module_path: string, --root: path]: nothing -> nothing {
             $module.commands.name | each {|command|
                 let command_file = $command | document-command {
                     module_name: $module_name,
-                    main_index: $main_index,
                     full_module_name_with_leading_path: $full_module_name_with_leading_path,
                     root: $root,
                 }
