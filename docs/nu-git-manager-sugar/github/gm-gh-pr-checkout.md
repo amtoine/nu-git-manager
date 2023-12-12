@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar github gm gh pr checkout`
-## Description
+# `gm gh pr checkout` (`nu-git-manager-sugar github`)
 checkout one of the repo's PR interactively
 
 
@@ -8,6 +7,6 @@ checkout one of the repo's PR interactively
 
 
 ## Signatures
-| input | output |
-| ----- | ------ |
-| `any` | `any`  |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

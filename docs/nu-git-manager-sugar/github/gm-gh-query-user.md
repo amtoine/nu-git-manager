@@ -1,10 +1,11 @@
-# `nu-git-manager-sugar github gm gh query-user`
-## Description
+# `gm gh query-user` (`nu-git-manager-sugar github`)
 get information about a GitHub user
 
-Examples:
-    get the avatar picture of @amtoine
-    > gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+## Examples:
+```nushell
+# get the avatar picture of @amtoine
+gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+```
 
 ## Parameters
 - parameter_name: user

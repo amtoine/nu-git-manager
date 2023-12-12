@@ -1,10 +1,11 @@
-# `nu-git-manager gm update-cache`
-## Description
+# `gm update-cache` (`nu-git-manager`)
 update the local cache of repositories
 
-# Examples
-    update the cache of repositories
-    > gm update-cache
+## Examples
+```nushell
+# update the cache of repositories
+gm update-cache
+```
 
 ## Parameters
 

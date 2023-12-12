@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar git gm repo compare`
-## Description
+# `gm repo compare` (`nu-git-manager-sugar git`)
 compare the changes between two revisions, from a target to the "head"
 
 
@@ -19,6 +18,6 @@ compare the changes between two revisions, from a target to the "head"
 - parameter_default: HEAD
 
 ## Signatures
-| input | output |
-| ----- | ------ |
-| `any` | `any`  |
+| input     | output   |
+| --------- | -------- |
+| `nothing` | `string` |

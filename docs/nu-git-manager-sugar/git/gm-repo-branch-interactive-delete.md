@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar git gm repo branch interactive-delete`
-## Description
+# `gm repo branch interactive-delete` (`nu-git-manager-sugar git`)
 remove a branch interactively
 
 
@@ -8,6 +7,6 @@ remove a branch interactively
 
 
 ## Signatures
-| input | output |
-| ----- | ------ |
-| `any` | `any`  |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |
