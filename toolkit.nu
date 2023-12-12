@@ -117,6 +117,10 @@ export def get-ignored-tests []: nothing -> table<file: string, test: string, re
         }
 }
 
+def run-nu [code: string]: nothing -> any {
+    ^$nu.current-exe --no-config-file --commands ($code ++ " | to nuon") | from nuon
+}
+
 def document-command [
     args: record<module_name: string, full_module_name_with_leading_path: string, root: path>
 ]: string -> string {
@@ -128,10 +132,10 @@ def document-command [
         | update extension md
         | path join
 
-    let help = ^$nu.current-exe --no-config-file --commands $"
+    let help = run-nu $"
         use ($args.root)/($args.full_module_name_with_leading_path) '($command)'
         scope commands | where name == '($command)' | into record
-    | to nuon" | from nuon
+    "
 
     let signatures = $help.signatures | transpose | get column1
 
@@ -250,10 +254,10 @@ def document-module [
         }
     }
 
-    let module = ^$nu.current-exe --no-config-file --commands $"
+    let module = run-nu $"
         use ($root)/($module_path)
         scope modules | where name == ($module_path | path basename) | into record
-    | to nuon" | from nuon
+    "
 
     $module | aux $module_path
 }
