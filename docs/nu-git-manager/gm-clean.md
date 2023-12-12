@@ -13,6 +13,12 @@ Examples
     list the leaves of the store that would have to be cleaned
     > gm clean --list
 
+## Parameters
+- parameter_name: list
+- parameter_type: switch
+- is_optional: true
+- description: only list without cleaning
+
 ## Signatures
 | input     | output         |
 | --------- | -------------- |

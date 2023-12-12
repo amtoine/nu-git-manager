@@ -10,6 +10,9 @@ get the list of all the remotes in the current repository
 
 
 
+## Parameters
+
+
 ## Signatures
 | input     | output                                               |
 | --------- | ---------------------------------------------------- |

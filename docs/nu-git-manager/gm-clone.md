@@ -20,6 +20,50 @@ will give a nice error if the repository is already in the local store.
     clone a big repo as a single commit, avoiding all intermediate Git deltas
     > gm clone https://github.com/neovim/neovim --depth 1
 
+## Parameters
+- parameter_name: url
+- parameter_type: positional
+- syntax_shape: string
+- is_optional: false
+- description: the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
+---
+- parameter_name: remote
+- parameter_type: named
+- syntax_shape: string
+- is_optional: true
+- description: the name of the remote to setup
+- parameter_default: origin
+---
+- parameter_name: ssh
+- parameter_type: switch
+- is_optional: true
+- description: setup the remote to use the SSH protocol both to FETCH and to PUSH
+---
+- parameter_name: fetch
+- parameter_type: named
+- syntax_shape: completable<string>
+- is_optional: true
+- description: setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
+- custom_completion: git-protocols
+---
+- parameter_name: push
+- parameter_type: named
+- syntax_shape: completable<string>
+- is_optional: true
+- description: setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
+- custom_completion: git-protocols
+---
+- parameter_name: bare
+- parameter_type: switch
+- is_optional: true
+- description: clone the repository as a "bare" project
+---
+- parameter_name: depth
+- parameter_type: named
+- syntax_shape: int
+- is_optional: true
+- description: the depth at which to clone the repository
+
 ## Signatures
 | input     | output    |
 | --------- | --------- |

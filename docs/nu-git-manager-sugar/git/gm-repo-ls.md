@@ -4,6 +4,13 @@ get some information about a repo
 
 
 
+## Parameters
+- parameter_name: repo
+- parameter_type: positional
+- syntax_shape: path
+- is_optional: true
+- description: the path to the repo (defaults to `.`)
+
 ## Signatures
 | input     | output                                                                                                                                                             |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

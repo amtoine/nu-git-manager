@@ -38,6 +38,9 @@ Examples
     update the cache if necessary
     > if (gm status).should_update_cache { gm update-cache }
 
+## Parameters
+
+
 ## Signatures
 | input     | output                                                                                                                                          |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |

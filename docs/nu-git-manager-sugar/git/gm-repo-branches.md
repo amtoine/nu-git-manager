@@ -13,6 +13,12 @@ inspect local branches
     clean all dangling branches
     > gm repo branches --clean
 
+## Parameters
+- parameter_name: clean
+- parameter_type: switch
+- is_optional: true
+- description: clean all dangling branches
+
 ## Signatures
 | input     | output                                         |
 | --------- | ---------------------------------------------- |
