@@ -133,6 +133,8 @@ def document-command [
         scope commands | where name == '($command)' | into record
     | to nuon" | from nuon
 
+    let signatures = $help.signatures | transpose | get column1
+
     let page = [
         $"# `($args.module_name) ($command)`",
         $"## Description",
@@ -140,11 +142,26 @@ def document-command [
         "",
         $help.extra_usage,
         "",
+        "## Parameters",
+        (
+            $signatures.0
+                | where parameter_type not-in ["input", "output"]
+                | each {
+                    transpose
+                        | where not ($it.column1 | is-empty)
+                        | transpose --header-row
+                        | into record
+                        | to text
+                        | lines
+                        | str replace --regex '^' '- '
+                        | str join "\n"
+                }
+                | str join "\n---\n"
+        ),
+        "",
         $"## Signatures",
         (
-            $help.signatures
-                | transpose
-                | get column1
+            $signatures
                 | each {
                     where parameter_type in ["input", "output"]
                         | select parameter_type syntax_shape
