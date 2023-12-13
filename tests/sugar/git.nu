@@ -71,6 +71,21 @@ export def branches [] {
     clean $repo
 }
 
+export def branches-checked-out [] {
+    let repo = init-repo-and-cd-into
+
+    commit "init"
+
+    ^git branch bar
+    ^git branch foo
+    ^git checkout bar
+
+    gm repo branches --clean
+    assert equal (gm repo branches) [{branch: bar, remotes: []}, ]
+
+    clean $repo
+}
+
 export def is-ancestor [] {
     let repo = init-repo-and-cd-into
 
@@ -336,4 +351,116 @@ export def branch-compare [] {
     assert equal (gm repo compare main --head foo) ($expected | str join "\n")
 
     clean $foo
+}
+
+export module prompt {
+    use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision, git-action]
+    use ../../src/nu-git-manager-sugar/git/lib/prompt.nu [get-left-prompt]
+    use ../../src/nu-git-manager-sugar/git/lib/style.nu [simplify-path]
+
+    def "assert revision" [expected: record] {
+        let actual = get-revision --short-hash true
+        assert equal $actual $expected
+    }
+
+    def "assert prompt" [expected: string] {
+        let actual = get-left-prompt 10hr | ansi strip
+
+        let admin_segment = if $nu.os-info.name == "windows" {
+            "!!"
+        } else {
+            null
+        }
+
+        assert equal $actual ($admin_segment | append $expected | compact | str join " ")
+    }
+
+    export def repo-revision [] {
+        let repo = init-repo-and-cd-into
+        ^git config tag.gpgSign false
+
+        assert revision {name: "main", hash: "", type: "branch"}
+
+        let hashes = commit c1 c2 c3
+        assert revision {name: "main", hash: ($hashes | last), type: "branch"}
+
+        ^git checkout $hashes.1
+        assert revision {name: null, hash: $hashes.1, type: "detached"}
+
+        ^git tag foo --annotate --message ""
+        assert revision {name: "foo", hash: $hashes.1, type: "tag"}
+
+        ^git checkout main
+        ^git tag bar --annotate --message ""
+        assert revision {name: "main", hash: ($hashes | last), type: "branch"}
+
+        ^git checkout bar
+        assert revision {name: "bar", hash: ($hashes | last), type: "tag"}
+
+        clean $repo
+    }
+
+    export def repo-current-action [] {
+        let repo = init-repo-and-cd-into
+
+        assert equal (git-action) null
+
+        commit init
+        assert equal (git-action) null
+
+        ^git checkout -b some main
+        "foo" | save --force file.txt
+        ^git add file.txt
+        commit foo
+
+        ^git checkout -b other main
+        "bar" | save --force file.txt
+        ^git add file.txt
+        commit bar
+
+        do --ignore-errors { ^git merge some }
+        assert equal (git-action | ansi strip) $"MERGING"
+
+        ^git merge --abort
+        do --ignore-errors { ^git rebase some }
+        assert equal (git-action | ansi strip) $"REBASE-i"
+
+        ^git rebase --abort
+        do --ignore-errors { ^git cherry-pick some }
+        assert equal (git-action | ansi strip) $"CHERRY-PICKING"
+
+        ^git cherry-pick --abort
+        assert equal (git-action) null
+
+        clean $repo
+    }
+
+    export def build-left-prompt [] {
+        let repo = init-repo-and-cd-into
+
+        assert prompt $"($repo | path basename) \(main:\) "
+
+        let hash = commit init | get 0
+        assert prompt $"($repo | path basename) \(main:($hash)\) "
+
+        mkdir foo
+        cd foo
+        let pwd = $repo | path basename | append foo | str join (char path_sep)
+        assert prompt $"($pwd) \(main:($hash)\) "
+
+        cd ..
+        ^git checkout $hash
+        assert prompt $"($repo | path basename) \(_:($hash)\) "
+
+        cd ..
+        # FIXME: use `path sanitize` from `nu-git-manager`
+        let expected_pwd = $repo
+            | path dirname
+            | str replace --regex '^.:' ''
+            | str replace --all '\' '/'
+            | simplify-path
+        assert prompt $"($expected_pwd) "
+
+        clean $repo
+    }
 }

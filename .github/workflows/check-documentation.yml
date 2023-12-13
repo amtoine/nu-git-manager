@@ -1,0 +1,34 @@
+name: Checking the documentation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+      - nightly
+
+jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out repository
+        uses: actions/checkout@v3
+
+      - uses: hustcer/setup-nu@v3.7
+        with:
+          version: "0.87.0"
+
+      - name: Check the documentation
+        shell: nu {0}
+        run: |
+          nu --commands $"
+            use ($env.PWD)/toolkit.nu
+            toolkit doc
+            if not \(git status --short | lines | is-empty\) {
+              error make --unspanned {
+                msg: $'status is non-empty: \(git status --short | lines\)'
+              }
+            }
+          "
