@@ -12,6 +12,6 @@ get some information about a repo
 - description: the path to the repo (defaults to `.`)
 
 ## Signatures
-| input     | output                                                                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `nothing` | `record<path: string, name: string, staged: int, unstaged: int, untracked: int, last_commit: record<date: datetime, title: string, hash: string>, branch: string>` |
+| input     | output                                                                                                                                                                                        |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nothing` | `record<path: string, name: string, staged: list<string>, unstaged: list<string>, untracked: list<string>, last_commit: record<date: datetime, title: string, hash: string>, branch: string>` |
