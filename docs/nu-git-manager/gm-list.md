@@ -1,18 +1,23 @@
-# `nu-git-manager gm list`
-## Description
+# `gm list` (`nu-git-manager`)
 list all the local repositories in your local store
 
-/!\ this command will return sanitized paths. /!\
+**/!\\** this command will return sanitized paths. **/!\\**
 
-# Examples
-    list all the repositories in the store
-    > gm list
-
-    list all the repositories in the store with their full paths
-    > gm list --full-path
-
-    jump to a directory in the store
-    > cd (gm list --full-path | input list)
+## Examples
+```nushell
+# list all the repositories in the store
+gm list
+```
+---
+```nushell
+# list all the repositories in the store with their full paths
+gm list --full-path
+```
+---
+```nushell
+# jump to a directory in the store
+cd (gm list --full-path | input list)
+```
 
 ## Parameters
 - parameter_name: full-path

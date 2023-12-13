@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar git gm repo ls`
-## Description
+# `gm repo ls` (`nu-git-manager-sugar git`)
 get some information about a repo
 
 

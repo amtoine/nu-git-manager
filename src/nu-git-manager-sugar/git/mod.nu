@@ -6,12 +6,16 @@ use ../completions/nu-complete.nu [GIT_QUERY_TABLES, git-query-tables]
 
 # get the commit hash of any revision
 #
-# # Examples
-#     get the commit hash of the currently checked out revision
-#     > gm repo get commit
-#
-#     get the commit hash of the main branch
-#     > gm repo get commit main
+# ## Examples
+# ```nushell
+# # get the commit hash of the currently checked out revision
+# gm repo get commit
+# ```
+# ---
+# ```nushell
+# # get the commit hash of the main branch
+# gm repo get commit main
+# ```
 export def "gm repo get commit" [
     revision: string = "HEAD"  # the revision to get the hash of
 ]: nothing -> string {
@@ -22,20 +26,24 @@ export def "gm repo get commit" [
 export def "gm repo compare" [
     target: string, # the target to compare from
     --head: string = "HEAD", # the "head" to use for the comparison
-] {
+]: nothing -> string {
     ^git diff (^git merge-base $target $head) $head
 }
 
-def repo-root [] {
+def repo-root []: nothing -> string {
     ^git rev-parse --show-toplevel
 }
 
 # go to the root of the repository from anywhere in the worktree
 #
-# # Examples
-#     go back to the root of a repo
-#     > cd foo/bar/baz; gm repo goto root; print (pwd)
-#     /path/to/repo
+# ## Examples
+# ```nushell
+# # go back to the root of a repo
+# cd foo/bar/baz; gm repo goto root; print (pwd)
+# ```
+# ```
+# /path/to/repo
+# ```
 export def --env "gm repo goto root" []: nothing -> nothing {
     cd (repo-root)
 }
@@ -46,12 +54,16 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 # > in the following, a "*dangling*" branch refers to a branch that does not have any remote
 # > counterpart, i.e. it's a purely local branch.
 #
-# # Examples
-#     list branches and their associated remotes
-#     > gm repo branches
-#
-#     clean all dangling branches
-#     > gm repo branches --clean
+# ## Examples
+# ```nushell
+# # list branches and their associated remotes
+# gm repo branches
+# ```
+# ---
+# ```nushell
+# # clean all dangling branches
+# gm repo branches --clean
+# ```
 export def "gm repo branches" [
     --clean  # clean all dangling branches
 ]: nothing -> table<branch: string, remotes: list<string>> {
@@ -93,7 +105,7 @@ export def "gm repo branches" [
 export def "gm repo branch wipe" [
     branch: string, # the branch to wipe
     remote: string, # the remote to push to
-] {
+]: nothing -> nothing {
     ^git branch --delete --force $branch
     ^git push $remote --delete $branch
 }
@@ -101,14 +113,22 @@ export def "gm repo branch wipe" [
 
 # return true iif the first revision is an ancestor of the second
 #
-# # Examples
-#     HEAD~20 is an ancestor of HEAD
-#     > gm repo is-ancestor HEAD~20 HEAD
-#     true
-#
-#     HEAD is never an ancestor of HEAD~20
-#     > gm repo is-ancestor HEAD HEAD~20
-#     false
+# ## Examples
+# ```nushell
+# # HEAD~20 is an ancestor of HEAD
+# gm repo is-ancestor HEAD~20 HEAD
+# ```
+# ```
+# true
+# ```
+# ---
+# ```nushell
+# # HEAD is never an ancestor of HEAD~20
+# gm repo is-ancestor HEAD HEAD~20
+# ```
+# ```
+# false
+# ```
 export def "gm repo is-ancestor" [
     a: string  # the base commit-ish revision
     b: string  # the *head* commit-ish revision
@@ -117,12 +137,17 @@ export def "gm repo is-ancestor" [
 }
 
 # get the list of all the remotes in the current repository
-# # Examples
-#     list all the remotes in a default `nu-git-manager` repo
-#     > gm repo remote list
-#     #┬remote┬──────────────────fetch──────────────────┬─────────────────push──────────────────
-#     0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
-#     ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
+#
+# ## Examples
+# ```nushell
+# # list all the remotes in a default `nu-git-manager` repo
+# gm repo remote list
+# ```
+# ```
+# #┬remote┬──────────────────fetch──────────────────┬─────────────────push──────────────────
+# 0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
+# ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
+# ```
 export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
     # FIXME: use the helper `list-remotes` command from ../nu-git-manager/git/repo.nu:29
     ^git remote --verbose
@@ -142,7 +167,7 @@ export def "gm repo fetch branch" [
     remote: string, # the branch to fetch
     branch: string, # the remote to fetch the branch from
     --strategy: string = "none" # the merge strategy to use
-] {
+]: nothing -> nothing {
     ^git fetch $remote $branch
 
     if (^git branch --list | lines | str substring 2.. | where $it == $branch | is-empty) {
@@ -190,7 +215,7 @@ def get-branches [--merged, --no-merged]: nothing -> list<string> {
 }
 
 # remove a branch interactively
-export def "gm repo branch interactive-delete" [] {
+export def "gm repo branch interactive-delete" []: nothing -> nothing {
     let choice = get-branches | input list --multi "remove"
     if ($choice | is-empty) {
         return
@@ -260,7 +285,30 @@ export def "gm repo ls" [
     }
 }
 
-# TODO: documentation
+# queries the `.git/` directory as a database with `nu_plugin_git_query`
+#
+# ## Examples
+# ```nushell
+# # get the commits of the current repo
+# gm repo query commits
+# ```
+# ---
+# ```nushell
+# # get the total number of insertions and deletions per author
+# gm repo query diffs
+#     | group-by name
+#     | transpose author data
+#     | insert insertions { get data.insertions | math sum }
+#     | insert deletions { get data.deletions | math sum }
+#     | reject data
+# ```
+# ```
+# #┬────author────┬insertions┬deletions
+# 0│amtoine       │      6770│     5402
+# 1│Antoine Stevan│      8537│     4562
+# 2│Mel Massadian │       654│       64
+# ─┴──────────────┴──────────┴─────────
+# ```
 export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
     if $table not-in $GIT_QUERY_TABLES {
         error make {

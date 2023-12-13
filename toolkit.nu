@@ -161,8 +161,7 @@ def document-command [
     let signatures = $help.signatures | transpose | get column1
 
     let page = [
-        $"# `($args.module_name) ($command)`",
-        $"## Description",
+        $"# `($command)` \(`($args.module_name)`\)",
         $help.usage,
         "",
         $help.extra_usage,
