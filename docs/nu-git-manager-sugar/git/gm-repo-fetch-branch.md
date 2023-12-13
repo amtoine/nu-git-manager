@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar git gm repo fetch branch`
-## Description
+# `gm repo fetch branch` (`nu-git-manager-sugar git`)
 fetch a remote branch locally, without pulling down the whole remote
 
 
@@ -25,6 +24,6 @@ fetch a remote branch locally, without pulling down the whole remote
 - parameter_default: none
 
 ## Signatures
-| input | output |
-| ----- | ------ |
-| `any` | `any`  |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

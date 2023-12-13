@@ -1,5 +1,4 @@
-# `nu-git-manager-sugar git gm repo branch wipe`
-## Description
+# `gm repo branch wipe` (`nu-git-manager-sugar git`)
 wipe a branch completely, i.e. both locally and remotely
 
 
@@ -18,6 +17,6 @@ wipe a branch completely, i.e. both locally and remotely
 - description: the remote to push to
 
 ## Signatures
-| input | output |
-| ----- | ------ |
-| `any` | `any`  |
+| input     | output    |
+| --------- | --------- |
+| `nothing` | `nothing` |

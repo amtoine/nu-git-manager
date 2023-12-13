@@ -63,17 +63,23 @@ def "warning make" [
 # > see the [rest API of GitHub](https://docs.github.com/en/rest) for a complete
 # > list of available end points and documentation
 #
-# # Examples
-#     list the releases of Nushell sorted by date
-#     > gm gh query-api "/repos/nushell/nushell/releases"
-#           | select tag_name published_at
-#           | rename tag date
-#           | into datetime date
-#           | sort-by date
-#
-#     get the bio of @amtoine
-#     > gm gh query-api --no-paginate "/users/amtoine" | get bio
-#     you shall not rebase in the middle of a PR review nor close other's review threads :pray:
+# ## Examples
+# ```nushell
+# # list the releases of Nushell sorted by date
+# gm gh query-api "/repos/nushell/nushell/releases"
+#     | select tag_name published_at
+#     | rename tag date
+#     | into datetime date
+#     | sort-by date
+# ```
+# ---
+# ```nushell
+# # get the bio of @amtoine
+# gm gh query-api --no-paginate "/users/amtoine" | get bio
+# ```
+# ```
+# you shall not rebase in the middle of a PR review nor close other's review threads :pray:
+# ```
 export def "gm gh query-api" [
     end_point: string # the end point in the GitHub API to query
     --page-size: int = 100 # the size of each page
@@ -170,13 +176,15 @@ export def "gm gh query-api" [
 
 # list the releases of a GitHub repository
 #
-# # Examples
-#     get the last release of the `github.com:nushell/nushell` repository
-#     > gm gh query-releases "nushell/nushell"
-#           | into datetime published_at
-#           | sort-by published_at
-#           | last
-#           | select tag_name published_at
+# ## Examples
+# ```nushell
+# # get the last release of the `github.com:nushell/nushell` repository
+# gm gh query-releases "nushell/nushell"
+#     | into datetime published_at
+#     | sort-by published_at
+#     | last
+#     | select tag_name published_at
+# ```
 export def "gm gh query-releases" [
     repo: string # the GitHub repository to query the releases of
     --page-size: int = 100 # the size of each page
@@ -187,9 +195,11 @@ export def "gm gh query-releases" [
 
 # get information about a GitHub user
 #
-# Examples:
-#     get the avatar picture of @amtoine
-#     > gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+# ## Examples:
+# ```nushell
+# # get the avatar picture of @amtoine
+# gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
+# ```
 export def "gm gh query-user" [
     user: string # the user to query information about
     --no-gh # force to use `http get` instead of `gh`
@@ -198,7 +208,7 @@ export def "gm gh query-user" [
 }
 
 # checkout one of the repo's PR interactively
-export def "gm gh pr checkout" [] {
+export def "gm gh pr checkout" []: nothing -> nothing {
     if (which gh --all | where type == external | is-empty) {
         error make --unspanned {
             msg: (

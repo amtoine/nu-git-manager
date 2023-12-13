@@ -13,30 +13,40 @@ use error/error.nu [throw-error, throw-warning]
 
 use completions/nu-complete.nu
 
-# manage your Git repositories with the main command of `nu-git-manager`
+# manage your Git repositories with the main command of NGM
 #
-# `nu-git-manager` will look for a store in the following places, in order:
+# ### the location for the store
+# NGM will look for a store in the following places, in order:
 # - `$env.GIT_REPOS_HOME`
-# - `$env.XDG_DATA_HOME | path join "repos"
+# - `$env.XDG_DATA_HOME | path join "repos"`
 # - `~/.local/share/repos`
 #
-# `nu-git-manager` will look for a cache in the following places, in order:
+# ### the cache
+# NGM will look for a cache in the following places, in order:
 # - `$env.GIT_REPOS_CACHE`
-# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"
+# - `$env.XDG_CACHE_HOME | path join "nu-git-manager/cache.nuon"`
 # - `~/.cache/nu-git-manager/cache.nuon`
 #
-# # Examples
-#     a contrived example to set the path to the root of the store
-#     > with-env { GIT_REPOS_HOME: ($nu.home-path | path join "foo") } {
-#           gm status | get root.path | str replace $nu.home-path '~'
-#       }
-#     ~/foo
-#
-#     a contrived example to set the path to the cache of the store
-#     > with-env { XDG_CACHE_HOME: ($nu.home-path | path join "foo") } {
-#           gm status | get cache.path | str replace $nu.home-path '~'
-#       }
-#     ~/foo/nu-git-manager/cache.nuon
+# ## Examples
+# ```nushell
+# # a contrived example to set the path to the root of the store
+# with-env { GIT_REPOS_HOME: ($nu.home-path | path join "foo") } {
+#     gm status | get root.path | str replace $nu.home-path '~'
+# }
+# ```
+# ```
+# ~/foo
+# ```
+# ---
+# ```nushell
+# # a contrived example to set the path to the cache of the store
+# with-env { XDG_CACHE_HOME: ($nu.home-path | path join "foo") } {
+#     gm status | get cache.path | str replace $nu.home-path '~'
+# }
+# ```
+# ```
+# ~/foo/nu-git-manager/cache.nuon
+# ```
 export def "gm" []: nothing -> nothing {
     print (help gm)
 }
@@ -45,21 +55,31 @@ export def "gm" []: nothing -> nothing {
 #
 # will give a nice error if the repository is already in the local store.
 #
-# # Examples
-#     clone a repository in the local store of `nu-git-manager`
-#     > gm clone https://github.com/amtoine/nu-git-manager
-#
-#     clone as a bare repository, i.e. a repo without a worktree
-#     > gm clone --bare https://github.com/amtoine/nu-git-manager
-#
-#     clone a repo and change the name of the remote
-#     > gm clone --remote default https://github.com/amtoine/nu-git-manager
-#
-#     setup a public repo in the local store and use HTTP to fetch without PAT and push with SSH
-#     > gm clone https://github.com/amtoine/nu-git-manager --fetch https --push ssh
-#
-#     clone a big repo as a single commit, avoiding all intermediate Git deltas
-#     > gm clone https://github.com/neovim/neovim --depth 1
+# ## Examples
+# ```nushell
+# # clone a repository in the local store of `nu-git-manager`
+# gm clone https://github.com/amtoine/nu-git-manager
+# ```
+# ---
+# ```nushell
+# # clone as a bare repository, i.e. a repo without a worktree
+# gm clone --bare https://github.com/amtoine/nu-git-manager
+# ```
+# ---
+# ```nushell
+# # clone a repo and change the name of the remote
+# gm clone --remote default https://github.com/amtoine/nu-git-manager
+# ```
+# ---
+# ```nushell
+# # setup a public repo in the local store and use HTTP to fetch without PAT and push with SSH
+# gm clone https://github.com/amtoine/nu-git-manager --fetch https --push ssh
+# ```
+# ---
+# ```nushell
+# # clone a big repo as a single commit, avoiding all intermediate Git deltas
+# gm clone https://github.com/neovim/neovim --depth 1
+# ```
 export def "gm clone" [
     url: string # the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
     --remote: string = "origin" # the name of the remote to setup
@@ -171,17 +191,23 @@ export def "gm clone" [
 
 # list all the local repositories in your local store
 #
-# /!\ this command will return sanitized paths. /!\
+# **/!\\** this command will return sanitized paths. **/!\\**
 #
-# # Examples
-#     list all the repositories in the store
-#     > gm list
-#
-#     list all the repositories in the store with their full paths
-#     > gm list --full-path
-#
-#     jump to a directory in the store
-#     > cd (gm list --full-path | input list)
+# ## Examples
+# ```nushell
+# # list all the repositories in the store
+# gm list
+# ```
+# ---
+# ```nushell
+# # list all the repositories in the store with their full paths
+# gm list --full-path
+# ```
+# ---
+# ```nushell
+# # jump to a directory in the store
+# cd (gm list --full-path | input list)
+# ```
 export def "gm list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
 ]: nothing -> list<path> {
@@ -195,43 +221,61 @@ export def "gm list" [
     }
 }
 
-# get current status about the repositories managed by `nu-git-manager`
+# get current status about the repositories managed by NGM
 #
-# /!\ `$.root.path` and `$.cache.path` will be sanitized /!\
+# **/!\\** `$.root.path` and `$.cache.path` will be sanitized **/!\\**
 #
-# Examples
-#     getting status when everything is fine
-#     > gm status | reject missing | flatten | into record
-#     ╭─────────────────────┬────────────────────────────────────╮
-#     │ path                │ ~/.local/share/repos               │
-#     │ exists              │ true                               │
-#     │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
-#     │ cache_exists        │ true                               │
-#     │ should_update_cache │ false                              │
-#     ╰─────────────────────┴────────────────────────────────────╯
-#
-#     getting status when there is no store
-#     > gm status | get root
-#     ╭────────┬──────────────────────╮
-#     │ path   │ ~/.local/share/repos │
-#     │ exists │ false                │
-#     ╰────────┴──────────────────────╯
-#
-#     getting status when there is no cache
-#     > gm status | get root
-#     ╭────────┬────────────────────────────────────╮
-#     │ path   │ ~/.cache/nu-git-manager/cache.nuon │
-#     │ exists │ false                              │
-#     ╰────────┴────────────────────────────────────╯
-#
-#     getting status when a project is in the cache but is missing on the filesystem
-#     > gm status | get missing
-#     ╭──────────────────────────────────────╮
-#     │ 0 │ ~/.local/share/repos/foo/bar/baz │
-#     ╰──────────────────────────────────────╯
-#
-#     update the cache if necessary
-#     > if (gm status).should_update_cache { gm update-cache }
+# ## Examples
+# ```nushell
+# # getting status when everything is fine
+# gm status | reject missing | flatten | into record
+# ```
+# ```
+# ╭─────────────────────┬────────────────────────────────────╮
+# │ path                │ ~/.local/share/repos               │
+# │ exists              │ true                               │
+# │ cache_path          │ ~/.cache/nu-git-manager/cache.nuon │
+# │ cache_exists        │ true                               │
+# │ should_update_cache │ false                              │
+# ╰─────────────────────┴────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when there is no store
+# gm status | get root
+# ```
+# ```
+# ╭────────┬──────────────────────╮
+# │ path   │ ~/.local/share/repos │
+# │ exists │ false                │
+# ╰────────┴──────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when there is no cache
+# gm status | get root
+# ```
+# ```
+# ╭────────┬────────────────────────────────────╮
+# │ path   │ ~/.cache/nu-git-manager/cache.nuon │
+# │ exists │ false                              │
+# ╰────────┴────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # getting status when a project is in the cache but is missing on the filesystem
+# gm status | get missing
+# ```
+# ```
+# ╭──────────────────────────────────────╮
+# │ 0 │ ~/.local/share/repos/foo/bar/baz │
+# ╰──────────────────────────────────────╯
+# ```
+# ---
+# ```nushell
+# # update the cache if necessary
+# if (gm status).should_update_cache { gm update-cache }
+# ```
 export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
     let root = get-repo-store-path
     let cache = get-repo-store-cache-path
@@ -260,9 +304,11 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 
 # update the local cache of repositories
 #
-# # Examples
-#     update the cache of repositories
-#     > gm update-cache
+# ## Examples
+# ```nushell
+# # update the cache of repositories
+# gm update-cache
+# ```
 export def "gm update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
     clean-cache-dir $cache_file
@@ -280,18 +326,26 @@ export def "gm update-cache" []: nothing -> nothing {
 
 # remove one of the repositories from your local store
 #
-# # Examples
-#     remove any repository by fuzzy-finding the whole store
-#     > gm remove --fuzzy
-#
-#     restrict the search to any one of my repositories
-#     > gm remove amtoine
-#
-#     remove a precise repo by giving its full name, a name collision is unlikely
-#     > gm remove amtoine/nu-git-manager
-#
-#     remove a precise repo without confirmation
-#     > gm remove amtoine/nu-git-manager --no-confirm
+# ## Examples
+# ```nushell
+# # remove any repository by fuzzy-finding the whole store
+# gm remove --fuzzy
+# ```
+# ---
+# ```nushell
+# # restrict the search to any one of my repositories
+# gm remove amtoine
+# ```
+# ---
+# ```nushell
+# # remove a precise repo by giving its full name, a name collision is unlikely
+# gm remove amtoine/nu-git-manager
+# ```
+# ---
+# ```nushell
+# # remove a precise repo without confirmation
+# gm remove amtoine/nu-git-manager --no-confirm
+# ```
 export def "gm remove" [
     pattern?: string # a pattern to restrict the choices
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
@@ -400,15 +454,19 @@ export def "gm remove" [
 # - keys: the root hash of repos, e.g. [2ed2d87](https://github.com/amtoine/nu-git-manager/commit/2ed2d875d80505d78423328c6b2a60522715fcdf) for `nu-git-manager`
 # - values: the main fork to select in full-name form, e.g. `github.com/amtoine/nu-git-manager`
 #
-# # Examples
-#     squash forks interactively
-#     > gm squash-forks
-#
-#     squash forks non-interactively: `nu-git-manager` and `nushell` to the forks of @amtoine
-#     > gm squash-forks --non-interactive-preselect {
-#           2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
-#           8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
-#       }
+# ## Examples
+# ```nushell
+# # squash forks interactively
+# gm squash-forks
+# ```
+# ---
+# ```nushell
+# # squash forks non-interactively: `nu-git-manager` and `nushell` to the forks of @amtoine
+# gm squash-forks --non-interactive-preselect {
+#     2ed2d875d80505d78423328c6b2a60522715fcdf: "github.com/amtoine/nu-git-manager",
+#     8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
+# }
+# ```
 export def "gm squash-forks" [
     --non-interactive-preselect: record = {} # the non-interactive preselection record, see documentation above
 ]: nothing -> nothing {
@@ -474,14 +532,18 @@ export def "gm squash-forks" [
 #
 # this command will mainly remove empty directory recursively.
 #
-# /!\ this command will return sanitized paths. /!\
+# **/!\\** this command will return sanitized paths. **/!\\**
 #
-# Examples
-#     clean the store
-#     > gm clean
-#
-#     list the leaves of the store that would have to be cleaned
-#     > gm clean --list
+# ## Examples
+# ```nushell
+# # clean the store
+# gm clean
+# ```
+# ---
+# ```nushell
+# # list the leaves of the store that would have to be cleaned
+# gm clean --list
+# ```
 export def "gm clean" [
     --list # only list without cleaning
 ]: nothing -> list<path> {

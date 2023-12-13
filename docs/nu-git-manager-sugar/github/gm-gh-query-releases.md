@@ -1,14 +1,15 @@
-# `nu-git-manager-sugar github gm gh query-releases`
-## Description
+# `gm gh query-releases` (`nu-git-manager-sugar github`)
 list the releases of a GitHub repository
 
-# Examples
-    get the last release of the `github.com:nushell/nushell` repository
-    > gm gh query-releases "nushell/nushell"
-          | into datetime published_at
-          | sort-by published_at
-          | last
-          | select tag_name published_at
+## Examples
+```nushell
+# get the last release of the `github.com:nushell/nushell` repository
+gm gh query-releases "nushell/nushell"
+    | into datetime published_at
+    | sort-by published_at
+    | last
+    | select tag_name published_at
+```
 
 ## Parameters
 - parameter_name: repo
