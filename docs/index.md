@@ -21,6 +21,7 @@
 - [`gm repo goto root`](nu-git-manager-sugar/git/gm-repo-goto-root.md)
 - [`gm repo is-ancestor`](nu-git-manager-sugar/git/gm-repo-is-ancestor.md)
 - [`gm repo ls`](nu-git-manager-sugar/git/gm-repo-ls.md)
+- [`gm repo query`](nu-git-manager-sugar/git/gm-repo-query.md)
 - [`gm repo remote list`](nu-git-manager-sugar/git/gm-repo-remote-list.md)
 - [`gm repo switch`](nu-git-manager-sugar/git/gm-repo-switch.md)
 - [`setup`](nu-git-manager-sugar/git/prompt/setup.md)
