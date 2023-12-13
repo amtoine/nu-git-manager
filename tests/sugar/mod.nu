@@ -20,6 +20,7 @@ export module imports {
             "gm repo goto root",
             "gm repo is-ancestor",
             "gm repo ls",
+            "gm repo query",
             "gm repo remote list",
             "gm repo switch",
             "prompt setup",

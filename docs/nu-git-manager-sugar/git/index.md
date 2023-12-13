@@ -12,6 +12,7 @@
 - [`gm repo goto root`](gm-repo-goto-root.md)
 - [`gm repo is-ancestor`](gm-repo-is-ancestor.md)
 - [`gm repo ls`](gm-repo-ls.md)
+- [`gm repo query`](gm-repo-query.md)
 - [`gm repo remote list`](gm-repo-remote-list.md)
 - [`gm repo switch`](gm-repo-switch.md)
 

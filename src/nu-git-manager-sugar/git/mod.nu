@@ -2,6 +2,8 @@ use std log
 
 use ../git/lib/lib.nu [get-status]
 
+use ../completions/nu-complete.nu [GIT_QUERY_TABLES, git-query-tables]
+
 # get the commit hash of any revision
 #
 # ## Examples
@@ -280,5 +282,35 @@ export def "gm repo ls" [
         untracked: $status.untracked,
         last_commit: $last_commit,
         branch: (^git -C $repo branch --show-current),
+    }
+}
+
+# TODO: documentation
+export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
+    if $table not-in $GIT_QUERY_TABLES {
+        error make {
+            msg: $"(ansi red_bold)invalid_qit_query_table(ansi reset)",
+            label: {
+                text: $"expected one of ($GIT_QUERY_TABLES), got '($table)'"
+                span: (metadata $table).span,
+            }
+        }
+    }
+
+    if (which "query git" | is-empty) {
+        error make --unspanned {
+            msg: (
+                $"(ansi red_bold)requirement_not_found(ansi reset):\n"
+              + $"could not find `(ansi default_dimmed)query git(ansi reset)` in current scope\n"
+              +  "\n"
+              + $"(ansi cyan)help(ansi reset): install the (ansi blue_dimmed)[`(ansi reset)(ansi blue_bold)nu_plugin_query_git(ansi reset)(ansi blue_dimmed)`]\(https://github.com/fdncred/nu_plugin_query_git\)(ansi reset) plugin with `(ansi default_dimmed)cargo build --release(ansi reset)` and then `(ansi default_dimmed)register(ansi reset)` it"
+            )
+        }
+    }
+
+    if $table == "commits" {
+        query git $"select * from commits" | into datetime datetime
+    } else {
+        query git $"select * from ($table)"
     }
 }
