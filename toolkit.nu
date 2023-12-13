@@ -211,7 +211,6 @@ def document-module [
 
     def aux [
         full_module_name_with_leading_path: string,
-        depth?: int = 0,
     ]: record<name: string, commands: list<string>, submodules: list<record>> -> nothing {
         let module = $in
 
@@ -270,7 +269,7 @@ def document-module [
 
 
         for submodule in $module.submodules {
-            $submodule | aux ($full_module_name_with_leading_path + ' ' + $submodule.name) ($depth + 1)
+            $submodule | aux ($full_module_name_with_leading_path + ' ' + $submodule.name)
         }
     }
 
