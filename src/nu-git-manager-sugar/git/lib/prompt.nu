@@ -1,20 +1,23 @@
 use ../../git/lib/lib.nu [get-revision, git-action]
 use ../../git/lib/style.nu [color, simplify-path]
 
-# TODO: write a test
+# /!\ the PWD will be sanitized
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     let is_git_repo = not (
         do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
     )
 
+    # FIXME: use `path sanitize` from `nu-git-manager`
+    let pwd = pwd | str replace --regex '^.:' '' | str replace --all '\' '/'
     let pwd = if $is_git_repo {
-        let repo_root = (
-            ^git rev-parse --show-toplevel
-        )
+        # FIXME: use `path sanitize` from `nu-git-manager`
+        let repo_root = ^git rev-parse --show-toplevel
+            | str replace --regex '^.:' ''
+            | str replace --all '\' '/'
         let repo = $repo_root | path basename | color "magenta_bold"
-        let sub_dir = pwd
-            | str replace $repo_root ''
-            | str trim --char (char path_sep)
+        let sub_dir = $pwd
+            | str replace $repo_root '' # FIXME: use `path remove-prefix` from `nu-git-manager`
+            | str trim --char '/' # FIXME: use `path remove-trailing-path-sep` from `nu-git-manager`
             | simplify-path
 
         if $sub_dir != "" {
@@ -24,7 +27,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
             $repo
         }
     } else {
-        pwd | simplify-path | color "green"
+        $pwd | simplify-path | color "green"
     }
 
     let git_branch_segment = if $is_git_repo {
@@ -69,7 +72,10 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         null
     }
 
-    let cmd_duration = $env.CMD_DURATION_MS | into int | $in * 1ms
+    let cmd_duration = match $env.CMD_DURATION_MS? {
+        "0823" | null => -1ms,
+        _ => ($env.CMD_DURATION_MS | into int | $in * 1ms),
+    }
     let duration_segment = if $cmd_duration > $duration_threshold {
         $cmd_duration | color "light_yellow"
     } else {
