@@ -1,5 +1,7 @@
 use std log
 
+use ../git/lib/lib.nu [get-status]
+
 # get the commit hash of any revision
 #
 # # Examples
@@ -232,9 +234,9 @@ export def "gm repo switch" []: nothing -> nothing {
 # get some information about a repo
 export def "gm repo ls" [
     repo?: path, # the path to the repo (defaults to `.`)
-]: nothing -> record<path: path, name: string, staged: int, unstaged: int, untracked: int, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
+]: nothing -> record<path: path, name: string, staged: list<string>, unstaged: list<string>, untracked: list<string>, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
     let repo = $repo | default (pwd)
-    let status = ^git -C $repo status --short | lines
+    let status = get-status $repo
 
     let last_commit = if (do --ignore-errors { git -C $repo log -1 } | complete).exit_code == 0 { {
         date: (^git -C $repo log -1 --format=%cd | into datetime),
@@ -248,9 +250,9 @@ export def "gm repo ls" [
         # FIXME: should be using `path sanitize` defined in `nu-git-manager`
         path: ($repo | str replace --regex '^.:' '' | str replace --all '\' '/'),
         name: ($repo | path basename),
-        staged: ($status | parse --regex '^\w. (?<file>.*)' | get file),
-        unstaged: ($status | parse --regex '^.\w (?<file>.*)' | get file),
-        untracked: ($status | parse --regex '^\?\? (?<file>.*)' | get file),
+        staged: $status.staged,
+        unstaged: $status.unstaged,
+        untracked: $status.untracked,
         last_commit: $last_commit,
         branch: (^git -C $repo branch --show-current),
     }

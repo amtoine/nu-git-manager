@@ -109,3 +109,13 @@ export def git-action []: nothing -> string {
     }
 }
 
+export def get-status [
+    repo: path, # the path to the repo
+]: nothing -> record<staged: list<string>, unstaged: list<string>, untracked: list<string>> {
+    let status = ^git -C $repo status --short | lines
+    {
+        staged: ($status | parse --regex '^\w. (?<file>.*)' | get file),
+        unstaged: ($status | parse --regex '^.\w (?<file>.*)' | get file),
+        untracked: ($status | parse --regex '^\?\? (?<file>.*)' | get file),
+    }
+}
