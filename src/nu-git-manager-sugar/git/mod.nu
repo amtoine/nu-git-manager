@@ -2,7 +2,9 @@ use std log
 
 use ../git/lib/lib.nu [get-status]
 
-use ../completions/nu-complete.nu [GIT_QUERY_TABLES, git-query-tables]
+use ../completions/nu-complete.nu [
+    GIT_QUERY_TABLES, GIT_STRATEGIES, git-query-tables, get-remotes, get-branches, get-strategies
+]
 
 # get the commit hash of any revision
 #
@@ -164,9 +166,9 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
 
 # fetch a remote branch locally, without pulling down the whole remote
 export def "gm repo fetch branch" [
-    remote: string, # the branch to fetch
-    branch: string, # the remote to fetch the branch from
-    --strategy: string = "none" # the merge strategy to use
+    remote: string@get-remotes, # the branch to fetch
+    branch: string@get-branches, # the remote to fetch the branch from
+    --strategy: string@get-strategies = "none" # the merge strategy to use
 ]: nothing -> nothing {
     ^git fetch $remote $branch
 
@@ -190,7 +192,7 @@ export def "gm repo fetch branch" [
                 error make {
                     msg: $"(ansi red_bold)invalid_strategy(ansi reset)"
                     label: {
-                        text: "expected one of ['merge', 'rebase', 'none']"
+                        text: $"expected one of ($GIT_STRATEGIES)"
                         span: (metadata $strategy).span
                     }
                 }
