@@ -147,6 +147,8 @@ def document-command [
 ]: string -> string {
     let command = $in
 
+    print $"documenting command '($command)'"
+
     let command_file = $command
         | str replace --all ' ' '-'
         | path parse
@@ -208,6 +210,8 @@ def document-module [
     module_path: string, --root: path, --documentation-dir: path
 ]: nothing -> nothing {
     let main_index = $root | path join $documentation_dir "index.md"
+
+    print $"documenting module '($module_path)'"
 
     def aux [
         full_module_name_with_leading_path: string,
