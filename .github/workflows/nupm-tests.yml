@@ -3,34 +3,24 @@ on:
   workflow_dispatch:
     inputs:
       nu_version:
-        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
-        default: "*"
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
         type: string
       nupm_revision:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
-        default: "*"
         type: string
-      timeout:
-        description: "The timeout of the ci job. Default is 20min"
-        default: 20
-        type: number
 
   workflow_call:
     inputs:
       nu_version:
-        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
-        default: "*"
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
         type: string
       nupm_revision:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
-        default: "*"
         type: string
-      timeout:
-        description: "The timeout of the ci job. Default is 20min"
-        default: 20
-        type: number
 
 env:
   NU_LOG_LEVEL: DEBUG
@@ -42,7 +32,6 @@ defaults:
 
 jobs:
   nupm-tests:
-    timeout-minutes: ${{ inputs.timeout }}
     strategy:
       fail-fast: true
       matrix:
