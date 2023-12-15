@@ -1,6 +1,6 @@
 use std assert
 
-use ../../src/nu-git-manager-sugar/ git [
+use ../../nu-git-manager-sugar/nu-git-manager-sugar/ git [
     "gm repo get commit"
     "gm repo goto root"
     "gm repo branches"
@@ -11,8 +11,8 @@ use ../../src/nu-git-manager-sugar/ git [
     "gm repo branch wipe"
     "gm repo compare"
 ]
-use ../../src/nu-git-manager/fs/path.nu ["path sanitize"]
-use ../common/setup.nu [get-random-test-dir]
+use ../../nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../../tests/common/setup.nu [get-random-test-dir]
 
 def --env init-repo-and-cd-into []: nothing -> path {
     let repo = get-random-test-dir --no-sanitize
@@ -354,9 +354,9 @@ export def branch-compare [] {
 }
 
 export module prompt {
-    use ../../src/nu-git-manager-sugar/git/lib/lib.nu [get-revision, git-action]
-    use ../../src/nu-git-manager-sugar/git/lib/prompt.nu [get-left-prompt]
-    use ../../src/nu-git-manager-sugar/git/lib/style.nu [simplify-path]
+    use ../nu-git-manager-sugar/git/lib/lib.nu [get-revision, git-action]
+    use ../nu-git-manager-sugar/git/lib/prompt.nu [get-left-prompt]
+    use ../nu-git-manager-sugar/git/lib/style.nu [simplify-path]
 
     def "assert revision" [expected: record] {
         let actual = get-revision --short-hash true

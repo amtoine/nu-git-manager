@@ -1,11 +1,11 @@
 use std assert
 
-use ../src/nu-git-manager/fs/path.nu ["path sanitize"]
-use ../src/nu-git-manager/git/repo.nu [list-remotes]
-use ../src/nu-git-manager/ *
+use ../nu-git-manager/fs/path.nu ["path sanitize"]
+use ../nu-git-manager/git/repo.nu [list-remotes]
+use ../nu-git-manager/ *
 
-use common/setup.nu [get-random-test-dir]
-use common/import.nu ["assert imports"]
+use ../../../tests/common/setup.nu [get-random-test-dir]
+use ../../../tests/common/import.nu ["assert imports"]
 
 def run-with-env [code: closure, --prepare-cache] {
     let TEST_ENV_BASE = get-random-test-dir

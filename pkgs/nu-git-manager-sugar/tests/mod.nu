@@ -1,6 +1,6 @@
 use std assert
 
-use ../common/import.nu ["assert imports"]
+use ../../../tests/common/import.nu ["assert imports"]
 
 const MODULE = "nu-git-manager-sugar"
 
