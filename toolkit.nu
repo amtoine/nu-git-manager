@@ -8,14 +8,19 @@ export def "test" [
     pattern?: string = "" # the pattern a test name should match to run
     --verbose # show the output of each tests
 ]: nothing -> nothing {
-    let command = if $verbose {
-        $"nupm test ($pattern) --show-stdout"
+    let args = if $verbose {
+        "--show-stdout"
     } else {
-        $"nupm test ($pattern)"
+        ""
     }
 
     # NOTE: this is for the CI to pass without installing Nupm
-    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
+    ^$nu.current-exe --env-config $nu.env-path --commands $"
+        use nupm
+        ls pkgs/**/package.nuon | get name | path dirname | each {|pkg|
+            nupm test ($pattern) ($args) --dir $pkg
+        }
+    "
 }
 
 # install `nu-git-manager` with Nupm
