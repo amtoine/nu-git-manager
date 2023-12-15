@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       nu_version:
-        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
         default: "*"
         type: string
       nupm_revision:
@@ -15,7 +15,7 @@ on:
   workflow_call:
     inputs:
       nu_version:
-        description: "A valid NPM-style semver specification, such as '0.86.0', etc. and 'nightly', supports '0.60.0' -> latest and latest 'nightly'"
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
         default: "*"
         type: string
       nupm_revision:
