@@ -293,7 +293,9 @@ def document-module [
 }
 
 export def doc [--documentation-dir: path = "./docs/"] {
-    let modules = open package.nuon | get modules
+    let modules = ls pkgs/**/package.nuon
+        | insert pkg {|it| open $it.name | get name }
+        | each {|it| $it.name | path dirname | path join $it.pkg }
 
     let documentation_dir = $documentation_dir | path expand
 
