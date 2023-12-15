@@ -1,5 +1,12 @@
 use std repeat
 
+# NOTE: this will likely get replaced by Nupm workspaces in the future
+def list-modules-of-workspace []: nothing -> list<string> {
+    ls pkgs/**/package.nuon
+        | insert pkg {|it| open $it.name | get name }
+        | each {|it| $it.name | path dirname | path join $it.pkg }
+}
+
 # run the tests of the `nu-git-manager` package
 #
 # > **Important**  
@@ -8,22 +15,32 @@ export def "test" [
     pattern?: string = "" # the pattern a test name should match to run
     --verbose # show the output of each tests
 ]: nothing -> nothing {
-    let command = if $verbose {
-        $"nupm test ($pattern) --show-stdout"
+    let args = if $verbose {
+        "--show-stdout"
     } else {
-        $"nupm test ($pattern)"
+        ""
     }
 
     # NOTE: this is for the CI to pass without installing Nupm
-    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
+    ^$nu.current-exe --env-config $nu.env-path --commands $"
+        use nupm
+        (list-modules-of-workspace) | each {|pkg|
+            nupm test ($pattern) ($args) --dir \($pkg | path dirname\)
+        }
+    "
 }
 
 # install `nu-git-manager` with Nupm
 export def "install" []: nothing -> nothing {
-    let command = "nupm install --force --path (^git rev-parse --show-toplevel)"
-
     # NOTE: this is for the CI to pass without installing Nupm
-    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
+    ^$nu.current-exe --env-config $nu.env-path --commands $"
+        use nupm
+        (list-modules-of-workspace) | each {|pkg|
+            nupm install --force --path \($pkg | path dirname\)
+        }
+    "
+
+    null
 }
 
 # run some code inside an isolated environment
@@ -283,7 +300,7 @@ def document-module [
 }
 
 export def doc [--documentation-dir: path = "./docs/"] {
-    let modules = open package.nuon | get modules
+    let modules = list-modules-of-workspace
 
     let documentation_dir = $documentation_dir | path expand
 
