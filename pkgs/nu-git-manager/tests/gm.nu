@@ -1,8 +1,8 @@
 use std assert
 
-use ../nu-git-manager/fs/path.nu ["path sanitize"]
-use ../nu-git-manager/git/repo.nu [list-remotes]
-use ../nu-git-manager/ *
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../../pkgs/nu-git-manager/nu-git-manager/git/repo.nu [list-remotes]
+use ../../../pkgs/nu-git-manager/nu-git-manager/ *
 
 use ../../../tests/common/setup.nu [get-random-test-dir]
 use ../../../tests/common/import.nu ["assert imports"]
