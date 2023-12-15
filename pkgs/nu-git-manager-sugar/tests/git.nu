@@ -14,8 +14,6 @@ use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git [
 use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
-export module git
-
 def --env init-repo-and-cd-into []: nothing -> path {
     let repo = get-random-test-dir --no-sanitize
 
