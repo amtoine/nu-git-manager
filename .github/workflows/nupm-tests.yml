@@ -4,24 +4,22 @@ on:
     inputs:
       nu_version:
         description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
-        default: "*"
+        required: true
         type: string
       nupm_revision:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
-        default: "*"
         type: string
 
   workflow_call:
     inputs:
       nu_version:
         description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
-        default: "*"
+        required: true
         type: string
       nupm_revision:
         description: "A commit hash, branch name or tag to checkout before installing Nupm."
         required: true
-        default: "*"
         type: string
 
 env:
