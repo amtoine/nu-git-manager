@@ -38,7 +38,7 @@ git clone https://github.com/amtoine/nu-git-manager
 - activate the `nupm` module with `use nupm`
 - install the `nu-git-manager` package
 ```nushell
-nupm install --path --force nu-git-manager
+nupm install --path --force pkgs/nu-git-manager
 ```
 
 > **Note**

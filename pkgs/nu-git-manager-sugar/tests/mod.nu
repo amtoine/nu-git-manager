@@ -1,6 +1,7 @@
 use std assert
 
-use ../common/import.nu ["assert imports"]
+use ../../../tests/common/import.nu ["assert imports"]
+use ../../../tests/common/setup.nu [get-random-test-dir]
 
 const MODULE = "nu-git-manager-sugar"
 
@@ -40,4 +41,18 @@ export module imports {
 # ignored: `nu_plugin_gstat` is required
 def report [] {
     exit 1
+}
+
+export def install-package [] {
+    # FIXME: is there a way to not rely on hardcoded paths here?
+    use ~/.local/share/nupm/modules/nupm
+
+    with-env {NUPM_HOME: (get-random-test-dir)} {
+        nupm install --no-confirm --path .
+
+        assert (not ($env.NUPM_HOME | path join "scripts" | path exists))
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager-sugar]
+
+        rm --recursive --force --verbose $env.NUPM_HOME
+    }
 }

@@ -1,0 +1,17 @@
+{
+    name: "nu-git-manager"
+    version: 0.4.0
+    description: "A collection of Nushell tools to manage `git` repositories."
+    documentation: "https://github.com/amtoine/nu-git-manager/blob/main/README.md"
+    maintainers: [
+        @amtoine
+        @melMass
+    ]
+    license: "https://github.com/amtoine/nu-git-manager/blob/main/LICENSE"
+    dependencies: {
+        nushell: 0.88.1
+        git: 2.40.1
+    }
+    type: "module"
+}
+
