@@ -11,10 +11,6 @@ on:
         required: true
         default: "*"
         type: string
-      timeout:
-        description: "The timeout of the ci job. Default is 20min"
-        default: 20
-        type: number
 
   workflow_call:
     inputs:
@@ -27,10 +23,6 @@ on:
         required: true
         default: "*"
         type: string
-      timeout:
-        description: "The timeout of the ci job. Default is 20min"
-        default: 20
-        type: number
 
 env:
   NU_LOG_LEVEL: DEBUG
@@ -42,7 +34,6 @@ defaults:
 
 jobs:
   nupm-tests:
-    timeout-minutes: ${{ inputs.timeout }}
     strategy:
       fail-fast: true
       matrix:
