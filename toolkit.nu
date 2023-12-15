@@ -20,10 +20,15 @@ export def "test" [
 
 # install `nu-git-manager` with Nupm
 export def "install" []: nothing -> nothing {
-    let command = "nupm install --force --path (^git rev-parse --show-toplevel)"
-
     # NOTE: this is for the CI to pass without installing Nupm
-    ^$nu.current-exe --env-config $nu.env-path --commands $"use nupm; ($command)"
+    ^$nu.current-exe --env-config $nu.env-path --commands $"
+        use nupm
+        ls pkgs/**/package.nuon | get name | path dirname | each {|pkg|
+            nupm install --force --path $pkg
+        }
+    "
+
+    null
 }
 
 # run some code inside an isolated environment
