@@ -13,5 +13,5 @@ jobs:
   tests:
     uses: ./.github/workflows/nupm-tests.yml
     with:
-      nu_version: "0.88.0"
-      nupm_revision: "f7c0843f4d667194beae468614a46cc8d72cc5db"
+      nu_version: "0.88.1"
+      nupm_revision: "6a9618fa21453bca4000ac33707b7aace0da35c7"
