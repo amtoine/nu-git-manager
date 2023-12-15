@@ -247,8 +247,8 @@ export def install-package [] {
     with-env {NUPM_HOME: (get-random-test-dir)} {
         nupm install --no-confirm --path .
 
-        assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
-        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
+        assert (not ($env.NUPM_HOME | path join "scripts" | path exists))
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager]
 
         rm --recursive --force --verbose $env.NUPM_HOME
     }
