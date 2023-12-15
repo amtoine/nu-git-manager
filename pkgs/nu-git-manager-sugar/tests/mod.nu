@@ -3,6 +3,8 @@ use std assert
 use ../../../tests/common/import.nu ["assert imports"]
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
+export module git.nu
+
 const MODULE = "nu-git-manager-sugar"
 
 export module imports {
