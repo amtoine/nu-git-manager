@@ -68,5 +68,11 @@ jobs:
 
       - name: Run the tests
         run: |
-          use ${{ steps.nu-setup.outputs.nupm_path }}
-          nupm test --show-stdout
+          # NOTE: required for `use nupm` to work inside `toolkit test`
+          "$env.NU_LIB_DIRS = [ (${{ steps.nu-setup.outputs.nupm_path }} | path dirname) ]"
+            | save --force /tmp/env.nu
+          # NOTE: required for `use toolkit.nu` to work
+          nu --env-config /tmp/env.nu --commands "
+            use toolkit.nu
+            toolkit test --verbose
+          "
