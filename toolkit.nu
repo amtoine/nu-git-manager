@@ -1,5 +1,12 @@
 use std repeat
 
+# NOTE: this will likely get replaced by Nupm workspaces in the future
+def list-modules-of-workspace []: nothing -> list<string> {
+    ls pkgs/**/package.nuon
+        | insert pkg {|it| open $it.name | get name }
+        | each {|it| $it.name | path dirname | path join $it.pkg }
+}
+
 # run the tests of the `nu-git-manager` package
 #
 # > **Important**  
@@ -17,8 +24,8 @@ export def "test" [
     # NOTE: this is for the CI to pass without installing Nupm
     ^$nu.current-exe --env-config $nu.env-path --commands $"
         use nupm
-        ls pkgs/**/package.nuon | get name | path dirname | each {|pkg|
-            nupm test ($pattern) ($args) --dir $pkg
+        (list-modules-of-workspace) | each {|pkg|
+            nupm test ($pattern) ($args) --dir \($pkg | path dirname\)
         }
     "
 }
@@ -28,8 +35,8 @@ export def "install" []: nothing -> nothing {
     # NOTE: this is for the CI to pass without installing Nupm
     ^$nu.current-exe --env-config $nu.env-path --commands $"
         use nupm
-        ls pkgs/**/package.nuon | get name | path dirname | each {|pkg|
-            nupm install --force --path $pkg
+        (list-modules-of-workspace) | each {|pkg|
+            nupm install --force --path \($pkg | path dirname\)
         }
     "
 
@@ -293,9 +300,7 @@ def document-module [
 }
 
 export def doc [--documentation-dir: path = "./docs/"] {
-    let modules = ls pkgs/**/package.nuon
-        | insert pkg {|it| open $it.name | get name }
-        | each {|it| $it.name | path dirname | path join $it.pkg }
+    let modules = list-modules-of-workspace
 
     let documentation_dir = $documentation_dir | path expand
 
