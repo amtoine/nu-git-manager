@@ -21,7 +21,6 @@ use ../../../pkgs/nu-git-manager/nu-git-manager/fs/dir.nu [clean-empty-directori
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
 export module gm.nu
-export module sugar
 
 export module path {
     export def sanitization [] {
