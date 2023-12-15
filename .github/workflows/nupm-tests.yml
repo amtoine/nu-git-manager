@@ -58,10 +58,10 @@ jobs:
           echo "target: ${{github.base_ref}}"
           echo "ref: ${{github.ref}}"
 
-          if [[ ${{ github.base_ref }} == 'nightly' ]]; then
+          if [[ '${{ github.base_ref }}' == 'nightly' ]]; then
             echo "NU_VERSION='nightly'" >> $GITHUB_ENV
             echo "NUPM_REVISION='main'" >> $GITHUB_ENV
-          elif [[ ${{ github.ref }} == 'refs/heads/nightly' ]]; then
+          elif [[ '${{ github.ref }}' == 'refs/heads/nightly' ]]; then
             echo "NU_VERSION='nightly'" >> $GITHUB_ENV
             echo "NUPM_REVISION='main'" >> $GITHUB_ENV
           else
