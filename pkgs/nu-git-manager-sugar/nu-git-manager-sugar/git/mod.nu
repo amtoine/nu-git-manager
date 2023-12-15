@@ -6,6 +6,8 @@ use ../completions/nu-complete.nu [
     GIT_QUERY_TABLES, GIT_STRATEGIES, git-query-tables, get-remotes, get-branches, get-strategies
 ]
 
+export module prompt.nu
+
 # get the commit hash of any revision
 #
 # ## Examples

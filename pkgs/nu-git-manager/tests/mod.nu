@@ -20,6 +20,8 @@ use ../../../pkgs/nu-git-manager/nu-git-manager/fs/dir.nu [clean-empty-directori
 
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
+export module gm.nu
+
 export module path {
     export def sanitization [] {
         assert equal ('\foo\bar' | path sanitize) "/foo/bar"
