@@ -52,12 +52,29 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup Nushell and Nupm versions
+        shell: bash
+        run: |
+          echo "target: ${{github.base_ref}}"
+          echo "ref: ${{github.ref}}"
+
+          if [[ ${{ github.base_ref }} == 'nightly' ]]; then
+            echo "NU_VERSION='nightly'" >> $GITHUB_ENV
+            echo "NUPM_REVISION='main'" >> $GITHUB_ENV
+          elif [[ ${{ github.ref }} == 'refs/heads/nightly' ]]; then
+            echo "NU_VERSION='nightly'" >> $GITHUB_ENV
+            echo "NUPM_REVISION='main'" >> $GITHUB_ENV
+          else
+            echo "NU_VERSION=${{ inputs.nu_version }}" >> $GITHUB_ENV
+            echo "NUPM_REVISION=${{ inputs.nupm_revision }}" >> $GITHUB_ENV
+          fi
+
       - name: Setup nushell and nupm
         uses: amtoine/setup-nupm-action@0.1.1
         id: "nu-setup"
         with:
-          nu_version: ${{github.base_ref == 'nightly' && 'nightly' || inputs.nu_version}}
-          nupm_revision: ${{github.base_ref == 'nightly' && 'main' || inputs.nupm_revision}}
+          nu_version: ${{ env.NU_VERSION }}
+          nupm_revision: ${{ env.NUPM_REVISION }}
 
       - name: Set up Git
         shell: bash
