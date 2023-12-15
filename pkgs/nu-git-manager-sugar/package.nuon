@@ -1,7 +1,7 @@
 {
-    name: "nu-git-manager"
+    name: "nu-git-manager-sugar"
     version: 0.4.0
-    description: "A collection of Nushell tools to manage `git` repositories."
+    description: "A collection of extra Nushell tools to manage `git` repositories."
     documentation: "https://github.com/amtoine/nu-git-manager/blob/main/README.md"
     maintainers: [
         @amtoine
@@ -9,7 +9,7 @@
     ]
     license: "https://github.com/amtoine/nu-git-manager/blob/main/LICENSE"
     dependencies: {
-        nushell: 0.88.0
+        nushell: 0.88.1
         git: 2.40.1
         optionals: {
             "sugar gh": {
@@ -18,8 +18,4 @@
         }
     }
     type: "module"
-    modules: [
-        "./src/nu-git-manager/",
-        "./src/nu-git-manager-sugar/",
-    ]
 }

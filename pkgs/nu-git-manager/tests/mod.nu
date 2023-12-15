@@ -1,18 +1,24 @@
 use std assert
 
-use ../src/nu-git-manager/git/url.nu [parse-git-url, get-fetch-push-urls]
-use ../src/nu-git-manager/git/repo.nu [is-grafted, get-root-commit, list-remotes]
-use ../src/nu-git-manager/fs/store.nu [get-repo-store-path, list-repos-in-store]
-use ../src/nu-git-manager/fs/cache.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/git/url.nu [
+    parse-git-url, get-fetch-push-urls
+]
+use ../../../pkgs/nu-git-manager/nu-git-manager/git/repo.nu [
+    is-grafted, get-root-commit, list-remotes
+]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs/store.nu [
+    get-repo-store-path, list-repos-in-store
+]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs/cache.nu [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use ../src/nu-git-manager/fs/path.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu [
     "path sanitize", "path remove-prefix", "path remove-trailing-path-sep"
 ]
-use ../src/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
 
-use common/setup.nu [get-random-test-dir]
+use ../../../tests/common/setup.nu [get-random-test-dir]
 
 export module gm.nu
 export module sugar
@@ -250,8 +256,8 @@ export def install-package [] {
     with-env {NUPM_HOME: (get-random-test-dir)} {
         nupm install --no-confirm --path .
 
-        assert length (ls ($env.NUPM_HOME | path join "scripts")) 0
-        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager, nu-git-manager-sugar]
+        assert (not ($env.NUPM_HOME | path join "scripts" | path exists))
+        assert equal (ls ($env.NUPM_HOME | path join "modules") --short-names | get name) [nu-git-manager]
 
         rm --recursive --force --verbose $env.NUPM_HOME
     }
