@@ -56,8 +56,8 @@ jobs:
         uses: amtoine/setup-nupm-action@0.1.1
         id: "nu-setup"
         with:
-          nu_version: ${{github.ref == 'refs/heads/nightly' && 'nightly' || inputs.nu_version}}
-          nupm_revision: ${{github.ref == 'refs/heads/nightly' && 'main' || inputs.nupm_revision}}
+          nu_version: ${{github.base_ref == 'nightly' && 'nightly' || inputs.nu_version}}
+          nupm_revision: ${{github.base_ref == 'nightly' && 'main' || inputs.nupm_revision}}
 
       - name: Set up Git
         shell: bash
