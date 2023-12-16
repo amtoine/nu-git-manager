@@ -1,4 +1,6 @@
-use ../../git/lib/style.nu [color]
+export module style.nu
+
+use style [color]
 
 # give the revision of the repo you're in
 #

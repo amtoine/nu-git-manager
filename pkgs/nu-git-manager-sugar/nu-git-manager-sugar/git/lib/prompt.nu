@@ -1,5 +1,5 @@
-use ../../git/lib/lib.nu [get-revision, git-action, get-status]
-use ../../git/lib/style.nu [color, simplify-path]
+use ../../git/lib [get-revision, git-action, get-status]
+use ../../git/lib style [color, simplify-path]
 
 # /!\ the PWD will be sanitized
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {

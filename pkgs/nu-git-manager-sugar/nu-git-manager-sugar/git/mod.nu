@@ -1,6 +1,6 @@
 use std log
 
-use ../git/lib/lib.nu [get-status]
+use ../git/lib [get-status]
 
 use ../completions.nu [
     GIT_QUERY_TABLES, GIT_STRATEGIES, git-query-tables, get-remotes, get-branches, get-strategies

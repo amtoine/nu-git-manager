@@ -71,3 +71,5 @@ export def --env setup [
     $env.PROMPT_INDICATOR_VI_INSERT = $indicators.vi.insert
     $env.PROMPT_INDICATOR_VI_NORMAL = $indicators.vi.normal
 }
+
+
