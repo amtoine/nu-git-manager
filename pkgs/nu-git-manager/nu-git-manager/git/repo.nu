@@ -1,4 +1,4 @@
-use ../error/error.nu [throw-error]
+use ../error.nu [throw-error]
 
 # tell if a local repository has been grafted
 #
