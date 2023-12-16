@@ -1,9 +1,9 @@
 use std assert
 
-use ../../../pkgs/nu-git-manager/nu-git-manager/git/url.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/git url [
     parse-git-url, get-fetch-push-urls
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/git/repo.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/git repo [
     is-grafted, get-root-commit, list-remotes
 ]
 use ../../../pkgs/nu-git-manager/nu-git-manager/fs store [

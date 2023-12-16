@@ -7,8 +7,8 @@ use fs cache [
 ]
 use fs dir [clean-empty-directories-rec]
 use fs path ["path sanitize", "path remove-prefix"]
-use git/url.nu [parse-git-url, get-fetch-push-urls]
-use git/repo.nu [is-grafted, get-root-commit, list-remotes]
+use git url [parse-git-url, get-fetch-push-urls]
+use git repo [is-grafted, get-root-commit, list-remotes]
 use error.nu [throw-error, throw-warning]
 
 use completions.nu
