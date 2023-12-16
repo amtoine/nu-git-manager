@@ -11,7 +11,7 @@ use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git [
     "gm repo branch wipe"
     "gm repo compare"
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs path ["path sanitize"]
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
 def --env init-repo-and-cd-into []: nothing -> path {

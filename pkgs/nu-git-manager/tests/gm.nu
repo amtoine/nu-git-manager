@@ -1,6 +1,6 @@
 use std assert
 
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs path ["path sanitize"]
 use ../../../pkgs/nu-git-manager/nu-git-manager/git/repo.nu [list-remotes]
 use ../../../pkgs/nu-git-manager/nu-git-manager/ *
 

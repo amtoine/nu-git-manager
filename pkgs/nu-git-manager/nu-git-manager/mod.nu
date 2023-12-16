@@ -1,12 +1,12 @@
 use std log
 
-use fs/store.nu [get-repo-store-path, list-repos-in-store]
-use fs/cache.nu [
+use fs store [get-repo-store-path, list-repos-in-store]
+use fs cache [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use fs/dir.nu [clean-empty-directories-rec]
-use fs/path.nu ["path sanitize", "path remove-prefix"]
+use fs dir [clean-empty-directories-rec]
+use fs path ["path sanitize", "path remove-prefix"]
 use git/url.nu [parse-git-url, get-fetch-push-urls]
 use git/repo.nu [is-grafted, get-root-commit, list-remotes]
 use error.nu [throw-error, throw-warning]
