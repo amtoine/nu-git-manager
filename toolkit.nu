@@ -112,11 +112,13 @@ export def "run" [
         }
 
         let sugar_imports = if $sugar != null {
-            $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" }
+            $sugar | each { $"use ./pkgs/nu-git-manager-sugar/nu-git-manager-sugar ($in) *" }
         } else {
             []
         }
-        let imports = $sugar_imports | prepend "use ./src/nu-git-manager *" | str join "\n"
+        let imports = $sugar_imports
+            | prepend "use ./pkgs/nu-git-manager/nu-git-manager *"
+            | str join "\n"
 
         let nu_args = [
             --env-config $env_file
