@@ -1,5 +1,10 @@
 use std log
 
+module completions.nu
+module error.nu
+module fs/
+module git/
+
 use fs store [get-repo-store-path, list-repos-in-store]
 use fs cache [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
@@ -11,7 +16,7 @@ use git url [parse-git-url, get-fetch-push-urls]
 use git repo [is-grafted, get-root-commit, list-remotes]
 use error.nu [throw-error, throw-warning]
 
-use completions.nu
+use completions
 
 # manage your Git repositories with the main command of NGM
 #
