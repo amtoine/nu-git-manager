@@ -354,10 +354,10 @@ export def branch-compare [] {
 }
 
 export module prompt {
-    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib [
+    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib git [
         get-revision, git-action
     ]
-    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib/prompt.nu [
+    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib prompt [
         get-left-prompt
     ]
     use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib style [
