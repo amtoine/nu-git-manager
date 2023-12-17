@@ -1,8 +1,9 @@
 use std log
 
-use ../git/lib git [get-status]
+module lib/
+use lib git [get-status]
 
-use ../completions.nu [
+use completions [
     GIT_QUERY_TABLES, GIT_STRATEGIES, git-query-tables, get-remotes, get-branches, get-strategies
 ]
 

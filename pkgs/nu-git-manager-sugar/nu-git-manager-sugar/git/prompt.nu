@@ -1,4 +1,4 @@
-use ../git/lib/prompt.nu [get-left-prompt]
+use ../git/lib prompt [get-left-prompt]
 
 const DEFAULT_PROMPT_INDICATORS = {
     plain: "> ",
