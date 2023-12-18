@@ -2,7 +2,7 @@ name: Checking the documentation
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, nightly]
     types: [opened, synchronize, reopened]
   push:
     branches:
