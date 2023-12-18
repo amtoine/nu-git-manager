@@ -1,4 +1,4 @@
-use git.nu [get-revision, git-action, get-status]
+use git [get-revision, git-action, get-status]
 use style.nu [color, simplify-path]
 
 # /!\ the PWD will be sanitized

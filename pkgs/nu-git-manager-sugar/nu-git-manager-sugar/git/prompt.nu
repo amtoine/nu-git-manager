@@ -1,4 +1,4 @@
-use ../git/lib prompt [get-left-prompt]
+use lib prompt [get-left-prompt]
 
 const DEFAULT_PROMPT_INDICATORS = {
     plain: "> ",
@@ -71,5 +71,3 @@ export def --env setup [
     $env.PROMPT_INDICATOR_VI_INSERT = $indicators.vi.insert
     $env.PROMPT_INDICATOR_VI_NORMAL = $indicators.vi.normal
 }
-
-
