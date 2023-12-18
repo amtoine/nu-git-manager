@@ -26,9 +26,23 @@ jobs:
       - name: Checking out repository
         uses: actions/checkout@v3
 
+      - name: Setup Nushell version
+        shell: bash
+        run: |
+          echo "target: ${{github.base_ref}}"
+          echo "ref: ${{github.ref}}"
+
+          if [[ '${{ github.base_ref }}' == 'nightly' ]]; then
+            echo "NU_VERSION=nightly" >> $GITHUB_ENV
+          elif [[ '${{ github.ref }}' == 'refs/heads/nightly' ]]; then
+            echo "NU_VERSION=nightly" >> $GITHUB_ENV
+          else
+            echo "NU_VERSION=${{ inputs.nu_version }}" >> $GITHUB_ENV
+          fi
+
       - uses: hustcer/setup-nu@v3.8
         with:
-          version: ${{ inputs.nu_version }}
+          version: ${{ env.NU_VERSION }}
 
       - name: Check the documentation
         run: |
