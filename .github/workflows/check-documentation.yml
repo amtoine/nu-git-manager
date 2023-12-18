@@ -1,13 +1,19 @@
 name: Checking the documentation
 
 on:
-  pull_request:
-    branches: [main, nightly]
-    types: [opened, synchronize, reopened]
-  push:
-    branches:
-      - main
-      - nightly
+  workflow_dispatch:
+    inputs:
+      nu_version:
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      nu_version:
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
+        type: string
 
 jobs:
   check-documentation:
@@ -18,7 +24,7 @@ jobs:
 
       - uses: hustcer/setup-nu@v3.8
         with:
-          version: "nightly"
+          version: ${{ inputs.nu_version }}
 
       - name: Check the documentation
         shell: nu {0}
