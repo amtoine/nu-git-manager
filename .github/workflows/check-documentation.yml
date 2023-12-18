@@ -10,7 +10,7 @@ on:
       - nightly
 
 jobs:
-  check-merge:
+  check-documentation:
     runs-on: ubuntu-latest
     steps:
       - name: Checking out repository
