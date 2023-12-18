@@ -18,7 +18,7 @@ jobs:
 
       - uses: hustcer/setup-nu@v3.8
         with:
-          version: "0.88.1"
+          version: "nightly"
 
       - name: Check the documentation
         shell: nu {0}
