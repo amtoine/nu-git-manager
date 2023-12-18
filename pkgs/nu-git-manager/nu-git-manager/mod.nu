@@ -1,17 +1,22 @@
 use std log
 
-use fs/store.nu [get-repo-store-path, list-repos-in-store]
-use fs/cache.nu [
+module completions.nu
+module error.nu
+module fs/
+module git/
+
+use fs store [get-repo-store-path, list-repos-in-store]
+use fs cache [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use fs/dir.nu [clean-empty-directories-rec]
-use fs/path.nu ["path sanitize", "path remove-prefix"]
-use git/url.nu [parse-git-url, get-fetch-push-urls]
-use git/repo.nu [is-grafted, get-root-commit, list-remotes]
-use error/error.nu [throw-error, throw-warning]
+use fs dir [clean-empty-directories-rec]
+use fs path ["path sanitize", "path remove-prefix"]
+use git url [parse-git-url, get-fetch-push-urls]
+use git repo [is-grafted, get-root-commit, list-remotes]
+use error.nu [throw-error, throw-warning]
 
-use completions/nu-complete.nu
+use completions
 
 # manage your Git repositories with the main command of NGM
 #
@@ -84,8 +89,8 @@ export def "gm clone" [
     url: string # the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
     --remote: string = "origin" # the name of the remote to setup
     --ssh # setup the remote to use the SSH protocol both to FETCH and to PUSH
-    --fetch: string@"nu-complete git-protocols" # setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
-    --push: string@"nu-complete git-protocols" # setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
+    --fetch: string@"completions git-protocols" # setup the FETCH protocol explicitely, will overwrite `--ssh` for FETCH
+    --push: string@"completions git-protocols" # setup the PUSH protocol explicitely, will overwrite `--ssh` for PUSH
     --bare # clone the repository as a "bare" project
     --depth: int # the depth at which to clone the repository
 ]: nothing -> nothing {

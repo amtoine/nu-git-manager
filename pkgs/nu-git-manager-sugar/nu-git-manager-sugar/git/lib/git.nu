@@ -1,4 +1,4 @@
-use ../../git/lib/style.nu [color]
+use style.nu [color]
 
 # give the revision of the repo you're in
 #
@@ -119,3 +119,4 @@ export def get-status [
         untracked: ($status | parse --regex '^\?\? (?<file>.*)' | get file),
     }
 }
+

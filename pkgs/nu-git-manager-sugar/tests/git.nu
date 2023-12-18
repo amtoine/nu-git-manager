@@ -11,7 +11,7 @@ use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git [
     "gm repo branch wipe"
     "gm repo compare"
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs path ["path sanitize"]
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
 def --env init-repo-and-cd-into []: nothing -> path {
@@ -369,13 +369,13 @@ export def branch-compare [] {
 }
 
 export module prompt {
-    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib/lib.nu [
+    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib git [
         get-revision, git-action
     ]
-    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib/prompt.nu [
+    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib prompt [
         get-left-prompt
     ]
-    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib/style.nu [
+    use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/lib style [
         simplify-path
     ]
 

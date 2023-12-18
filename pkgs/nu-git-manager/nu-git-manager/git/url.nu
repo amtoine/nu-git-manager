@@ -1,4 +1,4 @@
-use ../fs/path.nu "path sanitize"
+use ../fs path "path sanitize"
 
 # parse the URL of a Git repo
 #
