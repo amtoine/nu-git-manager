@@ -15,6 +15,10 @@ on:
         required: true
         type: string
 
+defaults:
+  run:
+    shell: nu {0}
+
 jobs:
   check-documentation:
     runs-on: ubuntu-latest
@@ -27,7 +31,6 @@ jobs:
           version: ${{ inputs.nu_version }}
 
       - name: Check the documentation
-        shell: nu {0}
         run: |
           nu --commands $"
             use ($env.PWD)/toolkit.nu
