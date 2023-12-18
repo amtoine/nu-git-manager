@@ -1,13 +1,23 @@
 name: Checking the documentation
 
 on:
-  pull_request:
-    branches: [main, nightly]
-    types: [opened, synchronize, reopened]
-  push:
-    branches:
-      - main
-      - nightly
+  workflow_dispatch:
+    inputs:
+      nu_version:
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      nu_version:
+        description: "A semver, e.g. `0.12.3`, or `nightly` for the latest revision of Nushell."
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: nu {0}
 
 jobs:
   check-documentation:
@@ -16,12 +26,25 @@ jobs:
       - name: Checking out repository
         uses: actions/checkout@v3
 
+      - name: Setup Nushell version
+        shell: bash
+        run: |
+          echo "target: ${{github.base_ref}}"
+          echo "ref: ${{github.ref}}"
+
+          if [[ '${{ github.base_ref }}' == 'nightly' ]]; then
+            echo "NU_VERSION=nightly" >> $GITHUB_ENV
+          elif [[ '${{ github.ref }}' == 'refs/heads/nightly' ]]; then
+            echo "NU_VERSION=nightly" >> $GITHUB_ENV
+          else
+            echo "NU_VERSION=${{ inputs.nu_version }}" >> $GITHUB_ENV
+          fi
+
       - uses: hustcer/setup-nu@v3.8
         with:
-          version: "0.88.1"
+          version: ${{ env.NU_VERSION }}
 
       - name: Check the documentation
-        shell: nu {0}
         run: |
           nu --commands $"
             use ($env.PWD)/toolkit.nu
