@@ -27,6 +27,8 @@ export def "test" [
         (list-modules-of-workspace) | each {|pkg|
             nupm test ($pattern) ($args) --dir \($pkg | path dirname\)
         }
+
+        null
     "
 }
 
@@ -38,9 +40,9 @@ export def "install" []: nothing -> nothing {
         (list-modules-of-workspace) | each {|pkg|
             nupm install --force --path \($pkg | path dirname\)
         }
-    "
 
-    null
+        null
+    "
 }
 
 # run some code inside an isolated environment
