@@ -365,7 +365,7 @@ export module prompt {
     ]
 
     def "assert revision" [expected: record] {
-        let actual = get-revision --short-hash true
+        let actual = get-revision --short-hash
         assert equal $actual $expected
     }
 

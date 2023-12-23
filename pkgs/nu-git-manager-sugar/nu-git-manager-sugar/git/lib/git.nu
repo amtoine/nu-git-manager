@@ -40,7 +40,7 @@ use style.nu [color]
 #     │ type │ detached │
 #     ╰──────┴──────────╯
 export def get-revision [
-    --short-hash: bool  # print the hash of a detached HEAD in short format
+    --short-hash  # print the hash of a detached HEAD in short format
 ]: nothing -> record<name: string, hash: string, type: string> {
     let tag = do -i {
         ^git describe HEAD --tags
