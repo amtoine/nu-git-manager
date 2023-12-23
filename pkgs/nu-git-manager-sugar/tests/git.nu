@@ -86,6 +86,21 @@ export def branches-checked-out [] {
     clean $repo
 }
 
+export def branches-detached [] {
+    let repo = init-repo-and-cd-into
+
+    let hash = commit "init" | first
+
+    ^git branch bar
+    ^git branch foo
+    ^git checkout $hash
+
+    gm repo branches --clean
+    assert equal (gm repo branches) []
+
+    clean $repo
+}
+
 export def is-ancestor [] {
     let repo = init-repo-and-cd-into
 
