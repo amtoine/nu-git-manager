@@ -31,7 +31,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     }
 
     let git_branch_segment = if $is_git_repo {
-        let revision = get-revision --short-hash true
+        let revision = get-revision --short-hash
         let pretty_branch_tokens = match $revision.type {
             "branch" => [
                 ($revision.name | color {fg: "yellow", attr: "ub"}),
