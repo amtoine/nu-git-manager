@@ -72,7 +72,10 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 export def "gm repo branches" [
     --clean  # clean all dangling branches
 ]: nothing -> table<branch: string, remotes: list<string>> {
-    let local_branches = ^git branch --list | lines | str replace --regex '..' ""
+    let local_branches = ^git branch --list
+        | lines
+        | find --invert --regex '\(HEAD detached at .*\)'
+        | str replace --regex '..' ""
     let remote_branches = ^git branch --remotes
         | lines
         | str trim
