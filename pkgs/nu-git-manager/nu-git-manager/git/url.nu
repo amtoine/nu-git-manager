@@ -28,8 +28,8 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
             }
 
             {
-                owner: $owner,
-                group: $group,
+                owner: ($owner | default ""),
+                group: ($group | default ""),
                 repo: ($tokens | last)
             }
         }
