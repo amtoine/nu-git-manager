@@ -416,7 +416,7 @@ export def "gm repo bisect" [
     print $"starting bisecting at (^git rev-parse HEAD)"
 
     mut first_bad = ""
-    while $first_bad == null {
+    while $first_bad == "" {
         let head = try {
             do $test
             "good"
