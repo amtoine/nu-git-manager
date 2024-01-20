@@ -359,6 +359,7 @@ export def "gm repo bisect" [
     test: closure, # the code to run to check a given revision
     --good: string, # the initial known "good" revision
     --bad: string, # the initial known "bad" revision
+    --no-check, # don't check if `--good` and `--bad` are indeed "good" and "bad"
 ]: nothing -> string {
     let res = ^git rev-parse $good | complete
     if $res.exit_code != 0 {
@@ -378,31 +379,33 @@ export def "gm repo bisect" [
         }
     }
 
-    print $"checking that ($good) is good..."
-    ^git checkout $good
-    try {
-        do $test
-    } catch {
-        throw-error {
-            msg: "invalid_good_revision",
-            text: "not a good revision",
-            span: (metadata $good).span,
+    if not $no_check {
+        print $"checking that ($good) is good..."
+        ^git checkout $good
+        try {
+            do $test
+        } catch {
+            throw-error {
+                msg: "invalid_good_revision",
+                text: "not a good revision",
+                span: (metadata $good).span,
+            }
         }
-    }
 
-    print $"checking that ($bad) is bad..."
-    ^git checkout $bad
-    let res = try {
-        do $test
-        true
-    } catch {
-        false
-    }
-    if $res {
-        throw-error {
-            msg: "invalid_bad_revision",
-            text: "not a bad revision",
-            span: (metadata $bad).span,
+        print $"checking that ($bad) is bad..."
+        ^git checkout $bad
+        let res = try {
+            do $test
+            true
+        } catch {
+            false
+        }
+        if $res {
+            throw-error {
+                msg: "invalid_bad_revision",
+                text: "not a bad revision",
+                span: (metadata $bad).span,
+            }
         }
     }
 
