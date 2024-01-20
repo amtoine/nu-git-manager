@@ -355,7 +355,11 @@ def throw-error [
     }
 }
 
-export def "gm repo bisect" [test: closure, --good: string, --bad: string] {
+export def "gm repo bisect" [
+    test: closure, # the code to run to check a given revision
+    --good: string, # the initial known "good" revision
+    --bad: string, # the initial known "bad" revision
+]: nothing -> string {
     let res = ^git rev-parse $good | complete
     if $res.exit_code != 0 {
         throw-error {
@@ -408,7 +412,7 @@ export def "gm repo bisect" [test: closure, --good: string, --bad: string] {
 
     print $"starting bisecting at (^git rev-parse HEAD)"
 
-    mut first_bad = null
+    mut first_bad = ""
     while $first_bad == null {
         let head = try {
             do $test
