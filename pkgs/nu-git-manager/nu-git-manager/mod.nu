@@ -114,7 +114,7 @@ export def "gm clone" [
         }
     }
 
-    let urls = get-fetch-push-urls $repository $fetch $push $ssh
+    let urls = get-fetch-push-urls $repository ($fetch | default "") ($push | default "") $ssh
 
     mut args = [$urls.fetch $local_path --origin $remote]
     if $depth != null {
