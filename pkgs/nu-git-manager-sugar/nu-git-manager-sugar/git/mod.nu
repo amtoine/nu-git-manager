@@ -342,3 +342,96 @@ export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
         query git $"select * from ($table)"
     }
 }
+
+def throw-error [
+    error: record<msg: string, text: string, span: record<start: int, end: int>>
+]: nothing -> error {
+    error make {
+        msg: $"(ansi red_bold)($error.msg)(ansi reset)",
+        label: {
+            text: $error.text,
+            span: $error.span,
+        },
+    }
+}
+
+export def "gm repo bisect" [test: closure, --good: string, --bad: string] {
+    let res = ^git rev-parse $good | complete
+    if $res.exit_code != 0 {
+        throw-error {
+            msg: "invalid_git_revision",
+            text: $"not a valid revision in current repository",
+            span: (metadata $good).span,
+        }
+    }
+
+    let res = ^git rev-parse $bad | complete
+    if $res.exit_code != 0 {
+        throw-error {
+            msg: "invalid_git_revision",
+            text: "not a valid revision in current repository",
+            span: (metadata $bad).span,
+        }
+    }
+
+    print $"checking that ($good) is good..."
+    ^git checkout $good
+    try {
+        do $test
+    } catch {
+        throw-error {
+            msg: "invalid_good_revision",
+            text: "not a good revision",
+            span: (metadata $good).span,
+        }
+    }
+
+    print $"checking that ($bad) is bad..."
+    ^git checkout $bad
+    let res = try {
+        do $test
+        true
+    } catch {
+        false
+    }
+    if $res {
+        throw-error {
+            msg: "invalid_bad_revision",
+            text: "not a bad revision",
+            span: (metadata $bad).span,
+        }
+    }
+
+    ^git bisect start
+    ^git bisect good $good
+    ^git bisect bad $bad
+
+    print $"starting bisecting at (^git rev-parse HEAD)"
+
+    mut first_bad = null
+    while $first_bad == null {
+        let head = try {
+            do $test
+            "good"
+        } catch {
+            "bad"
+        }
+
+        let res = ^git bisect $head
+        let done = $res
+            | lines
+            | get 0
+            | parse "{hash} is the first bad commit"
+            | into record
+            | get hash?
+        if $done != null {
+            $first_bad = $done
+        } else {
+            print $res
+        }
+    }
+
+    ^git bisect reset
+
+    $first_bad
+}
