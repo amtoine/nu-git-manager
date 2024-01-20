@@ -343,6 +343,7 @@ export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
     }
 }
 
+# NOTE: would be cool to use the `throw-error` from `nu-git-manager`
 def throw-error [
     error: record<msg: string, text: string, span: record<start: int, end: int>>
 ]: nothing -> error {
