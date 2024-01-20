@@ -204,7 +204,7 @@ export def cache-manipulation [] {
         root_hash: "",
     }
 
-    def "assert cache" [cache: list<string>]: nothing -> nothing {
+    def "assert cache" [cache: list<any>]: nothing -> nothing {
         let actual = open-cache $CACHE | update path { path remove-prefix (pwd | path sanitize) }
         let expected = $cache
             | each {|it|
