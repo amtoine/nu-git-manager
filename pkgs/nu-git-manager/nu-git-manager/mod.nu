@@ -139,7 +139,7 @@ export def "gm clone" [
         }
     }
 
-    ^git clone $args
+    ^git clone ...$args
 
     ^git -C $local_path remote set-url $remote $urls.fetch
     ^git -C $local_path remote set-url $remote --push $urls.push
