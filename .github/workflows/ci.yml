@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/nupm-tests.yml
     with:
       nu_version: "0.89.0"
-      nupm_revision: "6a9618fa21453bca4000ac33707b7aace0da35c7"
+      nupm_revision: "66e2eaa848e3f72c1b4a841f26f4dc7efc4fedb9"
 
   documentation:
     uses: ./.github/workflows/check-documentation.yml
