@@ -45,15 +45,15 @@ export def git-url-parsing [] {
     let cases = [
         [input, host, owner, group, repo];
 
-        ["https://github.com/foo/bar",                  "github.com", "foo", null,      "bar"],
-        ["https://github.com/foo/bar.git",              "github.com", "foo", null,      "bar"],
-        ["https://github.com/foo/bar/tree/branch/file", "github.com", "foo", null,      "bar"],
-        ["ssh://github.com/foo/bar",                    "github.com", "foo", null,      "bar"],
-        ["git@github.com:foo/bar",                      "github.com", "foo", null,      "bar"],
-        ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo", null,      "bar"],
-        ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo", null,      "bar"],
+        ["https://github.com/foo/bar",                  "github.com", "foo",        "", "bar"],
+        ["https://github.com/foo/bar.git",              "github.com", "foo",        "", "bar"],
+        ["https://github.com/foo/bar/tree/branch/file", "github.com", "foo",        "", "bar"],
+        ["ssh://github.com/foo/bar",                    "github.com", "foo",        "", "bar"],
+        ["git@github.com:foo/bar",                      "github.com", "foo",        "", "bar"],
+        ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo",        "", "bar"],
+        ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo",        "", "bar"],
         ["git@gitlab.com:foo/bar/baz/brr",              "gitlab.com", "foo", "bar/baz", "brr"],
-        ["git://git.suckless.org/st",             "git.suckless.org",  null, null,      "st"],
+        ["git://git.suckless.org/st",             "git.suckless.org",    "",        "",  "st"],
     ]
 
     for case in $cases {
@@ -204,7 +204,7 @@ export def cache-manipulation [] {
         root_hash: "",
     }
 
-    def "assert cache" [cache: list<string>]: nothing -> nothing {
+    def "assert cache" [cache: list<any>]: nothing -> nothing {
         let actual = open-cache $CACHE | update path { path remove-prefix (pwd | path sanitize) }
         let expected = $cache
             | each {|it|
