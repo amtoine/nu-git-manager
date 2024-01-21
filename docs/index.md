@@ -12,6 +12,7 @@
 - [`gm status`](nu-git-manager/gm-status.md)
 - [`gm update-cache`](nu-git-manager/gm-update-cache.md)
 - [`gm report`](nu-git-manager-sugar/extra/gm-report.md)
+- [`gm repo bisect`](nu-git-manager-sugar/git/gm-repo-bisect.md)
 - [`gm repo branch interactive-delete`](nu-git-manager-sugar/git/gm-repo-branch-interactive-delete.md)
 - [`gm repo branch wipe`](nu-git-manager-sugar/git/gm-repo-branch-wipe.md)
 - [`gm repo branches`](nu-git-manager-sugar/git/gm-repo-branches.md)
