@@ -1,24 +1,26 @@
 use std assert
 
-use ../../../pkgs/nu-git-manager/nu-git-manager/git/url.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/git url [
     parse-git-url, get-fetch-push-urls
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/git/repo.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/git repo [
     is-grafted, get-root-commit, list-remotes
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/store.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs store [
     get-repo-store-path, list-repos-in-store
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/cache.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs cache [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
     save-cache, clean-cache-dir
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu [
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs path [
     "path sanitize", "path remove-prefix", "path remove-trailing-path-sep"
 ]
-use ../../../pkgs/nu-git-manager/nu-git-manager/fs/dir.nu [clean-empty-directories-rec]
+use ../../../pkgs/nu-git-manager/nu-git-manager/fs dir [clean-empty-directories-rec]
 
 use ../../../tests/common/setup.nu [get-random-test-dir]
+
+export module gm.nu
 
 export module path {
     export def sanitization [] {
@@ -43,15 +45,15 @@ export def git-url-parsing [] {
     let cases = [
         [input, host, owner, group, repo];
 
-        ["https://github.com/foo/bar",                  "github.com", "foo", null,      "bar"],
-        ["https://github.com/foo/bar.git",              "github.com", "foo", null,      "bar"],
-        ["https://github.com/foo/bar/tree/branch/file", "github.com", "foo", null,      "bar"],
-        ["ssh://github.com/foo/bar",                    "github.com", "foo", null,      "bar"],
-        ["git@github.com:foo/bar",                      "github.com", "foo", null,      "bar"],
-        ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo", null,      "bar"],
-        ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo", null,      "bar"],
+        ["https://github.com/foo/bar",                  "github.com", "foo",        "", "bar"],
+        ["https://github.com/foo/bar.git",              "github.com", "foo",        "", "bar"],
+        ["https://github.com/foo/bar/tree/branch/file", "github.com", "foo",        "", "bar"],
+        ["ssh://github.com/foo/bar",                    "github.com", "foo",        "", "bar"],
+        ["git@github.com:foo/bar",                      "github.com", "foo",        "", "bar"],
+        ["https://gitlab.com/foo/bar",                  "gitlab.com", "foo",        "", "bar"],
+        ["git@gitlab.com:foo/bar",                      "gitlab.com", "foo",        "", "bar"],
         ["git@gitlab.com:foo/bar/baz/brr",              "gitlab.com", "foo", "bar/baz", "brr"],
-        ["git://git.suckless.org/st",             "git.suckless.org",  null, null,      "st"],
+        ["git://git.suckless.org/st",             "git.suckless.org",    "",        "",  "st"],
     ]
 
     for case in $cases {
@@ -202,7 +204,7 @@ export def cache-manipulation [] {
         root_hash: "",
     }
 
-    def "assert cache" [cache: list<string>]: nothing -> nothing {
+    def "assert cache" [cache: list<any>]: nothing -> nothing {
         let actual = open-cache $CACHE | update path { path remove-prefix (pwd | path sanitize) }
         let expected = $cache
             | each {|it|

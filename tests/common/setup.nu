@@ -1,4 +1,4 @@
-use ../../pkgs/nu-git-manager/nu-git-manager/fs/path.nu ["path sanitize"]
+use ../../pkgs/nu-git-manager/nu-git-manager/fs path ["path sanitize"]
 
 # return the path to a random test directory
 #
