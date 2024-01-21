@@ -14,6 +14,7 @@ export module imports {
 
     export def git [] {
         assert imports $MODULE "git" [
+            "gm repo bisect",
             "gm repo branch interactive-delete",
             "gm repo branch wipe",
             "gm repo branches",

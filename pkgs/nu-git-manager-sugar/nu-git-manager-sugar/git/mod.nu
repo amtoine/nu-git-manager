@@ -345,3 +345,122 @@ export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
         query git $"select * from ($table)"
     }
 }
+
+# NOTE: would be cool to use the `throw-error` from `nu-git-manager`
+def throw-error [
+    error: record<msg: string, text: string, span: record<start: int, end: int>>
+]: nothing -> error {
+    error make {
+        msg: $"(ansi red_bold)($error.msg)(ansi reset)",
+        label: {
+            text: $error.text,
+            span: $error.span,
+        },
+    }
+}
+
+# bisect a worktree by running a piece of code repeatedly
+#
+# # Examples
+# ```nushell
+# # find a bug that was introduced in Nushell in `nushell/nushell
+# gm repo bisect --good 0.89.0 --bad 4458aae {
+#     cargo run -- -n -c "def foo [x: list<string>] { $x }; foo []"
+# }
+# ```
+# ```
+# 724818030dd1de392c54788eab5030074d694ecd
+# ```
+# ---
+# ```nushell
+# # avoid running the test twice more if it is expensive and you're sure
+# # `--good` and `--bad` are indeed "good" and "bad"
+# gm repo bisect --good $good --bad $bad --no-check $test
+# ```
+export def "gm repo bisect" [
+    test: closure, # the code to run to check a given revision, should return a non-zero exit code for bad revisions
+    --good: string, # the initial known "good" revision
+    --bad: string, # the initial known "bad" revision
+    --no-check, # don't check if `--good` and `--bad` are indeed "good" and "bad"
+]: nothing -> string {
+    let res = ^git rev-parse $good | complete
+    if $res.exit_code != 0 {
+        throw-error {
+            msg: "invalid_git_revision",
+            text: $"not a valid revision in current repository",
+            span: (metadata $good).span,
+        }
+    }
+
+    let res = ^git rev-parse $bad | complete
+    if $res.exit_code != 0 {
+        throw-error {
+            msg: "invalid_git_revision",
+            text: "not a valid revision in current repository",
+            span: (metadata $bad).span,
+        }
+    }
+
+    if not $no_check {
+        print $"checking that ($good) is good..."
+        ^git checkout $good
+        try {
+            do $test
+        } catch {
+            throw-error {
+                msg: "invalid_good_revision",
+                text: "not a good revision",
+                span: (metadata $good).span,
+            }
+        }
+
+        print $"checking that ($bad) is bad..."
+        ^git checkout $bad
+        let res = try {
+            do $test
+            true
+        } catch {
+            false
+        }
+        if $res {
+            throw-error {
+                msg: "invalid_bad_revision",
+                text: "not a bad revision",
+                span: (metadata $bad).span,
+            }
+        }
+    }
+
+    ^git bisect start
+    ^git bisect good $good
+    ^git bisect bad $bad
+
+    print $"starting bisecting at (^git rev-parse HEAD)"
+
+    mut first_bad = ""
+    while $first_bad == "" {
+        let head = try {
+            do $test
+            "good"
+        } catch {
+            "bad"
+        }
+
+        let res = ^git bisect $head
+        let done = $res
+            | lines
+            | get 0
+            | parse "{hash} is the first bad commit"
+            | into record
+            | get hash?
+        if $done != null {
+            $first_bad = $done
+        } else {
+            print $res
+        }
+    }
+
+    ^git bisect reset
+
+    $first_bad
+}
