@@ -1,4 +1,4 @@
-use ../fs/path.nu "path sanitize"
+use ../fs path "path sanitize"
 
 # parse the URL of a Git repo
 #
@@ -28,8 +28,8 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
             }
 
             {
-                owner: $owner,
-                group: $group,
+                owner: ($owner | default ""),
+                group: ($group | default ""),
                 repo: ($tokens | last)
             }
         }

@@ -1,5 +1,5 @@
-use ../../git/lib/lib.nu [get-revision, git-action, get-status]
-use ../../git/lib/style.nu [color, simplify-path]
+use git [get-revision, git-action, get-status]
+use style.nu [color, simplify-path]
 
 # /!\ the PWD will be sanitized
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {
@@ -31,7 +31,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     }
 
     let git_branch_segment = if $is_git_repo {
-        let revision = get-revision --short-hash true
+        let revision = get-revision --short-hash
         let pretty_branch_tokens = match $revision.type {
             "branch" => [
                 ($revision.name | color {fg: "yellow", attr: "ub"}),

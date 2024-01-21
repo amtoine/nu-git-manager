@@ -2,7 +2,7 @@ use std repeat
 
 # NOTE: this will likely get replaced by Nupm workspaces in the future
 def list-modules-of-workspace []: nothing -> list<string> {
-    ls pkgs/**/package.nuon
+    ls pkgs/**/nupm.nuon
         | insert pkg {|it| open $it.name | get name }
         | each {|it| $it.name | path dirname | path join $it.pkg }
 }
@@ -114,11 +114,13 @@ export def "run" [
         }
 
         let sugar_imports = if $sugar != null {
-            $sugar | each { $"use ./src/nu-git-manager-sugar ($in) *" }
+            $sugar | each { $"use ./pkgs/nu-git-manager-sugar/nu-git-manager-sugar ($in) *" }
         } else {
             []
         }
-        let imports = $sugar_imports | prepend "use ./src/nu-git-manager *" | str join "\n"
+        let imports = $sugar_imports
+            | prepend "use ./pkgs/nu-git-manager/nu-git-manager *"
+            | str join "\n"
 
         let nu_args = [
             --env-config $env_file

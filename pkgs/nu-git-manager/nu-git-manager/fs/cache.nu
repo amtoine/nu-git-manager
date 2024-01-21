@@ -1,5 +1,4 @@
 use path.nu "path sanitize"
-use ../git/repo.nu [is-grafted]
 
 # get the path to the cache of the local store of repos
 #
