@@ -3,6 +3,7 @@
 
 
 ## Commands
+- [`gm repo bisect`](gm-repo-bisect.md)
 - [`gm repo branch interactive-delete`](gm-repo-branch-interactive-delete.md)
 - [`gm repo branch wipe`](gm-repo-branch-wipe.md)
 - [`gm repo branches`](gm-repo-branches.md)
