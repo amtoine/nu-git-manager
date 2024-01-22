@@ -82,3 +82,12 @@ jobs:
             use toolkit.nu
             toolkit test --verbose
           "
+
+# const NUSHELL_VERSION = "0.89.0"
+# const NUSHELL_ARCH = "x86_64-unknown-linux-gnu"
+#
+#     let nushell_build = $"nu-($NUSHELL_VERSION)-($NUSHELL_ARCH)"
+#     http get https://github.com/nushell/nushell/releases/download/($NUSHELL_VERSION)/($nushell_build).tar.gz
+#         | save -f -p /tmp/nu.tar.gz
+#     tar -xvf /tmp/nu.tar.gz --directory /tmp
+#     ^$nu.current-exe --commands $"register /tmp/($nushell_build)/nu_plugin_gstat"
