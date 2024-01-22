@@ -18,7 +18,7 @@ it provides two main modules:
 - `nu-git-manager sugar` which exports a bunch of Git-related tools, e.g. to help use the `gh` command or augment the capabilities of `git`
 
 ## :link: requirements [[toc](#table-of-content)]
-- [Nushell] 0.85.1+
+- [Nushell] 0.89.0
     - with Cargo and `cargo install nu`
 - `git` 2.34.1
     - with Pacman and `pacman -S extra/git`
