@@ -404,9 +404,14 @@ export def "gm repo bisect" [
     if not $no_check {
         print $"checking that ($good) is good..."
         ^git checkout $good
-        try {
-            do $test
-        } catch {
+        let res = try {
+             do $test
+            true
+         } catch {
+            false
+        }
+        ^git checkout -
+        if not $res {
             throw-error {
                 msg: "invalid_good_revision",
                 text: "not a good revision",
@@ -422,6 +427,7 @@ export def "gm repo bisect" [
         } catch {
             false
         }
+        ^git checkout -
         if $res {
             throw-error {
                 msg: "invalid_bad_revision",
