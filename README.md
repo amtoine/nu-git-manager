@@ -2,14 +2,12 @@
 A collection of Nushell tools to manage `git` repositories.
 
 # Table of content
-- [nu-git-manager](#nu-git-manager)
-- [Table of content](#table-of-content)
-  - [:bulb: what is `nu-git-manager`](#bulb-what-is-nu-git-manager-toc)
-  - [:link: requirements](#link-requirements-toc)
-  - [:recycle: installation](#recycle-installation-toc)
-  - [:gear: usage](#gear-usage-toc)
-    - [:pray: getting help](#pray-getting-help-toc)
-  - [:exclamation: some ideas of advanced (?) usage](#exclamation-some-ideas-of-advanced--usage-toc)
+- [:bulb: what is `nu-git-manager`](#bulb-what-is-nu-git-manager-toc)
+- [:link: requirements](#link-requirements-toc)
+- [:recycle: installation](#recycle-installation-toc)
+- [:gear: usage](#gear-usage-toc)
+- [:pray: getting help](#pray-getting-help-toc)
+- [:exclamation: some ideas of advanced (?) usage](#exclamation-some-ideas-of-advanced--usage-toc)
 
 ## :bulb: what is `nu-git-manager` [[toc](#table-of-content)]
 like [`ghq`](https://github.com/x-motemen/ghq), `nu-git-manager` aims at being a fully-featured
