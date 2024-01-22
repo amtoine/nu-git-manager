@@ -41,34 +41,34 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
             print --no-newline $"(ansi erase_line)[($it.index + 1) / ($repos | length)]: ($it.item)\r"
             { path: $it.item } | merge (gstat $it.item)
         }
-        | insert index {(
-            $in.idx_added_staged
-            + $in.idx_modified_staged
-            + $in.idx_deleted_staged
-            + $in.idx_renamed
-            + $in.idx_type_changed
+        | insert index {|it| (
+            $it.idx_added_staged
+            + $it.idx_modified_staged
+            + $it.idx_deleted_staged
+            + $it.idx_renamed
+            + $it.idx_type_changed
         )}
-        | insert worktree {(
-            $in.wt_untracked
-            + $in.wt_modified
-            + $in.wt_deleted
-            + $in.wt_type_changed
-            + $in.wt_renamed
+        | insert worktree { |it| (
+            $it.wt_untracked
+            + $it.wt_modified
+            + $it.wt_deleted
+            + $it.wt_type_changed
+            + $it.wt_renamed
         )}
         | select repo_name branch remote tag index ignored conflicts ahead behind worktree stashes
         | rename --column {repo_name: name}
         | update remote {|it| $it.remote | str replace --regex $'/($it.branch)$' '' }
         | update tag { if $in == "no_tag" { null } else { $in } }
         | update remote { if $in == "" { null } else { $in } }
-        | insert clean {
+        | insert clean {|it|
             (
-                $in.index
-                + $in.ignored
-                + $in.conflicts
-                + $in.ahead
-                + $in.behind
-                + $in.worktree
-                + $in.stashes
+                $it.index
+                + $it.ignored
+                + $it.conflicts
+                + $it.ahead
+                + $it.behind
+                + $it.worktree
+                + $it.stashes
             ) == 0
         }
 }
