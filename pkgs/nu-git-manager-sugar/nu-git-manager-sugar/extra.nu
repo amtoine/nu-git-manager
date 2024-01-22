@@ -1,3 +1,5 @@
+use nu-git-manager [ "gm list" ]
+
 # get a full report about the local store of repositories
 #
 # ## Examples
