@@ -127,7 +127,7 @@ export def "run" [
             --config $config_file
         ]
 
-        let res = do { ^$nu.current-exe $nu_args --commands $imports } | complete
+        let res = do { ^$nu.current-exe ...$nu_args --commands $imports } | complete
         if $res.exit_code != 0 {
             print $res.stderr
             error make --unspanned {
@@ -136,7 +136,7 @@ export def "run" [
         }
 
         with-env ($gm_env | merge {PROMPT_COMMAND: "NU-GIT-MANAGER"}) {
-            ^$nu.current-exe $nu_args --execute $imports
+            ^$nu.current-exe ...$nu_args --execute $imports
         }
     } else {
         if $code == null {
