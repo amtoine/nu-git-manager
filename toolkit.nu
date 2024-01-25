@@ -163,6 +163,23 @@ def run-nu [code: string]: nothing -> any {
     ^$nu.current-exe --no-config-file --commands ($code ++ " | to nuon") | from nuon
 }
 
+def rg [root: path, pattern: string]: nothing -> table<file: path, line: int, match: string> {
+    ls ($root | path join "**" "*")
+        | where type == file
+        | get name
+        | wrap file
+        | insert match {|it|
+            open $it.file --raw
+                | lines
+                | enumerate
+                | rename line match
+                | update line { $in + 1 }
+                | find --regex $pattern
+        }
+        | where not ($it.match | is-empty)
+        | flatten --all
+}
+
 def document-command [
     args: record<module_name: string, full_module_name_with_leading_path: string, root: path>
 ]: string -> string {
@@ -181,20 +198,7 @@ def document-command [
 
     let signatures = $help.signatures | transpose | get column1
 
-    let res = ls ($args.root | path join "**" "*")
-        | where type == file
-        | get name
-        | wrap file
-        | insert match {|it|
-            open $it.file --raw
-                | lines
-                | enumerate
-                | rename line match
-                | update line { $in + 1 }
-                | find --regex $'export def.*"($command)"'
-        }
-        | where not ($it.match | is-empty)
-        | flatten --all
+    let res = rg $args.root $'export def.*"($command)"'
     let res = match ($res | length) {
         0 => { error make --unspanned { msg: $"no match for command `($command)`" } },
         1 => { $res.0 | into record },
