@@ -181,10 +181,23 @@ def document-command [
 
     let signatures = $help.signatures | transpose | get column1
 
-    let res = ^rg --line-number $'export def.*"($command)"' $args.root | lines
+    let res = ls ($args.root | path join "**" "*")
+        | where type == file
+        | get name
+        | wrap file
+        | insert match {|it|
+            open $it.file --raw
+                | lines
+                | enumerate
+                | rename line match
+                | update line { $in + 1 }
+                | find --regex $'export def.*"($command)"'
+        }
+        | where not ($it.match | is-empty)
+        | flatten --all
     let res = match ($res | length) {
         0 => { error make --unspanned { msg: $"no match for command `($command)`" } },
-        1 => { $res.0 | parse "{file}:{line}:{match}" | into record },
+        1 => { $res.0 | into record },
         _ => { error make --unspanned { msg: $"too many matches for command `($command)`" } },
     }
 
