@@ -1,4 +1,4 @@
-# `gm report` (`nu-git-manager-sugar extra`)
+# `gm report` from `nu-git-manager-sugar extra` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/extra.nu#L23))
 get a full report about the local store of repositories
 
 ## Examples

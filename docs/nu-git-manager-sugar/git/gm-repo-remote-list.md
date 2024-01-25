@@ -1,4 +1,4 @@
-# `gm repo remote list` (`nu-git-manager-sugar git`)
+# `gm repo remote list` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L159))
 get the list of all the remotes in the current repository
 
 ## Examples

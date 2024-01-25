@@ -1,4 +1,4 @@
-# `gm remove` (`nu-git-manager`)
+# `gm remove` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L354))
 remove one of the repositories from your local store
 
 ## Examples

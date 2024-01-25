@@ -1,4 +1,4 @@
-# `gm status` (`nu-git-manager`)
+# `gm status` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L284))
 get current status about the repositories managed by NGM
 
 **/!\\** `$.root.path` and `$.cache.path` will be sanitized **/!\\**
