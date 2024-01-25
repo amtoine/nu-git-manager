@@ -59,7 +59,7 @@ const DEFAULT_PROMPT_INDICATORS = {
 #     }
 # }
 # ```
-export def --env setup [
+export def --env "setup" [
     --indicators = $DEFAULT_PROMPT_INDICATORS,
     --duration-threshold: duration = 1sec  # the threshold above which the command duration is shown
 ]: nothing -> nothing {
