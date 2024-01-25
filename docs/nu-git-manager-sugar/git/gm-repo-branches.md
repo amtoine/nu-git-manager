@@ -1,4 +1,4 @@
-# `gm repo branches` (`nu-git-manager-sugar git`)
+# `gm repo branches` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L72))
 inspect local branches
 
 > **Note**  

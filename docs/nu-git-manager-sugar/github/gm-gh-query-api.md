@@ -1,4 +1,4 @@
-# `gm gh query-api` (`nu-git-manager-sugar github`)
+# `gm gh query-api` from `nu-git-manager-sugar github` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/github.nu#L83))
 query the GitHub API for any end point
 
 > :bulb: **Note**  

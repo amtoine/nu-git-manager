@@ -1,4 +1,4 @@
-# `gm repo compare` (`nu-git-manager-sugar git`)
+# `gm repo compare` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L31))
 compare the changes between two revisions, from a target to the "head"
 
 

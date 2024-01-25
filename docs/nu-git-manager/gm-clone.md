@@ -1,4 +1,4 @@
-# `gm clone` (`nu-git-manager`)
+# `gm clone` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L88))
 clone a remote Git repository into your local store
 
 will give a nice error if the repository is already in the local store.

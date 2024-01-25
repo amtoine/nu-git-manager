@@ -1,4 +1,4 @@
-# `gm repo get commit` (`nu-git-manager-sugar git`)
+# `gm repo get commit` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L24))
 get the commit hash of any revision
 
 ## Examples
