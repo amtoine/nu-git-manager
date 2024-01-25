@@ -1,4 +1,4 @@
-# `gm repo is-ancestor` (`nu-git-manager-sugar git`)
+# `gm repo is-ancestor` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L140))
 return true iif the first revision is an ancestor of the second
 
 ## Examples

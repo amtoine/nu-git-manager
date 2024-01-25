@@ -1,4 +1,4 @@
-# `gm gh query-releases` (`nu-git-manager-sugar github`)
+# `gm gh query-releases` from `nu-git-manager-sugar github` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/github.nu#L188))
 list the releases of a GitHub repository
 
 ## Examples

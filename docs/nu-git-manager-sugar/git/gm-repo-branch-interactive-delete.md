@@ -1,4 +1,4 @@
-# `gm repo branch interactive-delete` (`nu-git-manager-sugar git`)
+# `gm repo branch interactive-delete` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L226))
 remove a branch interactively
 
 

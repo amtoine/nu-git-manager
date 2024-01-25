@@ -1,4 +1,4 @@
-# `gm repo goto root` (`nu-git-manager-sugar git`)
+# `gm repo goto root` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L52))
 go to the root of the repository from anywhere in the worktree
 
 ## Examples
