@@ -181,8 +181,17 @@ def document-command [
 
     let signatures = $help.signatures | transpose | get column1
 
+    let res = ^rg --line-number $'export def.*"($command)"' $args.root | lines
+    let res = match ($res | length) {
+        0 => { error make --unspanned { msg: $"no match for command `($command)`" } },
+        1 => { $res.0 | parse "{file}:{line}:{match}" | into record },
+        _ => { error make --unspanned { msg: $"too many matches for command `($command)`" } },
+    }
+
+    let source = $"https://github.com/amtoine/nu-git-manager/blob/main/($res.file | path relative-to $args.root)#L($res.line)"
+
     let page = [
-        $"# `($command)` \(`($args.module_name)`\)",
+        $"# `($command)` from `($args.module_name)` \(see [source]\(($source)\)\)",
         $help.usage,
         "",
         $help.extra_usage,
