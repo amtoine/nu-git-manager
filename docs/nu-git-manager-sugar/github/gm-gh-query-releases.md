@@ -12,23 +12,10 @@ gm gh query-releases "nushell/nushell"
 ```
 
 ## Parameters
-- parameter_name: repo
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the GitHub repository to query the releases of
----
-- parameter_name: page-size
-- parameter_type: named
-- syntax_shape: int
-- is_optional: true
-- description: the size of each page
-- parameter_default: 100
----
-- parameter_name: no-gh
-- parameter_type: switch
-- is_optional: true
-- description: force to use `http get` instead of `gh`
+- `repo` <`string`>: the GitHub repository to query the releases of
+- `--page-size` <`int`> = `100`: the size of each page
+- `--no-gh` <`bool`>: force to use `http get` instead of `gh`
+
 
 ## Signatures
 | input     | output                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |

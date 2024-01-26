@@ -24,28 +24,11 @@ you shall not rebase in the middle of a PR review nor close other's review threa
 ```
 
 ## Parameters
-- parameter_name: end_point
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the end point in the GitHub API to query
----
-- parameter_name: page-size
-- parameter_type: named
-- syntax_shape: int
-- is_optional: true
-- description: the size of each page
-- parameter_default: 100
----
-- parameter_name: no-paginate
-- parameter_type: switch
-- is_optional: true
-- description: do not paginate the API, useful when getting a single record
----
-- parameter_name: no-gh
-- parameter_type: switch
-- is_optional: true
-- description: force to use `http get` instead of `gh`
+- `end_point` <`string`>: the end point in the GitHub API to query
+- `--page-size` <`int`> = `100`: the size of each page
+- `--no-paginate` <`bool`>: do not paginate the API, useful when getting a single record
+- `--no-gh` <`bool`>: force to use `http get` instead of `gh`
+
 
 ## Signatures
 | input     | output |

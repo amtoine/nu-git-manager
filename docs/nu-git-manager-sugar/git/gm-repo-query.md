@@ -25,11 +25,8 @@ gm repo query diffs
 ```
 
 ## Parameters
-- parameter_name: table
-- parameter_type: positional
-- syntax_shape: completable<string>
-- is_optional: false
-- custom_completion: git-query-tables
+- `table` <`string@git-query-tables`>: 
+
 
 ## Signatures
 | input     | output  |

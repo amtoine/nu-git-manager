@@ -17,10 +17,8 @@ gm clean --list
 ```
 
 ## Parameters
-- parameter_name: list
-- parameter_type: switch
-- is_optional: true
-- description: only list without cleaning
+- `--list` <`bool`>: only list without cleaning
+
 
 ## Signatures
 | input     | output         |
