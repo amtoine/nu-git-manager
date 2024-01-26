@@ -1,4 +1,5 @@
 use std repeat
+use std log
 
 # NOTE: this will likely get replaced by Nupm workspaces in the future
 def list-modules-of-workspace []: nothing -> list<string> {
@@ -187,6 +188,7 @@ def document-command [
     args: record<module_name: string, full_module_name_with_leading_path: string, root: path>
 ]: string -> string {
     let command = $in
+    log debug $"documenting command `($command)`"
 
     let command_file = $command
         | str replace --all ' ' '-'
@@ -279,6 +281,7 @@ def document-module [
         depth?: int = 0,
     ]: record<name: string, commands: list<string>, submodules: list<record>> -> nothing {
         let module = $in
+        log debug $"documenting module `($module.name)`"
 
         mkdir ($module.name | path basename)
         cd ($module.name | path basename)
