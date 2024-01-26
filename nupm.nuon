@@ -1,0 +1,5 @@
+{
+    workspace: [
+        "pkgs/nu-git-manager", "pkgs/nu-git-manager-sugar"
+    ]
+}
