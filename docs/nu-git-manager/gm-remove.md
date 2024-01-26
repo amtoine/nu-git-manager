@@ -23,21 +23,10 @@ gm remove amtoine/nu-git-manager --no-confirm
 ```
 
 ## Parameters
-- parameter_name: pattern
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: true
-- description: a pattern to restrict the choices
----
-- parameter_name: fuzzy
-- parameter_type: switch
-- is_optional: true
-- description: remove after fuzzy-finding the repo(s) to clean
----
-- parameter_name: no-confirm
-- parameter_type: switch
-- is_optional: true
-- description: do not ask for confirmation: useful in scripts but requires a single match
+- `pattern?` <`string`>: a pattern to restrict the choices
+- `--fuzzy` <`bool`>: remove after fuzzy-finding the repo(s) to clean
+- `--no-confirm` <`bool`>: do not ask for confirmation: useful in scripts but requires a single match
+
 
 ## Signatures
 | input     | output    |

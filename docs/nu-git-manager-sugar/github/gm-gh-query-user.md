@@ -8,16 +8,9 @@ gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.
 ```
 
 ## Parameters
-- parameter_name: user
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the user to query information about
----
-- parameter_name: no-gh
-- parameter_type: switch
-- is_optional: true
-- description: force to use `http get` instead of `gh`
+- `user` <`string`>: the user to query information about
+- `--no-gh` <`bool`>: force to use `http get` instead of `gh`
+
 
 ## Signatures
 | input     | output                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |

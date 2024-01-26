@@ -220,17 +220,32 @@ def document-command [
         (
             $signatures.0
                 | where parameter_type not-in ["input", "output"]
-                | each {
-                    transpose
-                        | where not ($it.column1 | is-empty)
-                        | transpose --header-row
-                        | into record
-                        | to text
-                        | lines
-                        | str replace --regex '^' '- '
-                        | str join "\n"
+                | each {|p|
+                    let opt = if $p.is_optional { "?" } else { "" }
+                    let cmp = if $p.custom_completion != "" {
+                        $"@($p.custom_completion)"
+                    } else {
+                        ""
+                    }
+                    let type = $p.syntax_shape
+                        | default ""
+                        | str replace --regex '^completable<(.*)>' '$1'
+                    let default = if $p.parameter_default != null {
+                        $" = `($p.parameter_default)`"
+                    } else {
+                        ""
+                    }
+                    let short = if $p.short_flag != null { $" \(`-($p.short_flag)`\)" } else { "" }
+                    let name = $p.parameter_name
+                    let desc = $p.description
+
+                    match $p.parameter_type {
+                        "positional" => $"- `($name)($opt)` <`($type)($cmp)`>($default): ($desc)",
+                        "switch" => $"- `--($name)`($short) <`bool($cmp)`>($default): ($desc)",
+                        "named" => $"- `--($name)`($short) <`($type)($cmp)`>($default): ($desc)",
+                    }
                 }
-                | str join "\n---\n"
+                | to text
         ),
         "",
         $"## Signatures",

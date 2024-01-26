@@ -17,10 +17,8 @@ gm repo branches --clean
 ```
 
 ## Parameters
-- parameter_name: clean
-- parameter_type: switch
-- is_optional: true
-- description: clean all dangling branches
+- `--clean` <`bool`>: clean all dangling branches
+
 
 ## Signatures
 | input     | output                                         |

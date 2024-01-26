@@ -19,28 +19,11 @@ gm repo bisect --good $good --bad $bad --no-check $test
 ```
 
 ## Parameters
-- parameter_name: test
-- parameter_type: positional
-- syntax_shape: closure()
-- is_optional: false
-- description: the code to run to check a given revision, should return a non-zero exit code for bad revisions
----
-- parameter_name: good
-- parameter_type: named
-- syntax_shape: string
-- is_optional: true
-- description: the initial known "good" revision
----
-- parameter_name: bad
-- parameter_type: named
-- syntax_shape: string
-- is_optional: true
-- description: the initial known "bad" revision
----
-- parameter_name: no-check
-- parameter_type: switch
-- is_optional: true
-- description: don't check if `--good` and `--bad` are indeed "good" and "bad"
+- `test` <`closure()`>: the code to run to check a given revision, should return a non-zero exit code for bad revisions
+- `--good` <`string`>: the initial known "good" revision
+- `--bad` <`string`>: the initial known "bad" revision
+- `--no-check` <`bool`>: don't check if `--good` and `--bad` are indeed "good" and "bad"
+
 
 ## Signatures
 | input     | output   |

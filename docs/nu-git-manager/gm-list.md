@@ -20,10 +20,8 @@ cd (gm list --full-path | input list)
 ```
 
 ## Parameters
-- parameter_name: full-path
-- parameter_type: switch
-- is_optional: true
-- description: show the full path instead of only the "owner + group + repo" name
+- `--full-path` <`bool`>: show the full path instead of only the "owner + group + repo" name
+
 
 ## Signatures
 | input     | output         |
