@@ -2,7 +2,10 @@ use std repeat
 
 # NOTE: this will likely get replaced by Nupm workspaces in the future
 def list-modules-of-workspace []: nothing -> list<string> {
-    ls pkgs/**/nupm.nuon
+    open nupm.nuon
+        | get workspace
+        | each { path join "nupm.nuon" }
+        | wrap name
         | insert pkg {|it| open $it.name | get name }
         | each {|it| $it.name | path dirname | path join $it.pkg }
 }
