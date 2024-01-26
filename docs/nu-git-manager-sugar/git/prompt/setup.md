@@ -55,18 +55,9 @@ export-env {
 ```
 
 ## Parameters
-- parameter_name: indicators
-- parameter_type: named
-- syntax_shape: record<plain: string, vi: record<insert: string, normal: string>>
-- is_optional: true
-- parameter_default: plain: > , vi: insert: : , normal: > 
----
-- parameter_name: duration-threshold
-- parameter_type: named
-- syntax_shape: duration
-- is_optional: true
-- description: the threshold above which the command duration is shown
-- parameter_default: 1sec
+- `--indicators` <`record<plain: string, vi: record<insert: string, normal: string>>`> = `{plain: > , vi: {insert: : , normal: > }}`: 
+- `--duration-threshold` <`duration`> = `1sec`: the threshold above which the command duration is shown
+
 
 ## Signatures
 | input     | output    |

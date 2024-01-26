@@ -19,17 +19,9 @@ false
 ```
 
 ## Parameters
-- parameter_name: a
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the base commit-ish revision
----
-- parameter_name: b
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the *head* commit-ish revision
+- `a` <`string`>: the base commit-ish revision
+- `b` <`string`>: the *head* commit-ish revision
+
 
 ## Signatures
 | input     | output |

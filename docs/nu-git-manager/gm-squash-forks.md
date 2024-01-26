@@ -32,11 +32,8 @@ gm squash-forks --non-interactive-preselect {
 ```
 
 ## Parameters
-- parameter_name: non-interactive-preselect
-- parameter_type: named
-- syntax_shape: record
-- is_optional: true
-- description: the non-interactive preselection record, see documentation above
+- `--non-interactive-preselect` <`record`> = `{}`: the non-interactive preselection record, see documentation above
+
 
 ## Signatures
 | input     | output    |

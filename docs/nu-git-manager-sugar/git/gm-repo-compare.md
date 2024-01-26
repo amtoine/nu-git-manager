@@ -4,18 +4,9 @@ compare the changes between two revisions, from a target to the "head"
 
 
 ## Parameters
-- parameter_name: target
-- parameter_type: positional
-- syntax_shape: string
-- is_optional: false
-- description: the target to compare from
----
-- parameter_name: head
-- parameter_type: named
-- syntax_shape: string
-- is_optional: true
-- description: the "head" to use for the comparison
-- parameter_default: HEAD
+- `target` <`string`>: the target to compare from
+- `--head` <`string`> = `HEAD`: the "head" to use for the comparison
+
 
 ## Signatures
 | input     | output   |
