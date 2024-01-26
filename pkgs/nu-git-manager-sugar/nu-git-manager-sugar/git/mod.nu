@@ -1,3 +1,5 @@
+# nu-git-manager-sugar git
+
 use std log
 
 module lib/

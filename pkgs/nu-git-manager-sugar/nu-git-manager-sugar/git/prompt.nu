@@ -1,3 +1,5 @@
+# nu-git-manager-sugar git prompt
+
 use lib prompt [get-left-prompt]
 
 const DEFAULT_PROMPT_INDICATORS = {

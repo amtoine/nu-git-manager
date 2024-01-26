@@ -1,3 +1,5 @@
+# nu-git-manager-sugar
+
 module completions.nu
 export module extra.nu
 export module git/

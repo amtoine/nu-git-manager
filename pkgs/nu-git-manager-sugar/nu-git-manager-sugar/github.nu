@@ -1,3 +1,5 @@
+# nu-git-manager-sugar github
+
 use std log
 
 const GH_ERROR_DEFAULT_HELP = (

@@ -1,3 +1,5 @@
+# nu-git-manager
+
 use std log
 
 module completions.nu

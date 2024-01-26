@@ -1,3 +1,5 @@
+# nu-git-manager-sugar extra
+
 # get a full report about the local store of repositories
 #
 # ## Examples
