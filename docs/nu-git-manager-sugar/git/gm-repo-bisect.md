@@ -1,4 +1,4 @@
-# `gm repo bisect` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L380))
+# `gm repo bisect` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L384))
 bisect a worktree by running a piece of code repeatedly
 
 # Examples

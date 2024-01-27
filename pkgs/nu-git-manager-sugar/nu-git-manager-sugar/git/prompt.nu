@@ -1,3 +1,7 @@
+# provides a command to setup a Git-based prompt for Nushell.
+#
+# /!\ this module is part of the optional NGM. /!\
+
 use lib prompt [get-left-prompt]
 
 const DEFAULT_PROMPT_INDICATORS = {

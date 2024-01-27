@@ -1,4 +1,4 @@
-# `gm update-cache` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L317))
+# `gm update-cache` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L325))
 update the local cache of repositories
 
 ## Examples
