@@ -1,4 +1,4 @@
-# `gm repo fetch branch` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L174))
+# `gm repo fetch branch` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L178))
 fetch a remote branch locally, without pulling down the whole remote
 
 

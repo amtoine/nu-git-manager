@@ -1,6 +1,6 @@
 # Module `nu-git-manager-sugar git`
 ## Description
-
+ships a bunch of helper commands that augments the capabilities of Git.
 
 ## Commands
 - [`gm repo bisect`](gm-repo-bisect.md)
