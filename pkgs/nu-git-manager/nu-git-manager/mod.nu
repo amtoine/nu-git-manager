@@ -1,3 +1,11 @@
+# `nu-git-manager` is the core module and package of NGM.
+#
+# it features all required commands to interact with and manage Git repos.
+#
+# this module ships the `gm` command and a bunch of subcommands, allowing you to
+# clone, list, remove, ..., repositories without worrying about where they are
+# on your filesystem!
+
 use std log
 
 module completions.nu

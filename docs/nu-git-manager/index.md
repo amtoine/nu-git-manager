@@ -1,6 +1,6 @@
 # Module `nu-git-manager`
 ## Description
-
+`nu-git-manager` is the core module and package of NGM.
 
 ## Commands
 - [`gm`](gm.md)

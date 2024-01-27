@@ -1,3 +1,7 @@
+# provides helper commands to simplify the use of the GitHub CLI.
+#
+# /!\ this module is part of the optional NGM. /!\
+
 use std log
 
 const GH_ERROR_DEFAULT_HELP = (

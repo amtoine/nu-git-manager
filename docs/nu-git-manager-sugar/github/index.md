@@ -1,6 +1,6 @@
 # Module `nu-git-manager-sugar github`
 ## Description
-
+provides helper commands to simplify the use of the GitHub CLI.
 
 ## Commands
 - [`gm gh pr checkout`](gm-gh-pr-checkout.md)

@@ -1,4 +1,4 @@
-# `gm squash-forks` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L475))
+# `gm squash-forks` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L483))
 squash multi-directory forks into a single repo
 
 Here, two forks are defined as *two non-grafted repositories that share the same initial commit,

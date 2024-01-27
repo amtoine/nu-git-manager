@@ -1,6 +1,7 @@
 # Module `nu-git-manager-sugar`
 ## Description
-
+`nu-git-manager-sugar` is the additional module and package of NGM, with sugar
+on top.
 
 ## Commands
 no commands

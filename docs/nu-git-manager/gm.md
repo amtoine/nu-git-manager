@@ -1,4 +1,4 @@
-# `gm` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L55))
+# `gm` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L63))
 manage your Git repositories with the main command of NGM
 
 ### the location for the store

@@ -1,4 +1,4 @@
-# `setup` from `nu-git-manager-sugar git prompt` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/prompt.nu#L62))
+# `setup` from `nu-git-manager-sugar git prompt` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/prompt.nu#L66))
 setup the Git prompt of NGM
 
 the different sections of the prompt are the following, in order and separated by a single space:
