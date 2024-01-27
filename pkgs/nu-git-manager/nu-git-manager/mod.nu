@@ -1,4 +1,4 @@
-# nu-git-manager is the core module and package of NGM.
+# `nu-git-manager` is the core module and package of NGM.
 #
 # it features all required commands to interact with and manage Git repos.
 #
