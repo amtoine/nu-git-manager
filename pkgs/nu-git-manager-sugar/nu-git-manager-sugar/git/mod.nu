@@ -1,4 +1,6 @@
-# nu-git-manager-sugar git
+# ships a bunch of helper commands that augments the capabilities of Git.
+#
+# /!\ this module is part of the optional NGM. /!\
 
 use std log
 

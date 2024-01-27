@@ -1,4 +1,6 @@
-# nu-git-manager-sugar extra
+# extends the core `gm` command with additional subcommands.
+#
+# /!\ this module is part of the optional NGM. /!\
 
 # get a full report about the local store of repositories
 #
