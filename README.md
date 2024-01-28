@@ -71,7 +71,7 @@ please have a look at the [documentation of NGM](./docs/index.md)
 ## :exclamation: some ideas of advanced (?) usage [[toc](#table-of-content)]
 everytime i open a terminal, i use [Tmux] to manage sessions, switch between them, detach and reattach, quite a ***BLAZZINGLY FAST*** workflow for my taste :smirk:
 
-to achieve this, i use the [`tmux-sessionizer.nu` script][`tmux-sessionizer.nu`] from the [`nu-goat-scripts` package][`nu-goat-scripts`], again installed with [Nupm] :ok_hand:
+to achieve this, i use the [`tmux-sessionizer.nu` script][`tmux-sessionizer.nu`], again installed with [Nupm] :ok_hand:
 
 then, in my Tmux config, i have a binding to
 1. list all my Git repositories
@@ -95,5 +95,4 @@ bind-key -r t display-popup -E "nu --commands '
 [Nupm instructions]: https://github.com/nushell/nupm#-installation
 
 [Tmux]: https://github.com/tmux/tmux
-[`tmux-sessionizer.nu`]: https://github.com/goatfiles/scripts/blob/main/nu_scripts/scripts/tmux-sessionizer.nu#L463
-[`nu-goat-scripts`]: https://github.com/goatfiles/scripts/blob/main/nu_scripts/README.md#nu_scripts
+[`tmux-sessionizer.nu`]: https://github.com/amtoine/tmux-sessionizer
