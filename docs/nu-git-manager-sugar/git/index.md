@@ -2,6 +2,8 @@
 ## Description
 ships a bunch of helper commands that augments the capabilities of Git.
 
+/!\ this module is part of the optional NGM. /!\
+
 ## Commands
 - [`gm repo bisect`](gm-repo-bisect.md)
 - [`gm repo branch interactive-delete`](gm-repo-branch-interactive-delete.md)
