@@ -72,6 +72,8 @@ export def remove-from-cache [cache_file: path, old_path: path]: nothing -> noth
 #  same place as the expected cache file
 # - create the parent directory of the cache file
 export def clean-cache-dir [cache_file: path]: nothing -> nothing {
-    rm --recursive --force $cache_file
+    if ($cache_file | path exists) {
+        rm --recursive --force $cache_file
+    }
     mkdir ($cache_file | path dirname)
 }
