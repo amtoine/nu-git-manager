@@ -21,7 +21,9 @@ def run-with-env [code: closure, --prepare-cache] {
 
     with-env $TEST_ENV $code
 
-    rm --recursive --force --verbose $TEST_ENV_BASE
+    if ($TEST_ENV_BASE | path exists) {
+        rm --recursive --force --verbose $TEST_ENV_BASE
+    }
 }
 
 export def error-with-empty-store [] {
