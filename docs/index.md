@@ -11,6 +11,8 @@
 - [`gm squash-forks`](nu-git-manager/gm-squash-forks.md)
 - [`gm status`](nu-git-manager/gm-status.md)
 - [`gm update-cache`](nu-git-manager/gm-update-cache.md)
+- [`gm cfg`](nu-git-manager-sugar/dotfiles/gm-cfg.md)
+- [`gm cfg edit`](nu-git-manager-sugar/dotfiles/gm-cfg-edit.md)
 - [`gm report`](nu-git-manager-sugar/extra/gm-report.md)
 - [`gm repo bisect`](nu-git-manager-sugar/git/gm-repo-bisect.md)
 - [`gm repo branch interactive-delete`](nu-git-manager-sugar/git/gm-repo-branch-interactive-delete.md)

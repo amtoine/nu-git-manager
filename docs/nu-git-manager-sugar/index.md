@@ -11,6 +11,7 @@ the GitHub CLI.
 no commands
 
 ## Submodules
+- [`dotfiles`](dotfiles/index.md)
 - [`extra`](extra/index.md)
 - [`git`](git/index.md)
 - [`github`](github/index.md)
