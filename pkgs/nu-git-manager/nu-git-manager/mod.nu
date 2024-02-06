@@ -431,6 +431,13 @@ export def "gm remove" [
 
     let repo_to_remove = $root | path join $repo_to_remove
 
+    # FIXME: this should be possible with `path relative-to`
+    # related to https://github.com/nushell/nushell/issues/10370
+    if (pwd | path expand | str starts-with $repo_to_remove) {
+        log error "cannot remove the repo because you are inside it"
+        return
+    }
+
     rm --recursive --force --verbose $repo_to_remove
 
     let cache_file = get-repo-store-cache-path
