@@ -325,6 +325,8 @@ def document-module [
             "## Description",
             $module.usage,
             "",
+            $module.extra_usage,
+            "",
             "## Commands",
             $commands,
         ]
