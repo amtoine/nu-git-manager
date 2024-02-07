@@ -1,6 +1,6 @@
 {
     name: "nu-git-manager"
-    version: 0.5.0
+    version: 0.6.0
     description: "A collection of Nushell tools to manage `git` repositories."
     documentation: "https://github.com/amtoine/nu-git-manager/blob/main/README.md"
     maintainers: [
