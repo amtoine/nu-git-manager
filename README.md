@@ -33,10 +33,14 @@ it provides two main modules:
 ```shell
 git clone https://github.com/amtoine/nu-git-manager
 ```
-- activate the `nupm` module with `use nupm`
-- install the `nu-git-manager` package
+- activate the `toolkit` module with `use toolkit.nu`
+- install the `nu-git-manager` and `nu-git-manager-sugar` packages
 ```nushell
-nupm install --path --force pkgs/nu-git-manager
+toolkit install
+```
+- verify the installation after restarting Nushell
+```nushell
+gm version
 ```
 
 > **Note**
