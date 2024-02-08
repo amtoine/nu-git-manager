@@ -52,6 +52,13 @@ export def "install" []: nothing -> nothing {
     let v = (open pkgs/nu-git-manager/nupm.nuon).version
     let n = ^git describe | parse "{v}-{n}-{r}" | into record | get n? | default 0
     let version_cmd = [
+         "# see the version of NGM that is currently installed",
+         "#",
+         "# # Examples",
+         "# ```nushell",
+         "# # get the version of NGM",
+         "# gm version",
+         "# ```",
          "export def \"gm version\" []: nothing -> record<version: string, branch: string, commit: string, date: datetime> {",
          "    {",
         $"        version: \"($v)+($n)\",",
