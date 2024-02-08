@@ -56,7 +56,7 @@ body:
     id: config
     attributes:
       label: Configuration
-      description: "Please run `version | transpose key value | to md --pretty` and paste the output to show OS, features, etc."
+      description: "Please run `version | transpose key value | to md --pretty` and `gm version | transpose key value | to md --pretty` and paste their outputs to show OS, features, etc."
       placeholder: |
         > version | transpose key value | to md --pretty
         | key                | value                                                                                                                                                                   |
@@ -70,6 +70,14 @@ body:
         | build_rust_channel | release                                                                                                                                                                 |
         | features           | clipboard-cli, ctrlc, dataframe, default, rustyline, term, trash, uuid, which, zip                                                                                      |
         | installed_plugins  | binaryview, chart bar, chart line, fetch, from bson, from sqlite, inc, match, post, ps, query json, s3, selector, start, sys, textview, to bson, to sqlite, tree, xpath |
+
+        > gm version | transpose key value | to md --pretty
+        | key     | value                                    |
+        | ------- | ---------------------------------------- |
+        | version | 0.6.0+0                                  |
+        | branch  | main                                     |
+        | commit  | 763f7695605c792fce99f7c6767f285584802ea8 |
+        | date    | Thu, 08 Feb 2024 19:45:14 +0100          |
     validations:
       required: true
   - type: textarea
