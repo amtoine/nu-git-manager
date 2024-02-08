@@ -47,6 +47,25 @@ export def "install" []: nothing -> nothing {
 
         null
     "
+
+    let mod = $env.NUPM_HOME | path join "modules" "nu-git-manager" "mod.nu"
+    let v = (open pkgs/nu-git-manager/nupm.nuon).version
+    let n = ^git describe | parse "{v}-{n}-{r}" | into record | get n? | default 0
+    let version_cmd = [
+         "export def \"gm version\" []: nothing -> record<version: string, branch: string, commit: string, date: datetime> {",
+         "    {",
+        $"        version: \"($v)+($n)\",",
+        $"        branch: \"(^git branch --show-current)\",",
+        $"        commit: \"(^git rev-parse HEAD)\",",
+        $"        date: \((date now | to nuon)\),",
+         "    }",
+         "}",
+    ]
+
+    "\n" | save --append $mod
+    $version_cmd | str join "\n" | save --append $mod
+
+    null
 }
 
 # run some code inside an isolated environment
