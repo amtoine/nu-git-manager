@@ -19,7 +19,7 @@ gm cfg ls-files ~
 ---
 ```nushell
 # get the current status of the dotfiles in short format
-gm status --short
+gm cfg status --short
 ```
 
 ## Parameters

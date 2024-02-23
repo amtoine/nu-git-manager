@@ -23,7 +23,7 @@
 # ---
 # ```nushell
 # # get the current status of the dotfiles in short format
-# gm status --short
+# gm cfg status --short
 # ```
 export def --wrapped "gm cfg" [...args] {
     ^git --git-dir $env.DOTFILES_GIT_DIR --work-tree $env.DOTFILES_WORKTREE ...$args
