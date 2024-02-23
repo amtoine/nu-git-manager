@@ -39,6 +39,53 @@ export module imports {
             "gm gh query-user",
         ]
     }
+
+    export def all [] {
+        assert imports $MODULE "" [
+            "dotfiles gm cfg",
+            "dotfiles gm cfg edit",
+            "extra gm report",
+            "git gm repo bisect",
+            "git gm repo branch interactive-delete",
+            "git gm repo branch wipe",
+            "git gm repo branches",
+            "git gm repo compare",
+            "git gm repo fetch branch",
+            "git gm repo get commit",
+            "git gm repo goto root",
+            "git gm repo is-ancestor",
+            "git gm repo ls",
+            "git gm repo query",
+            "git gm repo remote list",
+            "git gm repo switch",
+            "git prompt setup",
+            "github gm gh pr checkout",
+            "github gm gh query-api",
+            "github gm gh query-releases",
+            "github gm gh query-user",
+            "gm cfg",
+            "gm cfg edit",
+            "gm gh pr checkout",
+            "gm gh query-api",
+            "gm gh query-releases",
+            "gm gh query-user",
+            "gm repo bisect",
+            "gm repo branch interactive-delete",
+            "gm repo branch wipe",
+            "gm repo branches",
+            "gm repo compare",
+            "gm repo fetch branch",
+            "gm repo get commit",
+            "gm repo goto root",
+            "gm repo is-ancestor",
+            "gm repo ls",
+            "gm repo query",
+            "gm repo remote list",
+            "gm repo switch",
+            "gm report",
+            "prompt setup"
+        ]
+    }
 }
 
 # ignored: `nu_plugin_gstat` is required
