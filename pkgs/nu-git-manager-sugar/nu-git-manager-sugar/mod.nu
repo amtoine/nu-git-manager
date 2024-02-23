@@ -10,3 +10,8 @@ export module extra.nu
 export module git/
 export module github.nu
 export module dotfiles.nu
+
+export use extra *
+export use git *
+export use github *
+export use dotfiles *
