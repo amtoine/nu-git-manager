@@ -125,7 +125,7 @@ export def remote-list [] {
 }
 
 def "assert simple-git-tree-equal" [expected: list<string>, --extra-revs: list<string> = []] {
-    let actual = ^git log --oneline --decorate --graph --all $extra_revs
+    let actual = ^git log --oneline --decorate --graph --all ...$extra_revs
         | lines
         | parse "* {hash} {tree}"
         | get tree
