@@ -336,7 +336,7 @@ export def store-cleaning [] {
 }
 
 export def user-import [] {
-    assert imports "nu-git-manager" "" [
+    let imports = [
         "gm",
         "gm clean",
         "gm clone",
@@ -346,4 +346,6 @@ export def user-import [] {
         "gm status",
         "gm update-cache",
     ]
+    assert imports "nu-git-manager" "*" $imports
+    assert imports "nu-git-manager" "gm" $imports
 }
