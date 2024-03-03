@@ -9,11 +9,11 @@ const MODULE = "nu-git-manager-sugar"
 
 export module imports {
     export def extra [] {
-        assert imports $MODULE "extra" [ "gm report" ]
+        assert imports $MODULE "extra *" [ "gm report" ]
     }
 
     export def git [] {
-        assert imports $MODULE "git" [
+        assert imports $MODULE "git *" [
             "gm repo bisect",
             "gm repo branch interactive-delete",
             "gm repo branch wipe",
@@ -32,11 +32,63 @@ export module imports {
     }
 
     export def github [] {
-        assert imports $MODULE "github" [
+        assert imports $MODULE "github *" [
             "gm gh pr checkout",
             "gm gh query-api",
             "gm gh query-releases",
             "gm gh query-user",
+        ]
+    }
+
+    export def gm [] {
+        assert imports $MODULE "gm" [
+            "gm cfg",
+            "gm cfg edit",
+            "gm gh pr checkout",
+            "gm gh query-api",
+            "gm gh query-releases",
+            "gm gh query-user",
+            "gm repo bisect",
+            "gm repo branch interactive-delete",
+            "gm repo branch wipe",
+            "gm repo branches",
+            "gm repo compare",
+            "gm repo fetch branch",
+            "gm repo get commit",
+            "gm repo goto root",
+            "gm repo is-ancestor",
+            "gm repo ls",
+            "gm repo query",
+            "gm repo remote list",
+            "gm repo switch",
+            "gm report",
+        ]
+    }
+
+    export def repo [] {
+        assert imports $MODULE "gm repo" [
+            "repo bisect",
+            "repo branch interactive-delete",
+            "repo branch wipe",
+            "repo branches",
+            "repo compare",
+            "repo fetch branch",
+            "repo get commit",
+            "repo goto root",
+            "repo is-ancestor",
+            "repo ls",
+            "repo query",
+            "repo remote list",
+            "repo switch",
+        ]
+    }
+
+    export def gh [] {
+        assert imports $MODULE "gm gh" [
+            "gh pr checkout",
+            "gh query-api",
+            "gh query-releases",
+            "gh query-user",
         ]
     }
 }

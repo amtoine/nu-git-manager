@@ -6,7 +6,7 @@ export def "assert imports" [
     | to nuon
     " | from nuon
     let after = ^$nu.current-exe --no-config-file --commands $"
-        use ./($module)/ ($submodule) *
+        use ./($module)/ ($submodule)
         scope commands | get name
     | to nuon" | from nuon
 
