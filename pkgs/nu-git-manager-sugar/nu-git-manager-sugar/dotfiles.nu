@@ -2,6 +2,7 @@
 #
 # the goal of `gm cfg` is to provide tools to interact with dotfiles managed
 # through a _bare_ repo.
+export module gm { export module cfg {
 
 def "options" [
     git_dir?: string
@@ -40,7 +41,7 @@ def "options" [
 # # visualize dotfiles in Lazygit
 # gm cfg { lg }
 # ```
-export def --wrapped "gm cfg" [
+export def --wrapped "main" [
     cmd: any
     ...args # implicit any instead of string required by --wrapped
     --git-dir: string
@@ -64,12 +65,12 @@ def "ansi cmd" []: string -> string {
 # - let you fuzzy search amongst all the dotfiles
 # - switch to the parent directory of the selected dotfile
 # - open the selected dotfile in `$env.VISUAL` or `$env.EDITOR`
-export def "gm cfg edit" [
+export def "edit" [
     editor?: string
     --git-dir: string
     --work-tree: string
 ]: nothing -> nothing {
-    alias cfg = gm cfg --git-dir $git_dir --work-tree $work_tree
+    alias cfg = main --git-dir $git_dir --work-tree $work_tree
 
     let work_tree = (options $git_dir $work_tree).GIT_WORK_TREE
     let prompt = $"choose a config file to (ansi cyan_bold)edit(ansi reset):"
@@ -90,3 +91,5 @@ export def "gm cfg edit" [
         # if they haven't defined these they might not know vi either
     ^$editor $config_file
 }
+
+} }

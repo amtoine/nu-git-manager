@@ -1,6 +1,7 @@
 # provides helper commands to simplify the use of the GitHub CLI.
 #
 # /!\ this module is part of the optional NGM. /!\
+export module gm { export module gh {
 
 use std log
 
@@ -63,7 +64,7 @@ def "warning make" [
 
 # query the GitHub API for any end point
 #
-# > :bulb: **Note**  
+# > :bulb: **Note**
 # > see the [rest API of GitHub](https://docs.github.com/en/rest) for a complete
 # > list of available end points and documentation
 #
@@ -84,7 +85,7 @@ def "warning make" [
 # ```
 # you shall not rebase in the middle of a PR review nor close other's review threads :pray:
 # ```
-export def "gm gh query-api" [
+export def "query-api" [
     end_point: string # the end point in the GitHub API to query
     --page-size: int = 100 # the size of each page
     --no-paginate # do not paginate the API, useful when getting a single record
@@ -189,7 +190,7 @@ export def "gm gh query-api" [
 #     | last
 #     | select tag_name published_at
 # ```
-export def "gm gh query-releases" [
+export def "query-releases" [
     repo: string # the GitHub repository to query the releases of
     --page-size: int = 100 # the size of each page
     --no-gh # force to use `http get` instead of `gh`
@@ -204,7 +205,7 @@ export def "gm gh query-releases" [
 # # get the avatar picture of @amtoine
 # gm gh query-user amtoine | get avatar_url | http get $in | save --force amtoine.png
 # ```
-export def "gm gh query-user" [
+export def "query-user" [
     user: string # the user to query information about
     --no-gh # force to use `http get` instead of `gh`
 ]: nothing -> record<login: string, id: int, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: bool, name: string, company: string, blog: string, location: string, email: nothing, hireable: nothing, bio: string, twitter_username: nothing, public_repos: int, public_gists: int, followers: int, following: int, created_at: string, updated_at: string> {
@@ -212,7 +213,7 @@ export def "gm gh query-user" [
 }
 
 # checkout one of the repo's PR interactively
-export def "gm gh pr checkout" []: nothing -> nothing {
+export def "pr checkout" []: nothing -> nothing {
     if (which gh --all | where type == external | is-empty) {
         error make --unspanned {
             msg: (
@@ -268,3 +269,5 @@ export def "gm gh pr checkout" []: nothing -> nothing {
         $res | ansi strip | parse "{author} ({number}): {title}" | into record | get number
     )
 }
+
+} }
