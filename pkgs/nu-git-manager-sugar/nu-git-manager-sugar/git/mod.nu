@@ -12,6 +12,7 @@ use completions [
 ]
 
 export module prompt.nu
+export module gm { export module repo {
 
 # get the commit hash of any revision
 #
@@ -25,14 +26,14 @@ export module prompt.nu
 # # get the commit hash of the main branch
 # gm repo get commit main
 # ```
-export def "gm repo get commit" [
+export def "get commit" [
     revision: string = "HEAD"  # the revision to get the hash of
 ]: nothing -> string {
     (^git rev-parse $revision)
 }
 
 # compare the changes between two revisions, from a target to the "head"
-export def "gm repo compare" [
+export def "compare" [
     target: string, # the target to compare from
     --head: string = "HEAD", # the "head" to use for the comparison
 ]: nothing -> string {
@@ -53,13 +54,13 @@ def repo-root []: nothing -> string {
 # ```
 # /path/to/repo
 # ```
-export def --env "gm repo goto root" []: nothing -> nothing {
+export def --env "goto root" []: nothing -> nothing {
     cd (repo-root)
 }
 
 # inspect local branches
 #
-# > **Note**  
+# > **Note**
 # > in the following, a "*dangling*" branch refers to a branch that does not have any remote
 # > counterpart, i.e. it's a purely local branch.
 #
@@ -73,7 +74,7 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 # # clean all dangling branches
 # gm repo branches --clean
 # ```
-export def "gm repo branches" [
+export def "branches" [
     --clean  # clean all dangling branches
 ]: nothing -> table<branch: string, remotes: list<string>> {
     let local_branches = ^git branch --list
@@ -114,7 +115,7 @@ export def "gm repo branches" [
 }
 
 # wipe a branch completely, i.e. both locally and remotely
-export def "gm repo branch wipe" [
+export def "branch wipe" [
     branch: string, # the branch to wipe
     remote: string, # the remote to push to
 ]: nothing -> nothing {
@@ -141,7 +142,7 @@ export def "gm repo branch wipe" [
 # ```
 # false
 # ```
-export def "gm repo is-ancestor" [
+export def "is-ancestor" [
     a: string  # the base commit-ish revision
     b: string  # the *head* commit-ish revision
 ]: nothing -> bool {
@@ -160,7 +161,7 @@ export def "gm repo is-ancestor" [
 # 0│origin│https://github.com/amtoine/nu-git-manager│ssh://github.com/amtoine/nu-git-manager
 # ─┴──────┴─────────────────────────────────────────┴───────────────────────────────────────
 # ```
-export def "gm repo remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
+export def "remote list" []: nothing -> table<remote: string, fetch: string, push: string> {
     # FIXME: use the helper `list-remotes` command from ../nu-git-manager/git/repo.nu:29
     ^git remote --verbose
         | detect columns --no-headers
@@ -175,7 +176,7 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
 }
 
 # fetch a remote branch locally, without pulling down the whole remote
-export def "gm repo fetch branch" [
+export def "fetch branch" [
     remote: string@get-remotes, # the branch to fetch
     branch: string@get-branches, # the remote to fetch the branch from
     --strategy: string@get-strategies = "none" # the merge strategy to use
@@ -227,7 +228,7 @@ def get-branches [--merged, --no-merged]: nothing -> list<string> {
 }
 
 # remove a branch interactively
-export def "gm repo branch interactive-delete" []: nothing -> nothing {
+export def "branch interactive-delete" []: nothing -> nothing {
     let choice = get-branches | input list --multi "remove"
     if ($choice | is-empty) {
         return
@@ -247,7 +248,7 @@ export def "gm repo branch interactive-delete" []: nothing -> nothing {
 }
 
 # switch between branches interactively
-export def "gm repo switch" []: nothing -> nothing {
+export def "switch" []: nothing -> nothing {
     let res = ^git branch --all
         | lines
         | str replace --regex '^  (remotes/.*)' $'  (ansi default_dimmed)${1}(ansi reset)'
@@ -271,7 +272,7 @@ export def "gm repo switch" []: nothing -> nothing {
 }
 
 # get some information about a repo
-export def "gm repo ls" [
+export def "ls" [
     repo?: path, # the path to the repo (defaults to `.`)
 ]: nothing -> record<path: path, name: string, staged: list<string>, unstaged: list<string>, untracked: list<string>, last_commit: record<date: datetime, title: string, hash: string>, branch: string> {
     let repo = $repo | default (pwd)
@@ -321,7 +322,7 @@ export def "gm repo ls" [
 # 2│Mel Massadian │       654│       64
 # ─┴──────────────┴──────────┴─────────
 # ```
-export def "gm repo query" [table: string@git-query-tables]: nothing -> table {
+export def "query" [table: string@git-query-tables]: nothing -> table {
     if $table not-in $GIT_QUERY_TABLES {
         error make {
             msg: $"(ansi red_bold)invalid_qit_query_table(ansi reset)",
@@ -381,7 +382,7 @@ def throw-error [
 # # `--good` and `--bad` are indeed "good" and "bad"
 # gm repo bisect --good $good --bad $bad --no-check $test
 # ```
-export def "gm repo bisect" [
+export def "bisect" [
     test: closure, # the code to run to check a given revision, should return a non-zero exit code for bad revisions
     --good: string, # the initial known "good" revision
     --bad: string, # the initial known "bad" revision
@@ -474,3 +475,5 @@ export def "gm repo bisect" [
 
     $first_bad
 }
+
+} }

@@ -2,6 +2,7 @@
 #
 # the goal of `gm cfg` is to provide tools to interact with dotfiles managed
 # through a _bare_ repo.
+export module gm { export module cfg {
 
 # manage dotfiles from anywhere
 #
@@ -25,7 +26,7 @@
 # # get the current status of the dotfiles in short format
 # gm status --short
 # ```
-export def --wrapped "gm cfg" [...args] {
+export def --wrapped "main" [...args] {
     ^git --git-dir $env.DOTFILES_GIT_DIR --work-tree $env.DOTFILES_WORKTREE ...$args
 }
 
@@ -39,7 +40,7 @@ def "ansi cmd" []: string -> string {
 # - let you fuzzy search amongst all the dotfiles
 # - switch to the parent directory of the selected dotfile
 # - open the selected dotfile in `$env.EDITOR`
-export def "gm cfg edit" [] {
+export def "edit" [] {
     let git_options = [
         --git-dir $env.DOTFILES_GIT_DIR
         --work-tree $env.DOTFILES_WORKTREE
@@ -58,3 +59,5 @@ export def "gm cfg edit" [] {
     cd ($config_file | path dirname)
     ^$env.EDITOR $config_file
 }
+
+} }

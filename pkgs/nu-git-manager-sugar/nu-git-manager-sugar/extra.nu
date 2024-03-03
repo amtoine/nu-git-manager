@@ -1,6 +1,7 @@
 # extends the core `gm` command with additional subcommands.
 #
 # /!\ this module is part of the optional NGM. /!\
+export module gm {
 
 # get a full report about the local store of repositories
 #
@@ -24,7 +25,7 @@
 # │ 11 │ clean     │
 # ╰────┴───────────╯
 # ```
-export def "gm report" []: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int, clean: bool> {
+export def "report" []: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int, clean: bool> {
     if (which gstat | is-empty) {
         error make --unspanned {
             msg: (
@@ -73,4 +74,6 @@ export def "gm report" []: nothing -> table<name: string, branch: string, remote
                 + $in.stashes
             ) == 0
         }
+}
+
 }

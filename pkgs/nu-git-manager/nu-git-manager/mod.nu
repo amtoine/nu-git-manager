@@ -12,6 +12,7 @@ module completions.nu
 module error.nu
 module fs/
 module git/
+export module gm {
 
 use fs store [get-repo-store-path, list-repos-in-store]
 use fs cache [
@@ -60,7 +61,7 @@ use completions
 # ```
 # ~/foo/nu-git-manager/cache.nuon
 # ```
-export def "gm" []: nothing -> nothing {
+export def "main" []: nothing -> nothing {
     print (help gm)
 }
 
@@ -93,7 +94,7 @@ export def "gm" []: nothing -> nothing {
 # # clone a big repo as a single commit, avoiding all intermediate Git deltas
 # gm clone https://github.com/neovim/neovim --depth 1
 # ```
-export def "gm clone" [
+export def "clone" [
     url: string # the URL to the repository to clone, supports HTTPS and SSH links, as well as references ending in `.git` or starting with `git@`
     --remote: string = "origin" # the name of the remote to setup
     --ssh # setup the remote to use the SSH protocol both to FETCH and to PUSH
@@ -221,7 +222,7 @@ export def "gm clone" [
 # # jump to a directory in the store
 # cd (gm list --full-path | input list)
 # ```
-export def "gm list" [
+export def "list" [
     --full-path # show the full path instead of only the "owner + group + repo" name
 ]: nothing -> list<path> {
     let cache_file = get-repo-store-cache-path
@@ -289,7 +290,7 @@ export def "gm list" [
 # # update the cache if necessary
 # if (gm status).should_update_cache { gm update-cache }
 # ```
-export def "gm status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
+export def "status" []: nothing -> record<root: record<path: path, exists: bool>, missing: list<path>, cache: record<path: path, exists: bool>, should_update_cache: bool> {
     let root = get-repo-store-path
     let cache = get-repo-store-cache-path
 
@@ -322,7 +323,7 @@ export def "gm status" []: nothing -> record<root: record<path: path, exists: bo
 # # update the cache of repositories
 # gm update-cache
 # ```
-export def "gm update-cache" []: nothing -> nothing {
+export def "update-cache" []: nothing -> nothing {
     let cache_file = get-repo-store-cache-path
     clean-cache-dir $cache_file
 
@@ -359,7 +360,7 @@ export def "gm update-cache" []: nothing -> nothing {
 # # remove a precise repo without confirmation
 # gm remove amtoine/nu-git-manager --no-confirm
 # ```
-export def "gm remove" [
+export def "remove" [
     pattern?: string # a pattern to restrict the choices
     --fuzzy # remove after fuzzy-finding the repo(s) to clean
     --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
@@ -487,7 +488,7 @@ export def "gm remove" [
 #     8f3b273337b53bd86d5594d5edc9d4ad7242bd4c: "github.com/amtoine/nushell",
 # }
 # ```
-export def "gm squash-forks" [
+export def "squash-forks" [
     --non-interactive-preselect: record = {} # the non-interactive preselection record, see documentation above
 ]: nothing -> nothing {
     let status = gm status
@@ -564,7 +565,7 @@ export def "gm squash-forks" [
 # # list the leaves of the store that would have to be cleaned
 # gm clean --list
 # ```
-export def "gm clean" [
+export def "clean" [
     --list # only list without cleaning
 ]: nothing -> list<path> {
     let empty_directories_in_store = ls (gm status | get root.path | path join "**")
@@ -582,4 +583,6 @@ export def "gm clean" [
     }
 
     $empty_non_repo_directories_in_store | clean-empty-directories-rec
+}
+
 }
