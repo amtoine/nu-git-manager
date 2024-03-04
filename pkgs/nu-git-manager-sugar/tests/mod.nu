@@ -42,7 +42,7 @@ export module imports {
 
     export def gm [] {
         assert imports $MODULE "gm" [
-            "gm cfg",
+            "gm cfg cfg",
             "gm cfg edit",
             "gm gh pr checkout",
             "gm gh query-api",

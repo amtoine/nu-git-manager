@@ -366,7 +366,7 @@ export def "remove" [
     --no-confirm # do not ask for confirmation: useful in scripts but requires a single match
 ]: nothing -> nothing {
     let root = get-repo-store-path
-    let choices = gm list | path remove-prefix $root | find $pattern
+    let choices = list | path remove-prefix $root | find $pattern
 
     let repo_to_remove = match ($choices | length) {
         0 => {
@@ -491,7 +491,7 @@ export def "remove" [
 export def "squash-forks" [
     --non-interactive-preselect: record = {} # the non-interactive preselection record, see documentation above
 ]: nothing -> nothing {
-    let status = gm status
+    let status = status
 
     let forks_to_squash = open $status.cache.path --raw
         | from nuon
@@ -541,7 +541,7 @@ export def "squash-forks" [
                 ^git -C $main remote set-url --push ($fork_name) $fork_origin.push
 
                 log debug $"    removing ($fork_full_name)"
-                gm remove --no-confirm $fork_full_name
+                remove --no-confirm $fork_full_name
             }
         }
     }
@@ -568,12 +568,12 @@ export def "squash-forks" [
 export def "clean" [
     --list # only list without cleaning
 ]: nothing -> list<path> {
-    let empty_directories_in_store = ls (gm status | get root.path | path join "**" | into glob)
+    let empty_directories_in_store = ls (status | get root.path | path join "**" | into glob)
         | where (ls $it.name | is-empty)
         | get name
         | path expand
         | each { path sanitize }
-    let cached_repos = gm list --full-path
+    let cached_repos = list --full-path
 
     let empty_non_repo_directories_in_store = $empty_directories_in_store
         | where not ($cached_repos | any {|repo| $it | str starts-with $repo})

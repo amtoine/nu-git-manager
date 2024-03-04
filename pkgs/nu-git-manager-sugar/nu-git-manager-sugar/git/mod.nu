@@ -298,6 +298,8 @@ export def "ls" [
     }
 }
 
+alias '_query git' = query git
+
 # queries the `.git/` directory as a database with `nu_plugin_git_query`
 #
 # ## Examples
@@ -333,7 +335,7 @@ export def "query" [table: string@git-query-tables]: nothing -> table {
         }
     }
 
-    if (which "query git" | is-empty) {
+    if (which "_query git" | is-empty) {
         error make --unspanned {
             msg: (
                 $"(ansi red_bold)requirement_not_found(ansi reset):\n"
@@ -345,9 +347,9 @@ export def "query" [table: string@git-query-tables]: nothing -> table {
     }
 
     if $table == "commits" {
-        query git $"select * from commits" | into datetime datetime
+        _query git $"select * from commits" | into datetime datetime
     } else {
-        query git $"select * from ($table)"
+        _query git $"select * from ($table)"
     }
 }
 

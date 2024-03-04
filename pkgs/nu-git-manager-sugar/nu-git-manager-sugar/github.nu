@@ -195,7 +195,7 @@ export def "query-releases" [
     --page-size: int = 100 # the size of each page
     --no-gh # force to use `http get` instead of `gh`
 ]: nothing -> table<url: string, assets_url: string, upload_url: string, html_url: string, id: int, author: record<login: string, id: int, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: bool>, node_id: string, tag_name: string, target_commitish: string, name: string, draft: bool, prerelease: bool, created_at: string, published_at: string, assets: list<any>, tarball_url: string, zipball_url: string, body: string, reactions: record<url: string, total_count: int, +1: int, -1: int, laugh: int, hooray: int, confused: int, heart: int, rocket: int, eyes: int>, mentions_count: int> {
-    gm gh query-api $"/repos/($repo)/releases" --page-size $page_size --no-gh=$no_gh
+    query-api $"/repos/($repo)/releases" --page-size $page_size --no-gh=$no_gh
 }
 
 # get information about a GitHub user
@@ -209,7 +209,7 @@ export def "query-user" [
     user: string # the user to query information about
     --no-gh # force to use `http get` instead of `gh`
 ]: nothing -> record<login: string, id: int, node_id: string, avatar_url: string, gravatar_id: string, url: string, html_url: string, followers_url: string, following_url: string, gists_url: string, starred_url: string, subscriptions_url: string, organizations_url: string, repos_url: string, events_url: string, received_events_url: string, type: string, site_admin: bool, name: string, company: string, blog: string, location: string, email: nothing, hireable: nothing, bio: string, twitter_username: nothing, public_repos: int, public_gists: int, followers: int, following: int, created_at: string, updated_at: string> {
-    gm gh query-api $"/users/($user)" --no-paginate --no-gh=$no_gh
+    query-api $"/users/($user)" --no-paginate --no-gh=$no_gh
 }
 
 # checkout one of the repo's PR interactively
@@ -231,7 +231,7 @@ export def "pr checkout" []: nothing -> nothing {
     }
 
     log debug $"pulling down list of pull requests for '($repo)'"
-    let prs = gm gh query-api $"/repos/($repo)/pulls"
+    let prs = query-api $"/repos/($repo)/pulls"
         | select number user.login title
         | rename id author title
     if ($prs | is-empty) {

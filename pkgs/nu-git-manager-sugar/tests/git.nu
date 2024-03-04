@@ -1,16 +1,6 @@
 use std assert
 
-use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git [
-    "gm repo get commit"
-    "gm repo goto root"
-    "gm repo branches"
-    "gm repo is-ancestor"
-    "gm repo remote list"
-    "gm repo fetch branch"
-    "gm repo ls"
-    "gm repo branch wipe"
-    "gm repo compare"
-]
+use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git gm
 use ../../../pkgs/nu-git-manager/nu-git-manager/fs path ["path sanitize"]
 use ../../../tests/common/setup.nu [get-random-test-dir]
 
