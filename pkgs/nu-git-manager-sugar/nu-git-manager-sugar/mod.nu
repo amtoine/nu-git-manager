@@ -10,7 +10,7 @@ export module extra.nu
 export module git/
 export module github.nu
 export module dotfiles.nu
-# workarounds for multiple bugs with export use
+# workarounds below explained in #184
 export module gm {
   use extra.nu gm; export use gm *
   use git/ gm repo; export module repo { export use repo * }
