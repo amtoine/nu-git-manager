@@ -2,7 +2,6 @@
 #
 # the goal of `gm cfg` is to provide tools to interact with dotfiles managed
 # through a _bare_ repo.
-export module gm { export module cfg {
 
 def "options" [
     git_dir?: string
@@ -91,5 +90,3 @@ export def "edit" [
         # if they haven't defined these they might not know vi either
     ^$editor $config_file
 }
-
-} }

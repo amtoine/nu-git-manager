@@ -12,7 +12,6 @@ use completions [
 ]
 
 export module prompt.nu
-export module gm { export module repo {
 
 # get the commit hash of any revision
 #
@@ -477,5 +476,3 @@ export def "bisect" [
 
     $first_bad
 }
-
-} }

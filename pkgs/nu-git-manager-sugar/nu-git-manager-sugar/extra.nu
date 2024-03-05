@@ -1,7 +1,6 @@
 # extends the core `gm` command with additional subcommands.
 #
 # /!\ this module is part of the optional NGM. /!\
-export module gm {
 
 # get a full report about the local store of repositories
 #
@@ -74,6 +73,4 @@ export def "report" []: nothing -> table<name: string, branch: string, remote: s
                 + $in.stashes
             ) == 0
         }
-}
-
 }

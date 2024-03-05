@@ -1,7 +1,6 @@
 # provides helper commands to simplify the use of the GitHub CLI.
 #
 # /!\ this module is part of the optional NGM. /!\
-export module gm { export module gh {
 
 use std log
 
@@ -269,5 +268,3 @@ export def "pr checkout" []: nothing -> nothing {
         $res | ansi strip | parse "{author} ({number}): {title}" | into record | get number
     )
 }
-
-} }

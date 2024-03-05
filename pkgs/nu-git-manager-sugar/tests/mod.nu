@@ -42,7 +42,7 @@ export module imports {
 
     export def gm [] {
         assert imports $MODULE "gm" [
-            "gm cfg cfg", # FIXME: caused by workarounds in main mod.nu
+            "gm cfg",
             "gm cfg edit",
             "gm gh pr checkout",
             "gm gh query-api",
@@ -89,6 +89,13 @@ export module imports {
             "gh query-api",
             "gh query-releases",
             "gh query-user",
+        ]
+    }
+
+    export def cfg [] {
+        assert imports $MODULE "gm cfg" [
+            "cfg",
+            "cfg edit",
         ]
     }
 }
