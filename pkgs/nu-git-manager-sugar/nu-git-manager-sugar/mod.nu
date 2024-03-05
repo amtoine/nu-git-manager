@@ -12,8 +12,14 @@ export module github.nu
 export module dotfiles.nu
 # workarounds below explained in #184
 export module gm {
-  use extra.nu gm; export use gm *
-  use git/ gm repo; export module repo { export use repo * }
-  use github.nu gm gh; export module gh { export use gh * }
-  use dotfiles.nu gm cfg; export module cfg { export use cfg * }
+    use extra.nu gm; export use gm *
+    export module repo {
+        use git/ gm repo; export use repo *
+    }
+    export module gh {
+        use github.nu gm gh; export use gh *
+    }
+    export module cfg {
+        use dotfiles.nu gm cfg; export use cfg *
+    }
 }
