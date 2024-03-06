@@ -567,7 +567,7 @@ export def "gm squash-forks" [
 export def "gm clean" [
     --list # only list without cleaning
 ]: nothing -> list<path> {
-    let empty_directories_in_store = ls (gm status | get root.path | path join "**")
+    let empty_directories_in_store = ls (gm status | get root.path | path join "**" | into glob)
         | where (ls $it.name | is-empty)
         | get name
         | path expand
