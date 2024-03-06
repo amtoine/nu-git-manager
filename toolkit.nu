@@ -194,7 +194,7 @@ def run-nu [code: string]: nothing -> any {
 }
 
 def rg [root: path, pattern: string]: nothing -> table<file: path, line: int, match: string> {
-    ls ($root | path join "**" "*")
+    ls ($root | path join "**" "*" | into glob)
         | where type == file
         | get name
         | wrap file
