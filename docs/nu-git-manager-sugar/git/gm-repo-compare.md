@@ -4,8 +4,8 @@ compare the changes between two revisions, from a target to the "head"
 
 
 ## Parameters
-- `target` <`string`>: the target to compare from
-- `--head` <`string`> = `HEAD`: the "head" to use for the comparison
+- `target` <`string@get-branches`>: the target to compare from
+- `--head` <`string@get-branches`> = `HEAD`: the "head" to use for the comparison
 
 
 ## Signatures
