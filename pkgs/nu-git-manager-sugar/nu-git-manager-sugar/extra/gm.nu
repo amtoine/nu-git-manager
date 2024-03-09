@@ -24,7 +24,7 @@
 # │ 11 │ clean     │
 # ╰────┴───────────╯
 # ```
-export def "gm report" []: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int, clean: bool> {
+export def "report" []: nothing -> table<name: string, branch: string, remote: string, tag: string, index: int, ignored: int, conflicts: int, ahead: int, behind: int, worktree: int, stashes: int, clean: bool> {
     if (which gstat | is-empty) {
         error make --unspanned {
             msg: (

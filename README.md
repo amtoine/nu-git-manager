@@ -61,7 +61,13 @@ in your `config.nu` you can add the following to load `nu-git-manager` modules:
 use nu-git-manager *
 
 # the following are non-essential modules
-use nu-git-manager-sugar extra *              # augment `gm` with additional commands
+use nu-git-manager-sugar gm                   # augment `gm` with additional commands
+
+# or by category
+use nu-git-manager-sugar extra *
+use nu-git-manager-sugar git *
+use nu-git-manager-sugar github *
+use nu-git-manager-sugar dotfiles *
 ```
 
 > **Note**  
