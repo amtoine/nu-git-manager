@@ -4,7 +4,10 @@ use style.nu [color, simplify-path]
 # /!\ the PWD will be sanitized
 export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     let is_git_repo = not (
-        do --ignore-errors { ^git rev-parse --is-inside-work-tree } | is-empty
+        do --ignore-errors { ^git rev-parse --is-inside-work-tree }
+            | complete
+            | get stdout
+            | is-empty
     )
 
     # FIXME: use `path sanitize` from `nu-git-manager`
