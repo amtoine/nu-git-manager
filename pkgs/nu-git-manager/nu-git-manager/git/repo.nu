@@ -21,10 +21,7 @@ export def get-root-commit [
     repo?: path, # the path to the repository to check (defaults to `pwd`)
 ]: nothing -> string {
     let repo = $repo | default (pwd)
-
-    # FIXME: this is a bug and should work without string interpolation
-    # see https://github.com/nushell/nushell/issues/11134
-    $"(^git -C $repo rev-list HEAD | lines | last)"
+    (^git -C $repo rev-list HEAD | lines | last)
 }
 
 # wrapper around `git remote --verbose show` to list the remotes of a repository
