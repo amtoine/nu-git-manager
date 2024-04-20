@@ -13,6 +13,8 @@ use completions [
 
 export module prompt.nu
 
+export def "gm repo" [] { help "gm repo" }
+
 # get the commit hash of any revision
 #
 # ## Examples
@@ -57,7 +59,9 @@ export def --env "gm repo goto root" []: nothing -> nothing {
     cd (repo-root)
 }
 
-# inspect local branches
+export def "gm repo branch" [] { help "gm repo branch" }
+
+# list local branches
 #
 # > **Note**  
 # > in the following, a "*dangling*" branch refers to a branch that does not have any remote
@@ -66,16 +70,9 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 # ## Examples
 # ```nushell
 # # list branches and their associated remotes
-# gm repo branches
+# gm repo branch list
 # ```
-# ---
-# ```nushell
-# # clean all dangling branches
-# gm repo branches --clean
-# ```
-export def "gm repo branches" [
-    --clean  # clean all dangling branches
-]: nothing -> table<branch: string, remotes: list<string>> {
+export def "gm repo branch list" []: nothing -> table<branch: string, remotes: list<string>> {
     let local_branches = ^git branch --list
         | lines
         | find --invert --regex '\(HEAD detached at .*\)'
@@ -91,32 +88,43 @@ export def "gm repo branches" [
         remotes: ($remote_branches | where branch == $branch | get remote)
     } }
 
-    if $clean {
-        let dangling_branches = $branches | where remotes == []
+    $branches
+}
 
-        if ($dangling_branches | is-empty) {
-            log warning "no dangling branches"
-            return
+# clean local dangling branches
+#
+# > **Note**  
+# > in the following, a "*dangling*" branch refers to a branch that does not have any remote
+# > counterpart, i.e. it's a purely local branch.
+#
+# ## Examples
+# ```nushell
+# # clean all dangling branches
+# gm repo branch clean
+# ```
+export def "gm repo branch clean" []: nothing -> nothing {
+    let dangling_branches = gm repo branch list | where remotes == []
+
+    if ($dangling_branches | is-empty) {
+        log warning "no dangling branches"
+        return
+    }
+
+    for branch in $dangling_branches.branch {
+        if $branch == (^git branch --show-current) {
+            log warning $"($branch) is currently checked out and cannot be deleted"
+            continue
         }
 
-        for branch in $dangling_branches.branch {
-            if $branch == (^git branch --show-current) {
-                log warning $"($branch) is currently checked out and cannot be deleted"
-                continue
-            }
-
-            log info $"deleting branch `($branch)`"
-            ^git branch --quiet --delete --force $branch
-        }
-    } else {
-        $branches
+        log info $"deleting branch `($branch)`"
+        ^git branch --quiet --delete --force $branch
     }
 }
 
 # wipe a branch completely, i.e. both locally and remotely
 export def "gm repo branch wipe" [
-    branch: string, # the branch to wipe
-    remote: string, # the remote to push to
+    branch: string@"get-branches", # the branch to wipe
+    remote: string@"get-remotes", # the remote to push to
 ]: nothing -> nothing {
     ^git branch --delete --force $branch
     ^git push $remote --delete $branch
@@ -148,6 +156,8 @@ export def "gm repo is-ancestor" [
     (do -i { ^git merge-base $a $b --is-ancestor } | complete | get exit_code) == 0
 }
 
+export def "gm repo remote" [] { help "gm repo remote" }
+
 # get the list of all the remotes in the current repository
 #
 # ## Examples
@@ -174,8 +184,49 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
         | rename remote fetch push
 }
 
+# add a remote to the current repository
+#
+# > **Note**  
+# > will throw an error if `$remote` does not appear to be a valid URL.
+#
+# ## Examples
+# ```nushell
+# # add `https://www.example.com` to the remotes as `upstream`
+# gm repo remote add upstream https://www.example.com
+# ```
+# ---
+# ```nushell
+# # add `https://www.example.com` to the remotes as `upstream`, using the SSH protocol
+# gm repo remote add upstream https://www.example.com --ssh
+# ```
+export def "gm repo remote add" [name: string, remote: string, --ssh]: nothing -> nothing {
+    try {
+        $remote | url parse
+    } catch {
+        throw-error {
+            msg: "remote_not_a_url",
+            text: "not a valid URL",
+            span: (metadata $remote).span,
+        }
+    }
+
+    let $remote = if $ssh {
+        $remote | url parse | update scheme "ssh" | url join
+    } else {
+        $remote
+    }
+
+    if $name in (^git remote show | lines) {
+        log warning $"changing remote '($name)' to '($remote)'"
+        ^git remote set-url $name $remote
+    } else {
+        log info $"adding remote '($name)' as '($remote)'"
+        ^git remote add $name $remote
+    }
+}
+
 # fetch a remote branch locally, without pulling down the whole remote
-export def "gm repo fetch branch" [
+export def "gm repo branch fetch" [
     remote: string@get-remotes, # the branch to fetch
     branch: string@get-branches, # the remote to fetch the branch from
     --strategy: string@get-strategies = "none" # the merge strategy to use

@@ -3,10 +3,11 @@ use std assert
 use ../../../pkgs/nu-git-manager-sugar/nu-git-manager-sugar/ git [
     "gm repo get commit"
     "gm repo goto root"
-    "gm repo branches"
+    "gm repo branch list"
+    "gm repo branch clean"
     "gm repo is-ancestor"
     "gm repo remote list"
-    "gm repo fetch branch"
+    "gm repo branch fetch"
     "gm repo ls"
     "gm repo branch wipe"
     "gm repo compare"
@@ -62,11 +63,11 @@ export def goto-root [] {
 export def branches [] {
     let repo = init-repo-and-cd-into
 
-    assert equal (gm repo branches) []
+    assert equal (gm repo branch list) []
 
     commit "init"
 
-    assert equal (gm repo branches) [{branch: main, remotes: []}]
+    assert equal (gm repo branch list) [{branch: main, remotes: []}]
 
     clean $repo
 }
@@ -80,8 +81,8 @@ export def branches-checked-out [] {
     ^git branch foo
     ^git checkout bar
 
-    gm repo branches --clean
-    assert equal (gm repo branches) [{branch: bar, remotes: []}, ]
+    gm repo branch clean
+    assert equal (gm repo branch list) [{branch: bar, remotes: []}, ]
 
     clean $repo
 }
@@ -95,8 +96,8 @@ export def branches-detached [] {
     ^git branch foo
     ^git checkout $hash
 
-    gm repo branches --clean
-    assert equal (gm repo branches) []
+    gm repo branch clean
+    assert equal (gm repo branch list) []
 
     clean $repo
 }
@@ -145,7 +146,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo
 
         assert simple-git-tree-equal [
             "(foo) c2",
@@ -158,7 +159,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo
 
         assert simple-git-tree-equal [
             "(foo) c4",
@@ -175,7 +176,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo
 
         assert simple-git-tree-equal --extra-revs ["FETCH_HEAD"] [
             "c6",
@@ -190,7 +191,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo --strategy "rebase"
+        gm repo branch fetch $"file://($foo)" foo --strategy "rebase"
 
         assert simple-git-tree-equal [
             "(HEAD -> foo) c6",
@@ -207,7 +208,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo fetch branch $"file://($foo)" foo --strategy "merge"
+        gm repo branch fetch $"file://($foo)" foo --strategy "merge"
 
         assert simple-git-tree-equal [
             "(HEAD -> foo) c8",
@@ -222,7 +223,7 @@ export def branch-fetch [] {
         ]
     }
 
-    assert error { gm repo fetch branch $"file://($foo)" foo --strategy "" }
+    assert error { gm repo branch fetch $"file://($foo)" foo --strategy "" }
 
     clean $foo
     clean $bar
