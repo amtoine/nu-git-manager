@@ -61,6 +61,8 @@ def "warning make" [
     ]
 }
 
+export def "gm gh" [] { help "gm gh" }
+
 # query the GitHub API for any end point
 #
 # > :bulb: **Note**  

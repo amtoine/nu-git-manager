@@ -1,5 +1,5 @@
-# `gm repo branches` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L76))
-inspect local branches
+# `gm repo branch list` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L75))
+list local branches
 
 > **Note**  
 > in the following, a "*dangling*" branch refers to a branch that does not have any remote
@@ -8,16 +8,10 @@ inspect local branches
 ## Examples
 ```nushell
 # list branches and their associated remotes
-gm repo branches
-```
----
-```nushell
-# clean all dangling branches
-gm repo branches --clean
+gm repo branch list
 ```
 
 ## Parameters
-- `--clean` <`bool`>: clean all dangling branches
 
 
 ## Signatures
