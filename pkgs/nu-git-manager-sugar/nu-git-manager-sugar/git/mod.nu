@@ -13,6 +13,8 @@ use completions [
 
 export module prompt.nu
 
+export def "gm repo" [] { help "gm repo" }
+
 # get the commit hash of any revision
 #
 # ## Examples
@@ -147,6 +149,8 @@ export def "gm repo is-ancestor" [
 ]: nothing -> bool {
     (do -i { ^git merge-base $a $b --is-ancestor } | complete | get exit_code) == 0
 }
+
+export def "gm repo remote" [] { help "gm repo remote" }
 
 # get the list of all the remotes in the current repository
 #
