@@ -20,6 +20,7 @@ ships a bunch of helper commands that augments the capabilities of Git.
 - [`gm repo ls`](gm-repo-ls.md)
 - [`gm repo query`](gm-repo-query.md)
 - [`gm repo remote`](gm-repo-remote.md)
+- [`gm repo remote add`](gm-repo-remote-add.md)
 - [`gm repo remote list`](gm-repo-remote-list.md)
 - [`gm repo switch`](gm-repo-switch.md)
 
