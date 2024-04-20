@@ -14,17 +14,22 @@ export module imports {
 
     export def git [] {
         assert imports $MODULE "git" [
+            "gm repo",
             "gm repo bisect",
+            "gm repo branch",
+            "gm repo branch clean",
+            "gm repo branch fetch",
             "gm repo branch interactive-delete",
+            "gm repo branch list",
             "gm repo branch wipe",
-            "gm repo branches",
             "gm repo compare",
-            "gm repo fetch branch",
             "gm repo get commit",
             "gm repo goto root",
             "gm repo is-ancestor",
             "gm repo ls",
             "gm repo query",
+            "gm repo remote",
+            "gm repo remote add",
             "gm repo remote list",
             "gm repo switch",
             "prompt setup",
@@ -33,6 +38,7 @@ export module imports {
 
     export def github [] {
         assert imports $MODULE "github" [
+            "gm gh",
             "gm gh pr checkout",
             "gm gh query-api",
             "gm gh query-releases",
