@@ -184,6 +184,47 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
         | rename remote fetch push
 }
 
+# add a remote to the current repository
+#
+# > **Note**  
+# > will throw an error if `$remote` does not appear to be a valid URL.
+#
+# ## Examples
+# ```nushell
+# # add `https://www.example.com` to the remotes as `upstream`
+# gm repo remote add upstream https://www.example.com
+# ```
+# ---
+# ```nushell
+# # add `https://www.example.com` to the remotes as `upstream`, using the SSH protocol
+# gm repo remote add upstream https://www.example.com --ssh
+# ```
+export def "gm repo remote add" [name: string, remote: string, --ssh]: nothing -> nothing {
+    try {
+        $remote | url parse
+    } catch {
+        throw-error {
+            msg: "remote_not_a_url",
+            text: "not a valid URL",
+            span: (metadata $remote).span,
+        }
+    }
+
+    let $remote = if $ssh {
+        $remote | url parse | update scheme "ssh" | url join
+    } else {
+        $remote
+    }
+
+    if $name in (^git remote show | lines) {
+        log warning $"changing remote '($name)' to '($remote)'"
+        ^git remote set-url $name $remote
+    } else {
+        log info $"adding remote '($name)' as '($remote)'"
+        ^git remote add $name $remote
+    }
+}
+
 # fetch a remote branch locally, without pulling down the whole remote
 export def "gm repo branch fetch" [
     remote: string@get-remotes, # the branch to fetch
