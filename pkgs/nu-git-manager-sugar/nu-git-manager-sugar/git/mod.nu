@@ -59,7 +59,9 @@ export def --env "gm repo goto root" []: nothing -> nothing {
     cd (repo-root)
 }
 
-# inspect local branches
+export def "gm repo branch" [] { help "gm repo branch" }
+
+# list local branches
 #
 # > **Note**  
 # > in the following, a "*dangling*" branch refers to a branch that does not have any remote
@@ -68,16 +70,9 @@ export def --env "gm repo goto root" []: nothing -> nothing {
 # ## Examples
 # ```nushell
 # # list branches and their associated remotes
-# gm repo branches
+# gm repo branch list
 # ```
-# ---
-# ```nushell
-# # clean all dangling branches
-# gm repo branches --clean
-# ```
-export def "gm repo branches" [
-    --clean  # clean all dangling branches
-]: nothing -> table<branch: string, remotes: list<string>> {
+export def "gm repo branch list" []: nothing -> table<branch: string, remotes: list<string>> {
     let local_branches = ^git branch --list
         | lines
         | find --invert --regex '\(HEAD detached at .*\)'
@@ -93,25 +88,36 @@ export def "gm repo branches" [
         remotes: ($remote_branches | where branch == $branch | get remote)
     } }
 
-    if $clean {
-        let dangling_branches = $branches | where remotes == []
+    $branches
+}
 
-        if ($dangling_branches | is-empty) {
-            log warning "no dangling branches"
-            return
+# clean local dangling branches
+#
+# > **Note**  
+# > in the following, a "*dangling*" branch refers to a branch that does not have any remote
+# > counterpart, i.e. it's a purely local branch.
+#
+# ## Examples
+# ```nushell
+# # clean all dangling branches
+# gm repo branch clean
+# ```
+export def "gm repo branch clean" []: nothing -> nothing {
+    let dangling_branches = gm repo branch list | where remotes == []
+
+    if ($dangling_branches | is-empty) {
+        log warning "no dangling branches"
+        return
+    }
+
+    for branch in $dangling_branches.branch {
+        if $branch == (^git branch --show-current) {
+            log warning $"($branch) is currently checked out and cannot be deleted"
+            continue
         }
 
-        for branch in $dangling_branches.branch {
-            if $branch == (^git branch --show-current) {
-                log warning $"($branch) is currently checked out and cannot be deleted"
-                continue
-            }
-
-            log info $"deleting branch `($branch)`"
-            ^git branch --quiet --delete --force $branch
-        }
-    } else {
-        $branches
+        log info $"deleting branch `($branch)`"
+        ^git branch --quiet --delete --force $branch
     }
 }
 
@@ -179,7 +185,7 @@ export def "gm repo remote list" []: nothing -> table<remote: string, fetch: str
 }
 
 # fetch a remote branch locally, without pulling down the whole remote
-export def "gm repo fetch branch" [
+export def "gm repo branch fetch" [
     remote: string@get-remotes, # the branch to fetch
     branch: string@get-branches, # the remote to fetch the branch from
     --strategy: string@get-strategies = "none" # the merge strategy to use
