@@ -123,8 +123,8 @@ export def "gm repo branch clean" []: nothing -> nothing {
 
 # wipe a branch completely, i.e. both locally and remotely
 export def "gm repo branch wipe" [
-    branch: string, # the branch to wipe
-    remote: string, # the remote to push to
+    branch: string@"get-branches", # the branch to wipe
+    remote: string@"get-remotes", # the remote to push to
 ]: nothing -> nothing {
     ^git branch --delete --force $branch
     ^git push $remote --delete $branch
