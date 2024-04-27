@@ -1,4 +1,4 @@
-# `gm repo query` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L375))
+# `gm repo query` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L380))
 queries the `.git/` directory as a database with `nu_plugin_git_query`
 
 ## Examples
