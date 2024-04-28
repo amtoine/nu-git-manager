@@ -59,7 +59,7 @@ jobs:
           fi
 
       - name: Setup nushell and nupm
-        uses: amtoine/setup-nupm-action@0.2.0
+        uses: amtoine/setup-nupm-action@0.3.0
         id: "nu-setup"
         with:
           nu_version: ${{ env.NU_VERSION }}
