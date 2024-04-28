@@ -6,7 +6,8 @@ fetch a remote branch locally, without pulling down the whole remote
 ## Parameters
 - `remote` <`string@get-remotes`>: the branch to fetch
 - `branch` <`string@get-branches`>: the remote to fetch the branch from
-- `--strategy` <`string@get-strategies`> = `none`: the merge strategy to use
+- `--strategy` <`string@get-strategies`>: the merge strategy to use, defaults to the `pull.rebase` Git
+config option
 
 
 ## Signatures

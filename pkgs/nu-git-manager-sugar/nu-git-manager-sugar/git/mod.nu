@@ -229,8 +229,13 @@ export def "gm repo remote add" [name: string, remote: string, --ssh]: nothing -
 export def "gm repo branch fetch" [
     remote: string@get-remotes, # the branch to fetch
     branch: string@get-branches, # the remote to fetch the branch from
-    --strategy: string@get-strategies = "none" # the merge strategy to use
+    --strategy: string@get-strategies # the merge strategy to use, defaults to the `pull.rebase` Git
+                                      # config option
 ]: nothing -> nothing {
+    let strategy = $strategy | default (
+        if (^git config pull.rebase) == "true" { "rebase" } else { "merge" }
+    )
+
     ^git fetch $remote $branch
 
     if (^git branch --list | lines | str substring 2.. | where $it == $branch | is-empty) {
