@@ -40,7 +40,7 @@ jobs:
             echo "NU_VERSION=${{ inputs.nu_version }}" >> $GITHUB_ENV
           fi
 
-      - uses: hustcer/setup-nu@v3.8
+      - uses: hustcer/setup-nu@v3.10
         with:
           version: ${{ env.NU_VERSION }}
 
