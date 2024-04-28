@@ -146,7 +146,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo branch fetch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo --strategy none
 
         assert simple-git-tree-equal [
             "(foo) c2",
@@ -159,7 +159,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo branch fetch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo --strategy none
 
         assert simple-git-tree-equal [
             "(foo) c4",
@@ -176,7 +176,7 @@ export def branch-fetch [] {
 
     do {
         cd $bar
-        gm repo branch fetch $"file://($foo)" foo
+        gm repo branch fetch $"file://($foo)" foo --strategy none
 
         assert simple-git-tree-equal --extra-revs ["FETCH_HEAD"] [
             "c6",
