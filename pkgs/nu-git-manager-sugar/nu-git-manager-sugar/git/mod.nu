@@ -530,3 +530,35 @@ export def "gm repo bisect" [
 
     $first_bad
 }
+
+
+def "gm repo zip" [rev: string, --head (-h): string = "HEAD", --out (-o): path = "a.zip"] {
+    let tmp = mktemp --tmpdir XXXXXXX --directory
+    log info $"dumping patches to (ansi purple)($tmp)(ansi reset)"
+
+    let patches = git rev-list $"($rev)..($head)"
+        | lines
+        | reverse
+        | enumerate
+        | each { |it|
+            let patch = { parent: $tmp, stem: $it.index, extension: "patch" } | path join
+            git show $it.item | save $patch
+
+            $patch
+        }
+
+    ^zip $out ...$patches
+}
+
+def "gm repo unzip" [zip: path] {
+    let tmp = mktemp --tmpdir XXXXXXX --directory
+    log info $"unzipping (ansi purple)($zip)(ansi reset) to (ansi purple)($tmp)(ansi reset)"
+
+    ^unzip $zip -d $tmp
+
+    for p in ($tmp | path join "**/*.patch" | into glob | ls $in | sort-by name --natural) {
+        git apply $p.name
+        git add .
+        git commit --verbose
+    }
+}
