@@ -532,7 +532,7 @@ export def "gm repo bisect" [
 }
 
 
-def "gm repo zip" [rev: string, --head (-h): string = "HEAD", --out (-o): path = "a.zip"] {
+export def "gm repo zip" [rev: string, --head (-h): string = "HEAD", --out (-o): path = "a.zip"] {
     let tmp = mktemp --tmpdir XXXXXXX --directory
     log info $"dumping patches to (ansi purple)($tmp)(ansi reset)"
 
@@ -550,7 +550,7 @@ def "gm repo zip" [rev: string, --head (-h): string = "HEAD", --out (-o): path =
     ^zip $out ...$patches
 }
 
-def "gm repo unzip" [zip: path] {
+export def "gm repo unzip" [zip: path] {
     let tmp = mktemp --tmpdir XXXXXXX --directory
     log info $"unzipping (ansi purple)($zip)(ansi reset) to (ansi purple)($tmp)(ansi reset)"
 
