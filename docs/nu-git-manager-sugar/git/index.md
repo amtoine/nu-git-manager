@@ -23,6 +23,8 @@ ships a bunch of helper commands that augments the capabilities of Git.
 - [`gm repo remote add`](gm-repo-remote-add.md)
 - [`gm repo remote list`](gm-repo-remote-list.md)
 - [`gm repo switch`](gm-repo-switch.md)
+- [`gm repo unzip`](gm-repo-unzip.md)
+- [`gm repo zip`](gm-repo-zip.md)
 
 ## Submodules
 - [`prompt`](prompt/index.md)
