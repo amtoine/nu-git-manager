@@ -13,10 +13,10 @@ jobs:
   tests:
     uses: ./.github/workflows/nupm-tests.yml
     with:
-      nu_version: "0.91.0"
-      nupm_revision: "29916fc43aad40ffe901b3c0be8820b9cb78fdba"
+      nu_version: "0.95.0"
+      nupm_revision: "42d65a980641a9374473907d521f008e859c9ac7"
 
   documentation:
     uses: ./.github/workflows/check-documentation.yml
     with:
-      nu_version: "0.91.0"
+      nu_version: "0.95.0"
