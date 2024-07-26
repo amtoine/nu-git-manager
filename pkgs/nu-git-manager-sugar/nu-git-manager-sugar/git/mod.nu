@@ -102,7 +102,7 @@ export def "gm repo branch list" []: nothing -> table<branch: string, remotes: l
 # # clean all dangling branches
 # gm repo branch clean
 # ```
-export def "gm repo branch clean" []: nothing -> nothing {
+export def "gm repo branch clean" []: nothing -> table<name: string, revision: string> {
     let dangling_branches = gm repo branch list | where remotes == []
 
     if ($dangling_branches | is-empty) {
@@ -110,14 +110,20 @@ export def "gm repo branch clean" []: nothing -> nothing {
         return
     }
 
-    for branch in $dangling_branches.branch {
+    $dangling_branches.branch | each { |branch|
         if $branch == (^git branch --show-current) {
             log warning $"($branch) is currently checked out and cannot be deleted"
-            continue
-        }
+        } else {
+            log info $"deleting branch `($branch)`"
+            let revision = ^git branch --delete --force $branch
+                | lines
+                | parse "Deleted branch {br} (was {rev})."
+                | into record
+                | get rev
+                | ^git rev-parse $in
 
-        log info $"deleting branch `($branch)`"
-        ^git branch --quiet --delete --force $branch
+            { name: $branch, revision: $revision }
+        }
     }
 }
 
