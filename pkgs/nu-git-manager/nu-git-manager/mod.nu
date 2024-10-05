@@ -150,11 +150,9 @@ export def "gm clone" [
     ^git clone ...$args
 
     if (^git -C $local_path log | complete | get exit_code) != 0 {
-        print "it appears you have cloned an empty repository"
-        let res = ["yes", "no"] | input list --fuzzy "do you want to create an 'init' commit?"
-        if $res == "yes" {
-            ^git -C $local_path commit --allow-empty
-        }
+        print $"it appears you have cloned an (ansi yellow_bold)empty repository(ansi reset)"
+        print $"creating an (ansi cyan)'init' commit(ansi reset)"
+        ^git -C $local_path commit --allow-empty --message "init"
     }
 
     ^git -C $local_path remote set-url $remote $urls.fetch
