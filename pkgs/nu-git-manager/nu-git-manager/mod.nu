@@ -242,21 +242,11 @@ export def "gm list" [
             help: $"expected a NUON list of strings, found ($ty | to nuon | nu-highlight)"
         }
     }
-    let user_repos = $user_repos | path expand
-    for it in ($user_repos | enumerate) {
-        if not ($it.item | path exists) {
-            error make --unspanned {
-                msg: $"(ansi red_bold)invalid_config_file(ansi reset): entry ($it.index) in (ansi purple)($user_config_file)(ansi reset) not found",
-                help: $"make sure entry ($it.index) \((ansi purple)($it.item)(ansi reset)\) is a valid path"
-            }
+    let user_repos = $user_repos
+        | path expand
+        | filter { |it|
+            ($it | path exists) and (try { ^git -C $it status err> /dev/null }) != null
         }
-        if (try { ^git -C $it.item status err> /dev/null }) == null {
-            error make --unspanned {
-                msg: $"(ansi red_bold)invalid_config_file(ansi reset): entry ($it.index) in (ansi purple)($user_config_file)(ansi reset) does not appear to be a Git repo",
-                help: $"make sure entry ($it.index) \((ansi purple)($it.item)(ansi reset)\) is a valid Git repo"
-            }
-        }
-    }
 
     let cache_repos = if $full_path {
         open-cache $cache_file | get path
