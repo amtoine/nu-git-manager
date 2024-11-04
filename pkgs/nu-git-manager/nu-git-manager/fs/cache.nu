@@ -14,6 +14,17 @@ export def get-repo-store-cache-path []: nothing -> path {
         | path sanitize
 }
 
+# get the path to the user-defined list of custom repos
+#
+# /!\ this command will sanitize the output path. /!\
+export def get-user-repo-store-config-path []: nothing -> path {
+    $env.XDG_CONFIG_HOME?
+        | default ($nu.home-path | path join ".config")
+        | path join "nu-git-manager/repos.nuon"
+        | path expand
+        | path sanitize
+}
+
 # make sure the cache file exists and give a nice error otherwise
 export def check-cache-file [cache_file: path]: nothing -> nothing {
     if not ($cache_file | path exists) {

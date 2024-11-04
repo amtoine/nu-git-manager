@@ -16,7 +16,7 @@ module git/
 use fs store [get-repo-store-path, list-repos-in-store]
 use fs cache [
     get-repo-store-cache-path, check-cache-file, add-to-cache, remove-from-cache, open-cache,
-    save-cache, clean-cache-dir
+    save-cache, clean-cache-dir, get-user-repo-store-config-path
 ]
 use fs dir [clean-empty-directories-rec]
 use fs path ["path sanitize", "path remove-prefix"]
@@ -233,11 +233,38 @@ export def "gm list" [
     let cache_file = get-repo-store-cache-path
     check-cache-file $cache_file
 
-    if $full_path {
+    let user_config_file = get-user-repo-store-config-path
+    let user_repos = if ($user_config_file | path exists) { open $user_config_file } else { [] }
+    let ty = $user_repos | describe --detailed
+    if not ($ty.type == "list" and ($ty.values | all { $in == "string" })) {
+        error make --unspanned {
+            msg: $"(ansi red_bold)invalid_config_file(ansi reset): config file (ansi purple)($user_config_file)(ansi reset) is invalid",
+            help: $"expected a NUON list of strings, found ($ty | to nuon | nu-highlight)"
+        }
+    }
+    let user_repos = $user_repos | path expand
+    for it in ($user_repos | enumerate) {
+        if not ($it.item | path exists) {
+            error make --unspanned {
+                msg: $"(ansi red_bold)invalid_config_file(ansi reset): entry ($it.index) in (ansi purple)($user_config_file)(ansi reset) not found",
+                help: $"make sure entry ($it.index) \((ansi purple)($it.item)(ansi reset)\) is a valid path"
+            }
+        }
+        if (try { ^git -C $it.item status err> /dev/null }) == null {
+            error make --unspanned {
+                msg: $"(ansi red_bold)invalid_config_file(ansi reset): entry ($it.index) in (ansi purple)($user_config_file)(ansi reset) does not appear to be a Git repo",
+                help: $"make sure entry ($it.index) \((ansi purple)($it.item)(ansi reset)\) is a valid Git repo"
+            }
+        }
+    }
+
+    let cache_repos = if $full_path {
         open-cache $cache_file | get path
     } else {
         open-cache $cache_file | get path | path remove-prefix (get-repo-store-path)
     }
+
+    $cache_repos | append $user_repos
 }
 
 # get current status about the repositories managed by NGM
