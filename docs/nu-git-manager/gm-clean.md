@@ -1,4 +1,4 @@
-# `gm clean` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L567))
+# `gm clean` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L573))
 clean the store
 
 this command will mainly remove empty directory recursively.
