@@ -1,4 +1,4 @@
-# `gm list` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L224))
+# `gm list` from `nu-git-manager` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager/nu-git-manager/mod.nu#L230))
 list all the local repositories in your local store
 
 **/!\\** this command will return sanitized paths. **/!\\**
