@@ -32,6 +32,8 @@ export module imports {
             "gm repo remote add",
             "gm repo remote list",
             "gm repo switch",
+            "gm repo unzip",
+            "gm repo zip",
             "prompt setup",
         ]
     }
