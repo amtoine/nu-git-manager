@@ -19,4 +19,4 @@ jobs:
   documentation:
     uses: ./.github/workflows/check-documentation.yml
     with:
-      nu_version: "0.96.0"
+      nu_version: "0.100.0"
