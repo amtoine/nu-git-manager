@@ -12,6 +12,6 @@
         nushell: 0.96.0
         git: 2.40.1
     }
-    type: "module"
+    type: "custom"
 }
 
