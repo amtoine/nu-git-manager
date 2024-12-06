@@ -143,7 +143,7 @@ export def "gm gh query-api" [
         if $no_paginate {
             http get ($base_url | update params.page 1 | url join)
         } else {
-            let res = generate 1 {|page|
+            let res = generate { |page|
                 log debug $"pulling page ($page)"
                 let resp = http get ($base_url | update params.page $page | url join)
 
@@ -173,7 +173,7 @@ export def "gm gh query-api" [
                         error make --unspanned { msg: $err_msg }
                     }
                 }
-            }
+            } 1
 
             $res | flatten
         }
