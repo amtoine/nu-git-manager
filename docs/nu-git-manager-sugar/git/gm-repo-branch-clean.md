@@ -15,6 +15,6 @@ gm repo branch clean
 
 
 ## Signatures
-| input     | output    |
-| --------- | --------- |
-| `nothing` | `nothing` |
+| input     | output                                  |
+| --------- | --------------------------------------- |
+| `nothing` | `table<name: string, revision: string>` |
