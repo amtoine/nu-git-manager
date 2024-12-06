@@ -4,7 +4,7 @@ use path.nu ["path sanitize"]
 #
 # /!\ this command will return sanitized paths /!\
 export def clean-empty-directories-rec []: list<path> -> list<path> {
-    let deleted = generate $in {|directories|
+    let deleted = generate {|directories|
         let next = $directories | each {|it|
             rm --force $it
 
@@ -19,7 +19,7 @@ export def clean-empty-directories-rec []: list<path> -> list<path> {
         } else {
             {out: $directories, next: $next}
         }
-    }
+    } $in
 
     $deleted | flatten
 }
