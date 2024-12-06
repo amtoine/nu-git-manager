@@ -124,7 +124,7 @@ export def "gm clone" [
 
     let urls = get-fetch-push-urls $repository ($fetch | default "") ($push | default "") $ssh
 
-    mut args = [$urls.fetch $local_path --origin $remote]
+    mut args: list<string> = [$urls.fetch $local_path --origin $remote]
     if $depth != null {
         if ($depth < 1) {
             throw-error {
@@ -136,14 +136,14 @@ export def "gm clone" [
             }
         }
 
-        $args = ($args ++ --depth ++ $depth)
+        $args = ($args ++ [--depth] ++ [$depth])
 
         if $bare {
-            $args = ($args ++ --bare)
+            $args = ($args ++ [--bare])
         }
     } else {
         if $bare {
-            $args = ($args ++ --bare)
+            $args = ($args ++ [--bare])
         }
     }
 
