@@ -9,6 +9,10 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
             | get stdout
             | is-empty
     )
+    let is_uninitialized = do -i { ^git rev-parse --short HEAD }
+        | complete
+        | get stderr
+        | $in =~ "Needed a single revision"
 
     # FIXME: use `path sanitize` from `nu-git-manager`
     let pwd = pwd | str replace --regex '^.:' '' | str replace --all '\' '/'
@@ -33,7 +37,9 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         $pwd | simplify-path | color "green"
     }
 
-    let git_branch_segment = if $is_git_repo {
+    let git_branch_segment = if $is_uninitialized {
+        $"\((ansi red)no rev(ansi reset)\)"
+    } else if $is_git_repo {
         let revision = get-revision --short-hash
         let pretty_branch_tokens = match $revision.type {
             "branch" => [
