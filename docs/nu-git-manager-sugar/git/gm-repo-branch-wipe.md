@@ -1,4 +1,4 @@
-# `gm repo branch wipe` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L125))
+# `gm repo branch wipe` from `nu-git-manager-sugar git` (see [source](https://github.com/amtoine/nu-git-manager/blob/main/pkgs/nu-git-manager-sugar/nu-git-manager-sugar/git/mod.nu#L131))
 wipe a branch completely, i.e. both locally and remotely
 
 
