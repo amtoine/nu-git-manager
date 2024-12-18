@@ -353,18 +353,17 @@ export def branch-compare [] {
         "+++ b/foo.txt",
         "@@ -0,0 +1 @@",
         "+foo",
-        "\\ No newline at end of file"
-        "",
+        "\\ No newline at end of file",
     ]
-    assert equal (gm repo compare main) ($expected | str join "\n")
-    assert equal (gm repo compare main --head HEAD) ($expected | str join "\n")
+    assert equal (gm repo compare main | collect) ($expected | str join "\n")
+    assert equal (gm repo compare main --head HEAD | collect) ($expected | str join "\n")
 
     ^git checkout main
     "bar" | save --append foo.txt
     ^git add foo.txt
     commit "c2"
 
-    assert equal (gm repo compare main --head foo) ($expected | str join "\n")
+    assert equal (gm repo compare main --head foo | collect) ($expected | str join "\n")
 
     clean $foo
 }
