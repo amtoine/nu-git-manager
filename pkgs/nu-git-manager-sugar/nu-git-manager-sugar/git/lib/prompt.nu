@@ -95,7 +95,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
     }
 
     let command_failed_segment = if $env.LAST_EXIT_CODE != 0 {
-        $env.LAST_EXIT_CODE | color "red_bold"
+        $env.LAST_EXIT_CODE | into string | color "red_bold"
     } else {
         null
     }
@@ -105,7 +105,7 @@ export def get-left-prompt [duration_threshold: duration]: nothing -> string {
         _ => ($env.CMD_DURATION_MS | into int | $in * 1ms),
     }
     let duration_segment = if $cmd_duration > $duration_threshold {
-        $cmd_duration | color "light_yellow"
+        $cmd_duration | into string | color "light_yellow"
     } else {
         null
     }
