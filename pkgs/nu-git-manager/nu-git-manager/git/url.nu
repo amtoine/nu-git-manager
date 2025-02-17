@@ -24,7 +24,7 @@ export def parse-git-url []: string -> record<host: string, owner: string, group
             }
 
             let group = if ($tokens | length) > 1 {
-                $tokens | range 1..(-2) | if $in != null { path join | path sanitize }
+                $tokens | slice 1..(-2) | if $in != null { path join | path sanitize }
             }
 
             {
