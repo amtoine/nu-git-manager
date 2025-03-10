@@ -240,9 +240,9 @@ def document-command [
 
     let page = [
         $"# `($command)` from `($args.module_name)` \(see [source]\(($source)\)\)",
-        $help.usage,
+        $help.description,
         "",
-        $help.extra_usage,
+        $help.extra_description,
         "",
         "## Parameters",
         (
@@ -349,9 +349,9 @@ def document-module [
         let page = [
             $"# Module `($module_name)`",
             "## Description",
-            $module.usage,
+            $module.description,
             "",
-            $module.extra_usage,
+            $module.extra_description,
             "",
             "## Commands",
             $commands,
