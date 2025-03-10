@@ -32,6 +32,8 @@
 - [`gm repo remote add`](nu-git-manager-sugar/git/gm-repo-remote-add.md)
 - [`gm repo remote list`](nu-git-manager-sugar/git/gm-repo-remote-list.md)
 - [`gm repo switch`](nu-git-manager-sugar/git/gm-repo-switch.md)
+- [`gm repo unzip`](nu-git-manager-sugar/git/gm-repo-unzip.md)
+- [`gm repo zip`](nu-git-manager-sugar/git/gm-repo-zip.md)
 - [`setup`](nu-git-manager-sugar/git/prompt/setup.md)
 - [`gm gh`](nu-git-manager-sugar/github/gm-gh.md)
 - [`gm gh pr checkout`](nu-git-manager-sugar/github/gm-gh-pr-checkout.md)
