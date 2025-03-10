@@ -216,6 +216,8 @@ def document-command [
     let command = $in
     log debug $"documenting command `($command)`"
 
+    print $"documenting command '($command)'"
+
     let command_file = $command
         | str replace --all ' ' '-'
         | path parse
@@ -302,9 +304,10 @@ def document-module [
 ]: nothing -> nothing {
     let main_index = $root | path join $documentation_dir "index.md"
 
+    print $"documenting module '($module_path)'"
+
     def aux [
         full_module_name_with_leading_path: string,
-        depth?: int = 0,
     ]: record<name: string, commands: list<string>, submodules: list<record>> -> nothing {
         let module = $in
         log debug $"documenting module `($module.name)`"
@@ -366,7 +369,7 @@ def document-module [
 
 
         for submodule in $module.submodules {
-            $submodule | aux ($full_module_name_with_leading_path + ' ' + $submodule.name) ($depth + 1)
+            $submodule | aux ($full_module_name_with_leading_path + ' ' + $submodule.name)
         }
     }
 
